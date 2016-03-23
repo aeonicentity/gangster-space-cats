@@ -1,3 +1,6 @@
-.BODY{
-	background-image:url("assets/bg.jpg");
+BODY {
+	background-image:url("../assets/bg.jpg");
+	background-color:red;
+	background-repeat:no-repeat;
+	background-position: top center;
 }
