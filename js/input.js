@@ -3,16 +3,43 @@ Game.input = (function (){
 	
 	function Mouse(){
 		var that = {
-			position : {},
+			position : {x:null,y:null},
 			clicks : [],
 			handlers : [],
 		}
 		
 		function mouseLeftClickDown(e){
-			that.handlers.push({x: e.clientX, y:e.clientY, time:e.timeStamp});
+			that.position.x = e.clientX;
+			that.position.y = e.clientY;
+			that.handlers.push({x: e.clientX, y:e.clientY, endX:null, endY:null, time:e.timeStamp});
 		}
+		
+		function mouseLeftClickUp(e){
+			//this is vestigial for now, but if we want to do click and drag, we might want to have some kind of ending X position saved from this.
+			that.position.x = e.clientX;
+			that.position.y = e.clientY;
+			var temp = that.handlers.pop();
+			temp.endX = e.clientX;
+			temp.endY = e.clientY;
+			that.handlers.push(temp);
+		}
+		
+		that.update = function (elapsedTime){ // given a specific time stamp, return all inputs registered since that time stamp in an array.
+			var clicksToExecute = [];
+			for (var i = 0; i < that.clicks.length; i++){
+				var top = that.clicks.peek();
+				if (top.time < elapsedTime){
+					//shift the click off the queue and onto the return queue.
+					clicksToExecute.push(clicks.shift());
+				}
+			}
+			return clicksToExcute;
+				
+		}
+		
 		window.addEventListener('onmousedown', mouseLeftClickDown);
 		window.addEventListener('onmouseup', mouseLeftClickUp);
+		return that;
 	}
 	
 	function Keyboard() {
