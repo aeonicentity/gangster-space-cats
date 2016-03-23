@@ -30,7 +30,7 @@ Game.gameLoop = (function (graphics, input, screens, server){
 	
 	
 	return {
-		start: initializeGame;
+		start: initializeGame,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server));
