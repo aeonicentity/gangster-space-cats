@@ -2,8 +2,8 @@ Game.graphics = (function(){
 	'use strict';
 	var gameWidth = 800;
 	var gameHeight = 500;
-	var canvas = document.getElementById("gameZone"), 
-		context = canvas.getContext('2d');
+	var canvas = document.getElementById("gameZone"); 
+	var	context = canvas.getContext('2d');
 	canvas.width  = gameWidth;
 	canvas.height = gameHeight;
 	CanvasRenderingContext2D.prototype.clear = function() {
@@ -32,13 +32,38 @@ Game.graphics = (function(){
 		
 		context.restore();
 	}
+	
+	function Polygon(spec){ //N-sided polygon.
+		var that = {};
+		
+		that.rotate = function(angle){
+			spec.rotation = angle
+		};
+		
+		that.draw = function(){
+			context.save();
+			context.translate(spec.x, spec.y);
+			context.rotate(spec.rotation);
+			context.translate(-(spec.x), -(spec.y));
+			context.fillStyle = spec.fill;
 
-	//------------------------------------------------------------------
-	//
-	// This is used to create a rectangle function that can be used by client
-	// code for rendering.
-	//
-	//------------------------------------------------------------------
+			context.beginPath();
+			context.moveTo (spec.x +  spec.size * Math.cos(0), spec.y +  spec.size *  Math.sin(0));          
+
+			for (var i = 1; i <= spec.sides;i += 1) {
+				context.lineTo (spec.x + spec.size * Math.cos(i * 2 * Math.PI / spec.sides), spec.y + spec.size * Math.sin(i * 2 * Math.PI / spec.sides));
+			}
+
+			context.strokeStyle = spec.stroke;
+			context.lineWidth = spec.lineWidth;
+			context.stroke();
+			context.fill();
+			context.restore();
+		};
+		
+		return that;
+	}
+	
 	function Rectangle(spec) {
 		var that = {};
 
@@ -194,9 +219,7 @@ Game.graphics = (function(){
 		gameHeight : gameHeight,
 		clear : clear,
 		Rectangle : Rectangle,
-		Paddle: Paddle,
-		Bit: Bit,
-		Ball: Ball,
+		Polygon: Polygon,
 		Text: Text,
 		drawImage:drawImage,
 	};

@@ -3,12 +3,14 @@
 	<head>
 		<title>Gangster Space Cats vs Zombie Nazis</title>
 		<link href="css/style.css" type="text/css" rel="stylesheet" />
-		<script>Game = {}</script>
-		<script src="js/input.js"></script>
-		<script src="js/graphics.js"></script>
-		<script src="js/gameloop.js"></script>
+		
 	</head>
 	<body>
+		<canvas style="width:100%; height:100%" id="gameZone"></canvas>
 	</body>
+	<script>Game = {}</script>
+	<script src="js/input.js"></script>
+	<script src="js/graphics.js"></script>
+	<script src="js/gameloop.js">Game.gameLoop.start();</script>
 </html>
 
