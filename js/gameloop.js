@@ -1,4 +1,4 @@
-Game.gameLoop = (function (graphics, input, screens, server){
+Game.gameLoop = (function (graphics, input, screens, server, assets){
 	var rqId;
 	var cancelFrame = false;
 	//Game states.
@@ -48,6 +48,16 @@ Game.gameLoop = (function (graphics, input, screens, server){
 			that.test.push(temp)
 		}
 		
+		testTexture = graphics.Texture({
+			center: {x:50, y:50},
+			width:50,
+			height:50,
+			image: assets.getAsset('towerBase'),
+			rotation : 0,
+			moveRate : 200,			// pixels per second
+			rotateRate : 3.14159	// Radians per second
+		});
+		
 		that.update = function (){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
@@ -65,12 +75,13 @@ Game.gameLoop = (function (graphics, input, screens, server){
 			});
 			//console.log(test);
 			
-			rect.draw();
+			//rect.draw();
 			for( var j in that.test){
 				for (var i in that.test[j]){
-					that.test[j][i].draw();
+					//that.test[j][i].draw();
 				}
 			}
+			testTexture.draw();
 		};
 		return that;
 	}());
@@ -92,4 +103,4 @@ Game.gameLoop = (function (graphics, input, screens, server){
 		start: initializeGame,
 	};
 	
-}(Game.graphics, Game.input, Game.screens, Game.server));
+}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets));
