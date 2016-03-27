@@ -1,4 +1,4 @@
-Game.gameLoop = (function (graphics, input, screens, server, assets){
+Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects){
 	var rqId;
 	var cancelFrame = false;
 	//Game states.
@@ -103,4 +103,4 @@ Game.gameLoop = (function (graphics, input, screens, server, assets){
 		start: initializeGame,
 	};
 	
-}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets));
+}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
