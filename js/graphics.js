@@ -118,7 +118,7 @@ Game.graphics = (function(){
 	function Texture(spec) {
 		var that = {},
 			ready = false,
-			image = new Image();
+			image = spec.image;
 		
 		//
 		// Load the image, set the ready flag once it is loaded so that
@@ -126,8 +126,8 @@ Game.graphics = (function(){
 		image.onload = function() { 
 			ready = true;
 		};
-		image.src = spec.image;
-		
+		/*image.src = spec.image;
+		*/
 		that.movetoX = function(xPos){
 			spec.center.x = xPos;
 		}
@@ -174,7 +174,7 @@ Game.graphics = (function(){
 		};
 		
 		
-		
+		console.log(image);
 		that.draw = function() {
 			if (ready) {
 				context.save();
@@ -220,6 +220,7 @@ Game.graphics = (function(){
 		clear : clear,
 		Rectangle : Rectangle,
 		Polygon: Polygon,
+		Texture: Texture,
 		Text: Text,
 		drawImage:drawImage,
 	};
