@@ -33,6 +33,29 @@ Game.graphics = (function(){
 		context.restore();
 	}
 	
+	function Circle(spec){
+		var that = {
+			radius: spec.radius,
+			center: spec.center,
+		};
+		
+		that.draw = function(){
+			context.save();
+			context.beginPath();
+			context.arc(that.center.x, that.center.y, that.radius, 0 ,2 * Math.PI, false);
+			context.fillStyle = spec.fill;
+			context.fill();
+			context.lineWidth = spec.line;
+			context.strokeStyle = spec.lineColor;
+			context.stroke();
+			context.restore();
+		}
+
+		that.update = function(){};
+		
+		return that;
+	}
+	
 	function Polygon(spec){ //N-sided polygon.
 		var that = {};
 		
@@ -60,6 +83,8 @@ Game.graphics = (function(){
 			context.fill();
 			context.restore();
 		};
+		
+		that.update = function(){};
 		
 		return that;
 	}
@@ -219,6 +244,7 @@ Game.graphics = (function(){
 		gameHeight : gameHeight,
 		clear : clear,
 		Rectangle : Rectangle,
+		Circle: Circle,
 		Polygon: Polygon,
 		Texture: Texture,
 		Text: Text,
