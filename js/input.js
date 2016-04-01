@@ -8,18 +8,18 @@ Game.input = (function (){
 			handlers : [],
 		}
 		
-		function mouseLeftClickDown(e){
+		that.mouseLeftClickDown = function(e){
 			console.log('clickDown');
 			that.handlers.push({x: e.clientX, y:e.clientY, endX:null, endY:null, time:e.timeStamp});
 		}
 		
-		function mouseTrack(e){
-			console.log(that.position.x+","+that.position.y);
+		that.mouseTrack = function(e){
+			//console.log(that.position.x+","+that.position.y);
 			that.position.x = e.clientX;
 			that.position.y = e.clientY;
 		}
 		
-		function mouseLeftClickUp(e){
+		that.mouseLeftClickUp = function(e){
 			console.log('clickup');
 			//this is vestigial for now, but if we want to do click and drag, we might want to have some kind of ending X position saved from this.
 			that.position.x = e.clientX;
@@ -28,24 +28,26 @@ Game.input = (function (){
 			temp.endX = e.clientX;
 			temp.endY = e.clientY;
 			that.handlers.push(temp);
+			//console.log(that.handlers);
 		}
 		
 		that.update = function (elapsedTime){ // given a specific time stamp, return all inputs registered since that time stamp in an array.
 			var clicksToExecute = [];
-			for (var i = 0; i < that.clicks.length; i++){
-				var top = that.clicks.peek();
-				if (top.time < elapsedTime){
+			for (var i = 0; i < that.handlers.length; i++){
+				var top = that.handlers[0];
+				if (top.endX != null){
 					//shift the click off the queue and onto the return queue.
-					clicksToExecute.push(clicks.shift());
+					clicksToExecute.push(that.handlers.shift());
 				}
 			}
-			return clicksToExcute;
+			return clicksToExecute;
 				
 		}
 		
-		window.addEventListener('onmousedown', mouseLeftClickDown);
-		window.addEventListener('onmouseup', mouseLeftClickUp);
-		window.addEventListener('mousemove', mouseTrack);
+		
+		document.getElementById("gameZone").addEventListener('mousedown', function(event){that.mouseLeftClickDown(event);});
+		document.getElementById("gameZone").addEventListener('mouseup', function(event){that.mouseLeftClickUp(event);});
+		document.getElementById("gameZone").addEventListener('mousemove', function(event){that.mouseTrack(event);});
 		
 		return that;
 	}
@@ -100,7 +102,8 @@ Game.input = (function (){
 	}
 	
 	return {
-		Keyboard : Keyboard
+		Keyboard : Keyboard,
+		Mouse: Mouse,
 	};
 }());
 

@@ -78,11 +78,11 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.radiusOn = function(){
-			that.radius = true;
+			that.showRadius = true;
 		}
 		
 		that.radiusOff = function(){
-			that.radius = false;
+			that.showRadius = false;
 		}
 		
 		that.upgrade = function (){

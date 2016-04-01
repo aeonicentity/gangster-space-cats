@@ -7,6 +7,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var gameStateBattle;
 	var startTime;
 	var tempTower = null;
+	var mouse;
+	var towers = [];
 	
 
 	function gameloop(){
@@ -32,12 +34,36 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
 	
 	function addBombTower(){
+		tempTower = gameobjects.Tower({
+			pos:{x:100,y:100},
+			tier:0,
+			upgradePath:['bomb_tower_1','bomb_tower_2','bomb_tower_3'],
+			sellPrice:100,
+			fireRate: 2,
+			radius: 100,
+		});
 	}
 	
 	function addAirTower(){
+		tempTower = gameobjects.Tower({
+			pos:{x:100,y:100},
+			tier:0,
+			upgradePath:['air_tower_1','air_tower_2','air_tower_3'],
+			sellPrice:100,
+			fireRate: 2,
+			radius: 100,
+		});
 	}
 	
 	function addSlowTower(){
+		tempTower = gameobjects.Tower({
+			pos:{x:100,y:100},
+			tier:0,
+			upgradePath:['slow_tower_1','slow_tower_2','slow_tower_3'],
+			sellPrice:100,
+			fireRate: 2,
+			radius: 100,
+		});
 	}
 	
 	gameStateBuild = (function (){
@@ -69,26 +95,39 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			that.test.push(temp)
 		}
 		
-		testTexture = gameobjects.Tower({
+		/*towers[0] = gameobjects.Tower({
 			pos:{x:100,y:100},
 			tier:0,
 			upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
 			sellPrice:100,
 			fireRate: 2,
 			radius: 100,
-		});
+		});*/
 		
-		that.update = function (){
+		that.update = function (elapsedTime){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
+			mouseInputs = mouse.update(elapsedTime);
 			if(tempTower != null){
-				pos = input.position;
-				tempTower.moveTo(pos.x,pos.y);
+				//console.log(mouseInputs.length);
+				if(mouseInputs.length > 0){
+					tempTower.radiusOff();
+					towers.push(tempTower);
+					console.log("placement");
+					tempTower = null;
+				}else{
+					pos = mouse.position;
+					tempTower.moveTo(pos.x,pos.y);
+				}
 			}
 		};
-		that.render = function (){ //placeholder function for game logic on build state.
+		that.render = function (elapsedTime){ //placeholder function for game logic on build state.
 			//console.log("update");
-			testTexture.draw();
+			graphics.clear();
+			
+			for(var i in towers){
+				towers[i].draw();
+			}
 			
 			if(tempTower != null){
 				tempTower.draw();
@@ -105,6 +144,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		console.log ("Initializing...");
 		gameState = gameStateBuild;
 		startTime = performance.now();
+		mouse = input.Mouse();
 		gameloop();
 	}
 	
@@ -113,6 +153,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	return {
 		start: initializeGame,
 		addBasicTower: addBasicTower,
+		addBombTower: addBombTower,
+		addAirTower: addAirTower,
+		addSlowTower: addSlowTower,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
