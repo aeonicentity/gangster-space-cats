@@ -7,6 +7,7 @@ Game.assets = (function(){
 	
 	function loadAsset(assetName){// Loads asset. Returns true if asset is loaded, returns false if asset cannot be found.
 		if(!(assetName in assets)){
+			
 			try{
 				assets[assetName] = new Image();
 				assets[assetName].src = "assets/"+assetName+".png";

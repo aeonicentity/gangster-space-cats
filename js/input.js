@@ -9,12 +9,18 @@ Game.input = (function (){
 		}
 		
 		function mouseLeftClickDown(e){
-			that.position.x = e.clientX;
-			that.position.y = e.clientY;
+			console.log('clickDown');
 			that.handlers.push({x: e.clientX, y:e.clientY, endX:null, endY:null, time:e.timeStamp});
 		}
 		
+		function mouseTrack(e){
+			console.log(that.position.x+","+that.position.y);
+			that.position.x = e.clientX;
+			that.position.y = e.clientY;
+		}
+		
 		function mouseLeftClickUp(e){
+			console.log('clickup');
 			//this is vestigial for now, but if we want to do click and drag, we might want to have some kind of ending X position saved from this.
 			that.position.x = e.clientX;
 			that.position.y = e.clientY;
@@ -39,6 +45,8 @@ Game.input = (function (){
 		
 		window.addEventListener('onmousedown', mouseLeftClickDown);
 		window.addEventListener('onmouseup', mouseLeftClickUp);
+		window.addEventListener('mousemove', mouseTrack);
+		
 		return that;
 	}
 	

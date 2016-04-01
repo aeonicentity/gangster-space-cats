@@ -50,6 +50,11 @@ Game.graphics = (function(){
 			context.stroke();
 			context.restore();
 		}
+		
+		that.moveTo =  function(x,y){
+			that.center.x = x;
+			that.center.y = y;
+		};
 
 		that.update = function(){};
 		
@@ -116,7 +121,7 @@ Game.graphics = (function(){
 		that.movetoY = function(yPos){
 			spec.y = yPos;
 		}
-		that.moveto = function(x,y){
+		that.moveTo = function(x,y){
 			spec.x = x;
 			spec.y = y;
 		}
@@ -143,8 +148,9 @@ Game.graphics = (function(){
 	function Texture(spec) {
 		var that = {},
 			ready = false,
-			image = spec.image;
+			image = new Image();
 		
+		image.src = spec.image.src;
 		//
 		// Load the image, set the ready flag once it is loaded so that
 		// rendering can begin.
@@ -159,7 +165,7 @@ Game.graphics = (function(){
 		that.movetoY = function(yPos){
 			spec.center.y = yPos;
 		}
-		that.moveto = function(xPos,yPos){
+		that.moveTo = function(xPos,yPos){
 			spec.center.x = xPos;
 			spec.center.y = yPos;
 		}

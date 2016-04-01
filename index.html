@@ -6,14 +6,14 @@
 		
 	</head>
 	<body>
-		<canvas style="width:800px; height:500px" id="gameZone"></canvas>
+		<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
         
         <div id="menu">
             <span id="current_catnip">catnip : 0</span>
             <button type="button" id="about">About</button>
             <center>
             <h2>I can has towers?</h2>
-            <button type="button" id="basic">Basic Tower</button>
+            <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
             <button type="button" id="bomb">Bomb Tower</button>
             <button type="button" id="air">Air Tower</button>
             <button type="button" id="slow">Slow Tower</button>
@@ -34,6 +34,6 @@
 	<script src="js/graphics.js"></script>
 	<script src="js/asset.js"></script>
 	<script src="js/gameobjects.js"></script>
-	<script src="js/gameloop.js">Game.gameLoop.start();</script>
+	<script src="js/gameloop.js"></script>
 </html>
 

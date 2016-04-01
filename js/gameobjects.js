@@ -19,6 +19,9 @@ Game.gameobjects = (function(graphics,assets){
 			rotateRate: Math.PI*2
 		});
 		
+		that.moveTo = function(x,y){
+			that.turret.moveTo(x,y);
+		};
 		
 		that.draw = function(elapsedTime){
 			that.turret.draw();
@@ -86,6 +89,14 @@ Game.gameobjects = (function(graphics,assets){
 			if (that.teir < 3){
 				that.teir++;
 			}
+		}
+		
+		that.moveTo = function(x,y){
+			that.pos.x = x;
+			that.pos.y = y;
+			that.radius.moveTo(x,y);
+			that.base.moveTo(x,y);
+			that.tower.moveTo(x,y);
 		}
 		
 		that.draw = function(elapsedTime){

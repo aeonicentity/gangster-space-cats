@@ -6,6 +6,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var gameStateBuild;
 	var gameStateBattle;
 	var startTime;
+	var tempTower = null;
 	
 
 	function gameloop(){
@@ -17,6 +18,26 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			gameState.render(elapsedTime);
 			rqId = requestAnimationFrame(gameloop)
 		}
+	}
+	
+	function addBasicTower(){
+		tempTower = gameobjects.Tower({
+			pos:{x:100,y:100},
+			tier:0,
+			upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
+			sellPrice:100,
+			fireRate: 2,
+			radius: 100,
+		});
+	}
+	
+	function addBombTower(){
+	}
+	
+	function addAirTower(){
+	}
+	
+	function addSlowTower(){
 	}
 	
 	gameStateBuild = (function (){
@@ -60,27 +81,18 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		that.update = function (){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
+			if(tempTower != null){
+				pos = input.position;
+				tempTower.moveTo(pos.x,pos.y);
+			}
 		};
 		that.render = function (){ //placeholder function for game logic on build state.
 			//console.log("update");
-			rect = graphics.Rectangle({
-				x:0,
-				y:0,
-				width:100,
-				height:20,
-				fill: 'rgba(241,31,96,1)',
-				stroke: 'rgba(255,0,0,1)',
-				rotation:0,
-			});
-			//console.log(test);
-			
-			//rect.draw();
-			for( var j in that.test){
-				for (var i in that.test[j]){
-					//that.test[j][i].draw();
-				}
-			}
 			testTexture.draw();
+			
+			if(tempTower != null){
+				tempTower.draw();
+			}
 		};
 		return that;
 	}());
@@ -100,6 +112,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	return {
 		start: initializeGame,
+		addBasicTower: addBasicTower,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
