@@ -48,14 +48,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			that.test.push(temp)
 		}
 		
-		testTexture = graphics.Texture({
-			center: {x:50, y:50},
-			width:50,
-			height:50,
-			image: assets.getAsset('towerBase'),
-			rotation : 0,
-			moveRate : 200,			// pixels per second
-			rotateRate : 3.14159	// Radians per second
+		testTexture = gameobjects.Tower({
+			pos:{x:100,y:100},
+			tier:0,
+			upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
+			sellPrice:100,
+			fireRate: 2,
+			radius: 100,
 		});
 		
 		that.update = function (){
