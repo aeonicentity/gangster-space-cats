@@ -144,7 +144,7 @@ Game.graphics = (function(){
 
 		return that;
 	}
-	
+  
 	function Texture(spec) {
 		var that = {},
 			ready = false,
@@ -243,6 +243,74 @@ Game.graphics = (function(){
 		return that;
 	}
 	
+    
+//////////////////Sprite sheet stuff
+      function SpriteSheet(spec){
+          var that = {};
+          var image = new Image();
+          console.log("not broken");
+          
+          spec.sprite = 0; //start sprite
+          spec.elapsedTime = 0;
+          
+          image.onload = function(){
+              that.draw = function(){
+                context.save();
+                context.translate(spec.center.x, spec.center.y);
+				context.rotate(spec.rotation);
+				context.translate(-spec.center.x, -spec.center.y);
+                
+				context.drawImage(
+					image,
+					spec.width * spec.sprite, 0,	// Which sprite to pick out
+					spec.width, spec.height,		// The size of the sprite
+					spec.center.x - spec.width/2,	// Where to draw the sprite
+					spec.center.y - spec.height/2,
+					spec.width, spec.height);
+
+				context.restore();
+              };
+            spec.height = image.height;
+			spec.width = image.width / spec.spriteCount;
+          };
+          image.src = spec.spriteSheet;
+          
+          
+		that.update = function(elapsedTime, forward) {
+			spec.elapsedTime += elapsedTime;
+			//
+			// Check to see if we should update the animation frame
+			if (spec.elapsedTime >= spec.spriteTime[spec.sprite]) {
+				//
+				// When switching sprites, keep the leftover time because
+				// it needs to be accounted for the next sprite animation frame.
+				spec.elapsedTime -= spec.spriteTime[spec.sprite];
+				//
+				// Depending upon the direction of the animation...
+				if (forward === true) {
+					spec.sprite += 1;
+					//
+					// This provides wrap around from the last back to the first sprite
+					spec.sprite = spec.sprite % spec.spriteCount;
+				} else {
+					spec.sprite -= 1;
+					//
+					// This provides wrap around from the first to the last sprite
+					if (spec.sprite <= 0) {
+						spec.sprite = spec.spriteCount - 1;
+					}
+				}
+			}
+		};
+        
+        that.draw = function() {
+			//
+			// Starts out empty, but gets replaced once the image is loaded!
+		};
+          return that;
+      }
+
+
 	
 
 	return {
