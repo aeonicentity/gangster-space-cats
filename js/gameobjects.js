@@ -169,6 +169,7 @@ Game.gameobjects = (function(graphics,assets){
 		console.log(spec);
         var that = {
             type: spec.tier,
+            typepath: spec.typepath,
 			pos: spec.pos,
             value: spec.value,
 			health: spec.health,
@@ -177,6 +178,11 @@ Game.gameobjects = (function(graphics,assets){
             rotation: spec.rotation,
             path: spec.path,
         }
+        
+        that.moveTo = function(x,y){
+			that.pos.x = x;
+			that.pos.y = y;
+		}
 	}
 	
 	function Pellet(spec){

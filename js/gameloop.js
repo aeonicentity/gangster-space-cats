@@ -66,6 +66,20 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			radius: 100,
 		});
 	}
+    
+    function addCreep1(){
+        tempCreep = gameobjects.Creep({
+            type: 1,
+            typepath:'creep1',
+			pos: {x:100, y:300},
+            value: 5,
+			health: 50,
+            destination: {x:800, y:300},
+            speed: 5,
+            rotation: 0,
+            path: [],
+        });
+    }
 	
 	function towerCollision(obj){
 		console.log(obj);
