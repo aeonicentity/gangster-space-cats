@@ -204,7 +204,7 @@ Game.gameobjects = (function(graphics,assets){
 		};
         
         that.draw = function(elapsedTime){
-			that.sprite.draw();
+			that.sprite.draw(elapsedTime);
 		};
 		
 		return that;

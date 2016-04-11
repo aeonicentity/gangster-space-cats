@@ -36,8 +36,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	function calcShortestPath(){
 		//using dijkstra's.
 		Q = [];
+		var maxx = towerGrid[0].length - 1;
+		var maxy = towerGrid.length - 1; 
 		var src = null;
-		for (var i in towerGrid){ //Initialize Q. this is n^2, but i'm not sure how to do this any other way.
+		/*for (var i in towerGrid){ //Initialize Q. this is n^2, but i'm not sure how to do this any other way.
 			for (var j in towerGrid[i]){
 				if(towerGrid[i][j].distance == 0){
 					Q.unshift(towerGrid[i][j]);
@@ -45,10 +47,44 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					Q.push(towerGrid[i][j]);
 				}
 			}
-		}
+		}*/
+		Q.push(towerGrid[4][0]);
 		
-		while (Q.length != 0){
-			
+		while (Q.length > 0){
+			var current = Q.shift();
+			var next;
+			if(current.x > 0 && ! towerGrid[current.y][current.x-1].filled){ //if left exists and left is not filled
+				next = towerGrid[current.y][current.x-1];
+				if(next.distance == null ){
+					next.distance = current.distance+1;
+					next.parent = current;
+					Q.push(next);
+				}
+			}
+			if(current.x < maxx && ! towerGrid[current.y][current.x+1].filled){ //right exists and right not filled.
+				next = towerGrid[current.y][current.x+1];
+				if(next.distance == null){
+					next.distance = current.distance +1;
+					next.parent = current;
+					Q.push(next);
+				}
+			}
+			if(current.y > 0 && ! towerGrid[current.y-1][current.x].filled){
+				next = towerGrid[current.y-1][current.x];
+				if(next.distance == null){
+					next.distance = current.distance +1;
+					next.parent = current;
+					Q.push(next);
+				}
+			}
+			if(current.y < maxy && ! towerGrid[current.y+1][current.x].filled){
+				next = towerGrid[current.y+1][current.x];
+				if(next.distance == null){
+					next.distance = current.distance +1;
+					next.parent = current;
+					Q.push(next);
+				}
+			}
 		}
 	}
 
