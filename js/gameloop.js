@@ -55,6 +55,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		});
 	}
 	
+	function towerCollision(obj){
+		console.log(obj);
+		for( i in towers){
+			if(towers[i].box.collidesWith(obj)){
+				console.log("Tower collision");
+				return true;
+			}
+		}return false;
+	}
+	
 	function addSlowTower(){
 		tempTower = gameobjects.Tower({
 			pos:{x:100,y:100},
@@ -95,22 +105,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			that.test.push(temp)
 		}
 		
-		/*towers[0] = gameobjects.Tower({
-			pos:{x:100,y:100},
-			tier:0,
-			upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
-			sellPrice:100,
-			fireRate: 2,
-			radius: 100,
-		});*/
-		
 		that.update = function (elapsedTime){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
 			mouseInputs = mouse.update(elapsedTime);
 			if(tempTower != null){
 				//console.log(mouseInputs.length);
-				if(mouseInputs.length > 0){
+				if(mouseInputs.length > 0 && !towerCollision(tempTower.box)){
 					tempTower.radiusOff();
 					towers.push(tempTower);
 					console.log("placement");

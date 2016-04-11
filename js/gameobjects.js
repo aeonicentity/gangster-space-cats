@@ -1,4 +1,32 @@
 Game.gameobjects = (function(graphics,assets){
+	function CollisionBox(x,y,dx,dy){
+		var that = {
+			left:x,
+			right:dx,
+			top:y,
+			bottom:dy,
+		}
+		
+		that.updatePos = function(x,y,dx,dy){
+			that.left = x;
+			that.right = dx;
+			that.top = y;
+			that.bottom = dy;
+		}
+		
+		that.collidesWith = function (box){
+			console.log("Collision test");
+			console.log(that);
+			console.log("vs");
+			console.log(box);
+			return !(  that.left > box.right || 
+				   that.right < box.left || 
+				   that.top > box.bottom ||
+				   that.bottom < box.top);
+		}
+		return that
+	}
+	
 	function Turret(spec){
 		var that = {
 			pos: {x:spec.center.x, y:spec.center.y},
@@ -40,6 +68,7 @@ Game.gameobjects = (function(graphics,assets){
 			upgradePath: spec.upgradePath,
 			pos: spec.pos,
 			showRadius: true,
+			box: CollisionBox(spec.pos.x-25,spec.pos.y-25,spec.pos.x+25,spec.pos.y+25),
 		};
 		that.radius = graphics.Circle({
 			center: that.pos,
@@ -97,6 +126,7 @@ Game.gameobjects = (function(graphics,assets){
 			that.radius.moveTo(x,y);
 			that.base.moveTo(x,y);
 			that.tower.moveTo(x,y);
+			that.box.updatePos(x-25,y-25,x+25,y+25);
 		}
 		
 		that.draw = function(elapsedTime){
