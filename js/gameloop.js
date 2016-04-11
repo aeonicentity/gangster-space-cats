@@ -163,12 +163,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			pos: {x:100, y:300},
             value: 5,
 			health: 50,
+            width: 50,
+            height: 50,
             destination: {x:800, y:300},
             speed: 5,
             rotation: 0,
             path: [],
         });
         creeps.push(tempCreep);
+        console.log(tempCreep);
     }
     
     function addCreep2(){
@@ -177,6 +180,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_2',
 			pos: {x:100, y:300},
             value: 5,
+            width: 50,
+            height: 50,
 			health: 50,
             destination: {x:800, y:300},
             speed: 5,
@@ -184,6 +189,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             path: [],
         });
         creeps.push(tempCreep);
+        console.log(tempCreep);
     }
     
     function addCreepAir(){
@@ -192,6 +198,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_air',
 			pos: {x:100, y:300},
             value: 5,
+            width: 50,
+            height: 50,
 			health: 50,
             destination: {x:800, y:300},
             speed: 5,
@@ -199,6 +207,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             path: [],
         });
         creeps.push(tempCreep);
+        console.log(tempCreep);
     }
     
     function addCreepBoss(){
@@ -207,6 +216,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_boss',
 			pos: {x:100, y:300},
             value: 5,
+            width: 50,
+            height: 50,
 			health: 50,
             destination: {x:800, y:300},
             speed: 5,
@@ -214,6 +225,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             path: [],
         });
         creeps.push(tempCreep);
+        console.log(tempCreep);
     }
     
 	
@@ -299,7 +311,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}
             
            for(var c in creeps){
-				creeps[c].draw();
+				creeps[c].draw(elapsedTime);
 			}
 			
 			if(tempTower != null){
