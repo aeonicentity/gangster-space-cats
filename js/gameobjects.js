@@ -174,6 +174,8 @@ Game.gameobjects = (function(graphics,assets){
             typepath: spec.typepath,
 			pos: spec.pos,
             value: spec.value,
+            width: spec.width,
+            height: spec.height,
 			health: spec.health,
             destination: spec.destination,
             speed: spec.speed,

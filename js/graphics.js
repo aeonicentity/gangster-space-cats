@@ -304,9 +304,34 @@ Game.graphics = (function(){
 		};
         
         that.draw = function(elapsedTime) {
-			//
-			// Starts out empty, but gets replaced once the image is loaded!
-		};
+          image.onload = function(){
+                context.save();
+                context.translate(spec.pos.x, spec.pos.y);
+				context.rotate(spec.rotation);
+				context.translate(-spec.pos.x, -spec.pos.y);
+                console.log("Drawing");
+                
+				context.drawImage(
+					image,
+					spec.width * spec.sprite, 0,	// Which sprite to pick out
+					spec.width, spec.height,		// The size of the sprite
+					spec.pos.x - spec.width/2,	// Where to draw the sprite
+					spec.pos.y - spec.height/2,
+					spec.width, spec.height);
+                console.log(image.src);
+                
+                context.drawImage(image, spec.pos.x, spec.pos.y);
+				context.restore();
+              };
+            spec.height = image.height;
+			spec.width = image.width / spec.spriteCount;
+          };
+          
+          
+         
+          image.src = 'assets/'+spec.typepath+'.png';
+         
+          
           return that;
       }
 
