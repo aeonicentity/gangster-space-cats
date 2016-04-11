@@ -15,39 +15,50 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var shortestPath = null;
 	var sumVertex = 0;
 	var Q = [];
+	var calcMutex = true;
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
 		for(var i =0; i < graphics.gameHeight - 50; i+=50){
 			line = []
 			for(var j=0; j < graphics.gameWidth -50; j+=50){
-				line.push({filled:false,distance:null,prev:null,x:j,y:i});
+				line.push({filled:false,distance:null,parent:null,x:Math.round(j/50),y:Math.round(i/50)});
 				sumVertex++;
 			}
 			towerGrid.push(line);
 		}
 		towerGrid[4][0].distance = 0;
+		towerGrid[4][0].filled = true;
+		towerGrid[4][towerGrid[4].length-1].filled = true;
 		console.log(towerGrid);
 	}
 	
-	function getEdges(){
+	function clearTowerGrid(){
+		for (var i in towerGrid){ //Initialize Q. this is n^2, but i'm not sure how to do this any other way.
+			for (var j in towerGrid[i]){
+				towerGrid[i][j].parent = null;
+				towerGrid[i][j].distance = null;
+			}
+		}
 	}
 	
+	
+	
 	function calcShortestPath(){
+	console.log('begin');
+	if(!calcMutex){
 		//using dijkstra's.
 		Q = [];
 		var maxx = towerGrid[0].length - 1;
 		var maxy = towerGrid.length - 1; 
 		var src = null;
-		/*for (var i in towerGrid){ //Initialize Q. this is n^2, but i'm not sure how to do this any other way.
-			for (var j in towerGrid[i]){
-				if(towerGrid[i][j].distance == 0){
-					Q.unshift(towerGrid[i][j]);
-				}else{
-					Q.push(towerGrid[i][j]);
-				}
+		for (var i = 0; i < maxy; i++){
+			for (var j =0; j < maxx; j++){
+				towerGrid[i][j].distance = null;
+				towerGrid[i][j].parent = null;
 			}
-		}*/
+		}
+		
 		Q.push(towerGrid[4][0]);
 		
 		while (Q.length > 0){
@@ -86,6 +97,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 		}
+		pos = towerGrid[maxy][maxx];
+		var path = [];
+		while (pos.parent!=null){
+			path.push({x:pos.x,y:pos.y});
+			pos = pos.parent;
+		}
+		path.push({x:0,y:4});
+		
+	}calcMutex = true;
+	return path;
 	}
 
 	function gameloop(){
@@ -252,8 +273,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			pos = mouse.position;
 			if(tempTower != null){
 				//console.log(mouseInputs.length);
-				if(mouseInputs.length > 0 && !towerCollision(tempTower.box)){
+				if(mouseInputs.length > 0 && !towerCollision(tempTower.box) && !towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled){
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
+					calcMutex = false; // switch the calc variable so we don't have a race condition.
+					console.log(calcShortestPath());
 					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
