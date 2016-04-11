@@ -13,16 +13,43 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     var creeps = [];
 	var towerGrid = [];
 	var shortestPath = null;
+	var sumVertex = 0;
+	var Q = [];
 	
 	function populateTowerGrid(){
+		sumVertex = 0;
 		for(var i =0; i < graphics.gameHeight - 50; i+=50){
 			line = []
 			for(var j=0; j < graphics.gameWidth -50; j+=50){
-				line.push(false);
+				line.push({filled:false,distance:null,prev:null,x:j,y:i});
+				sumVertex++;
 			}
 			towerGrid.push(line);
 		}
+		towerGrid[4][0].distance = 0;
 		console.log(towerGrid);
+	}
+	
+	function getEdges(){
+	}
+	
+	function calcShortestPath(){
+		//using dijkstra's.
+		Q = [];
+		var src = null;
+		for (var i in towerGrid){ //Initialize Q. this is n^2, but i'm not sure how to do this any other way.
+			for (var j in towerGrid[i]){
+				if(towerGrid[i][j].distance == 0){
+					Q.unshift(towerGrid[i][j]);
+				}else{
+					Q.push(towerGrid[i][j]);
+				}
+			}
+		}
+		
+		while (Q.length != 0){
+			
+		}
 	}
 
 	function gameloop(){
@@ -30,6 +57,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		if(cancelFrame){
 			/*When we cancel the game, there may be some code we want to execute here.*/
             /*we tell them they're weak noobs for being quitters*/
+            alert("You're a weak noob for being a quitter.");
 		}else{
 			gameState.update(elapsedTime);
 			gameState.render(elapsedTime);
@@ -189,7 +217,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(tempTower != null){
 				//console.log(mouseInputs.length);
 				if(mouseInputs.length > 0 && !towerCollision(tempTower.box)){
-					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1] = true;
+					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
