@@ -9,7 +9,19 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var tempTower = null;
 	var mouse;
 	var towers = [];
+	var towerGrid = [];
+	var shortestPath = null;
 	
+	function populateTowerGrid(){
+		for(var i =0; i < graphics.gameHeight - 50; i+=50){
+			line = []
+			for(var j=0; j < graphics.gameWidth -50; j+=50){
+				line.push(false);
+			}
+			towerGrid.push(line);
+		}
+		console.log(towerGrid);
+	}
 
 	function gameloop(){
 		var elapsedTime = performance.now() - startTime;
@@ -109,16 +121,20 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
 			mouseInputs = mouse.update(elapsedTime);
+			pos = mouse.position;
 			if(tempTower != null){
 				//console.log(mouseInputs.length);
 				if(mouseInputs.length > 0 && !towerCollision(tempTower.box)){
+					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1] = true;
+					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
-					console.log("placement");
 					tempTower = null;
 				}else{
-					pos = mouse.position;
-					tempTower.moveTo(Math.round(pos.x/50)*50,Math.round(pos.y/50)*50);
+					if(pos.x >= 25 && pos.x <= graphics.gameWidth-25 && pos.y >= 25 && pos.y <= graphics.gameHeight-25){
+						tempTower.moveTo(Math.round(pos.x/50)*50,Math.round(pos.y/50)*50);
+						
+					}
 				}
 			}
 		};
@@ -143,6 +159,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	function initializeGame(){
 		/*We should use this to initialize variables we declare below*/
 		console.log ("Initializing...");
+		populateTowerGrid();
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		mouse = input.Mouse();
