@@ -164,7 +164,9 @@ Game.gameobjects = (function(graphics,assets){
 		
 		return that;
 	}
-	
+
+
+
 	function Creep(spec){
 		console.log(spec);
         var that = {
@@ -178,11 +180,32 @@ Game.gameobjects = (function(graphics,assets){
             rotation: spec.rotation,
             path: spec.path,
         }
+        sprite = graphics.SpriteSheet(spec);
+        
+		that.update = function(elapsedTime) {
+			sprite.update(elapsedTime);
+		};
+		
+		that.render = function() {
+			sprite.draw();
+		};
+		
+		that.rotateRight = function(elapsedTime) {
+			spec.rotation += spec.rotateRate * (elapsedTime);
+		};
+		
+		that.rotateLeft = function(elapsedTime) {
+			spec.rotation -= spec.rotateRate * (elapsedTime);
+		};
         
         that.moveTo = function(x,y){
 			that.pos.x = x;
 			that.pos.y = y;
-		}
+		};
+        
+        that.draw = function(elapsedTime){
+			that.creep.draw();
+		};
 	}
 	
 	function Pellet(spec){

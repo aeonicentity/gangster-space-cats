@@ -7,8 +7,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var gameStateBattle;
 	var startTime;
 	var tempTower = null;
+    var tempCreep = null;
 	var mouse;
 	var towers = [];
+    var creeps = [];
 	var towerGrid = [];
 	var shortestPath = null;
 	
@@ -27,6 +29,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		var elapsedTime = performance.now() - startTime;
 		if(cancelFrame){
 			/*When we cancel the game, there may be some code we want to execute here.*/
+            /*we tell them they're weak noobs for being quitters*/
 		}else{
 			gameState.update(elapsedTime);
 			gameState.render(elapsedTime);
@@ -79,6 +82,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             rotation: 0,
             path: [],
         });
+        creeps.push(tempCreep);
     }
     
     function addCreep2(){
@@ -93,6 +97,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             rotation: 0,
             path: [],
         });
+        creeps.push(tempCreep);
     }
     
     function addCreepAir(){
@@ -107,6 +112,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             rotation: 0,
             path: [],
         });
+        creeps.push(tempCreep);
     }
     
     function addCreepBoss(){
@@ -121,7 +127,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             rotation: 0,
             path: [],
         });
+        creeps.push(tempCreep);
     }
+    
 	
 	function towerCollision(obj){
 		console.log(obj);
@@ -200,6 +208,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			
 			for(var i in towers){
 				towers[i].draw();
+			}
+            
+           for(var c in creeps){
+				creeps[c].draw();
 			}
 			
 			if(tempTower != null){
