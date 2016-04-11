@@ -6,12 +6,21 @@ Game.gameobjects = (function(graphics,assets){
 			top:y,
 			bottom:dy,
 		}
+		that.boundingBox = graphics.Rectangle({
+			x:x,
+			y:y,
+			width:dx-x,
+			height:dy-y,
+			fill:'rgba(255,251,15,0.3)',
+			rotation:0,
+		});
 		
 		that.updatePos = function(x,y,dx,dy){
 			that.left = x;
 			that.right = dx;
 			that.top = y;
 			that.bottom = dy;
+			that.boundingBox.moveTo(x,y)
 		}
 		
 		that.collidesWith = function (box){
@@ -19,11 +28,16 @@ Game.gameobjects = (function(graphics,assets){
 			console.log(that);
 			console.log("vs");
 			console.log(box);
-			return !(  that.left > box.right || 
-				   that.right < box.left || 
-				   that.top > box.bottom ||
-				   that.bottom < box.top);
+			return !(  that.left >= box.right || 
+				   that.right <= box.left || 
+				   that.top >= box.bottom ||
+				   that.bottom <= box.top);
 		}
+		
+		that.draw = function(){
+			that.boundingBox.draw();
+		}
+		
 		return that
 	}
 	
@@ -68,6 +82,7 @@ Game.gameobjects = (function(graphics,assets){
 			upgradePath: spec.upgradePath,
 			pos: spec.pos,
 			showRadius: true,
+			showBounding: false,
 			box: CollisionBox(spec.pos.x-25,spec.pos.y-25,spec.pos.x+25,spec.pos.y+25),
 		};
 		that.radius = graphics.Circle({
@@ -134,8 +149,12 @@ Game.gameobjects = (function(graphics,assets){
 				that.radius.draw();
 			}
 			
+			
 			that.base.draw(elapsedTime);
 			that.tower.draw(elapsedTime);
+			if(that.showBounding){
+				that.box.draw();
+			}
 		}
 		
 		that.update = function(elapsedTime){

@@ -118,7 +118,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					tempTower = null;
 				}else{
 					pos = mouse.position;
-					tempTower.moveTo(pos.x,pos.y);
+					tempTower.moveTo(Math.round(pos.x/50)*50,Math.round(pos.y/50)*50);
 				}
 			}
 		};
