@@ -180,14 +180,14 @@ Game.gameobjects = (function(graphics,assets){
             rotation: spec.rotation,
             path: spec.path,
         }
-        sprite = graphics.SpriteSheet(spec);
+        that.sprite = graphics.SpriteSheet(spec);
         
 		that.update = function(elapsedTime) {
-			sprite.update(elapsedTime);
+			that.sprite.update(elapsedTime);
 		};
 		
 		that.render = function() {
-			sprite.draw();
+			that.sprite.draw();
 		};
 		
 		that.rotateRight = function(elapsedTime) {
@@ -204,8 +204,10 @@ Game.gameobjects = (function(graphics,assets){
 		};
         
         that.draw = function(elapsedTime){
-			that.creep.draw();
+			that.sprite.draw();
 		};
+		
+		return that;
 	}
 	
 	function Pellet(spec){

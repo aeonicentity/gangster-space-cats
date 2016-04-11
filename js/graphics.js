@@ -256,16 +256,16 @@ Game.graphics = (function(){
           image.onload = function(){
               that.draw = function(){
                 context.save();
-                context.translate(spec.center.x, spec.center.y);
+                context.translate(spec.pos.x, spec.pos.y);
 				context.rotate(spec.rotation);
-				context.translate(-spec.center.x, -spec.center.y);
+				context.translate(-spec.pos.x, -spec.pos.y);
                 
 				context.drawImage(
 					image,
 					spec.width * spec.sprite, 0,	// Which sprite to pick out
 					spec.width, spec.height,		// The size of the sprite
-					spec.center.x - spec.width/2,	// Where to draw the sprite
-					spec.center.y - spec.height/2,
+					spec.pos.x - spec.width/2,	// Where to draw the sprite
+					spec.pos.y - spec.height/2,
 					spec.width, spec.height);
 
 				context.restore();
@@ -273,7 +273,7 @@ Game.graphics = (function(){
             spec.height = image.height;
 			spec.width = image.width / spec.spriteCount;
           };
-          image.src = spec.spriteSheet;
+          image.src = 'assets/'+spec.typepath+'.png';
           
           
 		that.update = function(elapsedTime, forward) {
@@ -322,7 +322,8 @@ Game.graphics = (function(){
 		Polygon: Polygon,
 		Texture: Texture,
 		Text: Text,
-		drawImage:drawImage,
+		drawImage: drawImage,
+		SpriteSheet: SpriteSheet,
 	};
 }());
 
