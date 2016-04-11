@@ -242,6 +242,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addBombTower: addBombTower,
 		addAirTower: addAirTower,
 		addSlowTower: addSlowTower,
+		addCreep1: addCreep1,
+		addCreep2: addCreep2,
+		addCreepAir: addCreepAir,
+		addCreepBoss: addCreepBoss,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
