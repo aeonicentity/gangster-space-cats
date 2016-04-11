@@ -16,6 +16,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var sumVertex = 0;
 	var Q = [];
 	var calcMutex = true;
+	var shortestPath = [];
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
@@ -276,7 +277,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				if(mouseInputs.length > 0 && !towerCollision(tempTower.box) && !towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled){
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
-					console.log(calcShortestPath());
+					shortestPath = calcShortestPath();
 					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
