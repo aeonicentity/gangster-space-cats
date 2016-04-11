@@ -186,9 +186,9 @@ Game.gameobjects = (function(graphics,assets){
 			that.sprite.update(elapsedTime);
 		};
 		
-		that.render = function() {
+		/*that.render = function() {
 			that.sprite.draw();
-		};
+		};*/
 		
 		that.rotateRight = function(elapsedTime) {
 			spec.rotation += spec.rotateRate * (elapsedTime);
