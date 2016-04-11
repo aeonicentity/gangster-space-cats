@@ -166,7 +166,17 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	function Creep(spec){
-		
+		console.log(spec);
+        var that = {
+            type: spec.tier,
+			pos: spec.pos,
+            value: spec.value,
+			health: spec.health,
+            destination: spec.destination,
+            speed: spec.speed,
+            rotation: spec.rotation,
+            path: spec.path,
+        }
 	}
 	
 	function Pellet(spec){
