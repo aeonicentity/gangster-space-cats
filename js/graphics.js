@@ -213,7 +213,6 @@ Game.graphics = (function(){
 		that.draw = function() {
 			if (ready) {
 				context.save();
-				
 				context.translate(spec.center.x, spec.center.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.center.x, -spec.center.y);
@@ -251,9 +250,13 @@ Game.graphics = (function(){
 //////////////////Sprite sheet stuff
       function SpriteSheet(spec){
           var that = {};
+<<<<<<< HEAD
           var image = new Image();
           //console.log(spec);
           
+=======
+          var image = new Image();    
+>>>>>>> 76dc549b1e1d1267abd9e186b244146da3af49a8
           spec.sprite = 0; //start sprite
           spec.elapsedTime = 0;
           
@@ -266,16 +269,21 @@ Game.graphics = (function(){
                 
 				context.drawImage(
 					image,
-					spec.creepWidth * spec.sprite, 0,	// Which sprite to pick out
-					spec.creepWidth, spec.height,		// The size of the sprite
-					spec.pos.x - spec.creepWidth/2,	// Where to draw the sprite
+					spec.width * spec.sprite, 0,	// Which sprite to pick out
+					spec.width, spec.height,		// The size of the sprite
+					spec.pos.x - spec.width/2,	// Where to draw the sprite
 					spec.pos.y - spec.height/2,
-					spec.creepWidth, spec.height);
+					spec.width, spec.height);
 
 				context.restore();
               };
             spec.height = image.height;
+<<<<<<< HEAD
 			spec.creepWidth = image.width / spec.spriteCount;
+=======
+			spec.width = image.width / spec.spriteCount;
+        
+>>>>>>> 76dc549b1e1d1267abd9e186b244146da3af49a8
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
@@ -308,13 +316,14 @@ Game.graphics = (function(){
 		};
         
         that.draw = function(elapsedTime) {
-          image.onload = function(){
+         /*image.onload = function(){
                 context.save();
                 context.translate(spec.pos.x, spec.pos.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.pos.x, -spec.pos.y);
                 console.log("Drawing");
-                
+                spec.width = 50;
+                spec.height = 50;
 				context.drawImage(
 					image,
 					spec.width * spec.sprite, 0,	// Which sprite to pick out
@@ -328,7 +337,7 @@ Game.graphics = (function(){
 				context.restore();
               };
             spec.height = image.height;
-			spec.width = image.width / spec.spriteCount;
+			spec.width = image.width / spec.spriteCount;*/
           };
           
           
