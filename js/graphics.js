@@ -209,7 +209,8 @@ Game.graphics = (function(){
 		that.draw = function() {
 			if (ready) {
 				context.save();
-				
+				spec.width = 50;
+                spec.height =50;
 				context.translate(spec.center.x, spec.center.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.center.x, -spec.center.y);
@@ -304,13 +305,14 @@ Game.graphics = (function(){
 		};
         
         that.draw = function(elapsedTime) {
-          image.onload = function(){
+         /*image.onload = function(){
                 context.save();
                 context.translate(spec.pos.x, spec.pos.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.pos.x, -spec.pos.y);
                 console.log("Drawing");
-                
+                spec.width = 50;
+                spec.height = 50;
 				context.drawImage(
 					image,
 					spec.width * spec.sprite, 0,	// Which sprite to pick out
@@ -324,7 +326,7 @@ Game.graphics = (function(){
 				context.restore();
               };
             spec.height = image.height;
-			spec.width = image.width / spec.spriteCount;
+			spec.width = image.width / spec.spriteCount;*/
           };
           
           

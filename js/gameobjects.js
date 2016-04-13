@@ -170,12 +170,12 @@ Game.gameobjects = (function(graphics,assets){
 	function Creep(spec){
 		console.log(spec);
         var that = {
-            type: spec.tier,
+            type: spec.type,
             typepath: spec.typepath,
 			pos: spec.pos,
             value: spec.value,
-            width: spec.width,
-            height: spec.height,
+            width: 50,
+            height: 50,
 			health: spec.health,
             destination: spec.destination,
             speed: spec.speed,
@@ -188,9 +188,9 @@ Game.gameobjects = (function(graphics,assets){
 			that.sprite.update(elapsedTime);
 		};
 		
-		/*that.render = function() {
+		that.render = function() {
 			that.sprite.draw();
-		};*/
+		};
 		
 		that.rotateRight = function(elapsedTime) {
 			spec.rotation += spec.rotateRate * (elapsedTime);

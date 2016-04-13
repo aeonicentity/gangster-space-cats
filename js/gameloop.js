@@ -143,6 +143,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			radius: 100,
 		});
 	}
+   
 	
 	function addAirTower(){
 		tempTower = gameobjects.Tower({
@@ -162,6 +163,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			pos: {x:100, y:300},
             value: 5,
 			health: 50,
+            spriteCount: 1,
             width: 50,
             height: 50,
             destination: {x:800, y:300},
@@ -180,6 +182,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			pos: {x:100, y:300},
             value: 5,
             width: 50,
+            spriteCount: 1,
             height: 50,
 			health: 50,
             destination: {x:800, y:300},
@@ -194,6 +197,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     function addCreepAir(){
         tempCreep = gameobjects.Creep({
             type: 3,
+            spriteCount: 1,
             typepath:'creep_air',
 			pos: {x:100, y:300},
             value: 5,
@@ -205,6 +209,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             rotation: 0,
             path: [],
         });
+        tempCreep.width = 50;
         creeps.push(tempCreep);
         console.log(tempCreep);
     }
