@@ -47,8 +47,11 @@ Game.gameobjects = (function(graphics,assets){
 			type: spec.type,
 			turret: null,
 			dirFace: spec.dirFace,
+			currentFace: spec.dirFace,
 			firing: false,
 			target: null,
+			fireOrder: null,
+			rotationSpeed: 1000,//rotation speed for one revolution in seconds
 		};
 		
 		that.turret = graphics.Texture({
@@ -61,15 +64,32 @@ Game.gameobjects = (function(graphics,assets){
 			rotateRate: Math.PI*2
 		});
 		
+		that.setFireOrder = function(order){
+			that.fireOrder = order;
+		}
+		
 		that.moveTo = function(x,y){
 			that.turret.moveTo(x,y);
 		};
+		
+		that.faceTo = function(angle){
+			that.dirFace = angle;
+		}
 		
 		that.draw = function(elapsedTime){
 			that.turret.draw();
 		};
 		
 		that.update = function(elapsedTime){
+			console.log('gothere');
+			if(that.dirFace != that.currentFace){
+				if( Math.abs(that.dirFace - that.currentFace) > (Math.PI*2)/that.rotationSpeed ){ //if we cant get there this time...
+					that.dirFace += (Math.PI*2)/that.rotationSpeed;
+				}else{
+					that.currentFace = that.dirFace;
+				}
+			}
+			that.turret.setRotation(that.currentFace);
 		};
 		
 		return that;
@@ -83,6 +103,8 @@ Game.gameobjects = (function(graphics,assets){
 			pos: spec.pos,
 			showRadius: true,
 			showBounding: false,
+			idle: true,
+			idleRotationAngle: null,
 			box: CollisionBox(spec.pos.x-25,spec.pos.y-25,spec.pos.x+25,spec.pos.y+25),
 		};
 		that.radius = graphics.Circle({
@@ -114,7 +136,7 @@ Game.gameobjects = (function(graphics,assets){
 		});
 		
 		that.rotateTo = function (angle){
-			that.tower.rotateTo(angle);
+			that.tower.faceTo(angle);
 		};
 		
 		that.selectTarget = function (target){
@@ -159,7 +181,14 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.update = function(elapsedTime){
 			that.tower.update(elapsedTime);
-			that.base.update(elapsedTime);
+			if(that.idle){
+				if(that.tower.dirFace != that.idleRotationAngle){
+					that.tower.faceTo(that.idleRotationAngle);
+				}else{
+					that.idleRotationAngle = (Math.random() * 2 * Math.PI)
+				}
+			}else{
+			}
 		}
 		
 		return that;
@@ -170,11 +199,11 @@ Game.gameobjects = (function(graphics,assets){
 	function Creep(spec){
 		console.log(spec);
         var that = {
-            type: spec.tier,
+            type: spec.type,
             typepath: spec.typepath,
 			pos: spec.pos,
             value: spec.value,
-            width: spec.width,
+            width: spec.creepWidth,
             height: spec.height,
 			health: spec.health,
             destination: spec.destination,

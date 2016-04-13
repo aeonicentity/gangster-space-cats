@@ -180,6 +180,10 @@ Game.graphics = (function(){
 			return {x:spec.center.x,y:spec.center.y};
 		}
 		
+		that.setRotation = function (angle){
+			spec.rotation = angle;
+		}
+		
 		function rotateRight(elapsedTime) {
 			spec.rotation += spec.rotateRate * (elapsedTime / 1000);
 		};
@@ -248,7 +252,7 @@ Game.graphics = (function(){
       function SpriteSheet(spec){
           var that = {};
           var image = new Image();
-          console.log("not broken");
+          //console.log(spec);
           
           spec.sprite = 0; //start sprite
           spec.elapsedTime = 0;
@@ -262,16 +266,16 @@ Game.graphics = (function(){
                 
 				context.drawImage(
 					image,
-					spec.width * spec.sprite, 0,	// Which sprite to pick out
-					spec.width, spec.height,		// The size of the sprite
-					spec.pos.x - spec.width/2,	// Where to draw the sprite
+					spec.creepWidth * spec.sprite, 0,	// Which sprite to pick out
+					spec.creepWidth, spec.height,		// The size of the sprite
+					spec.pos.x - spec.creepWidth/2,	// Where to draw the sprite
 					spec.pos.y - spec.height/2,
-					spec.width, spec.height);
+					spec.creepWidth, spec.height);
 
 				context.restore();
               };
             spec.height = image.height;
-			spec.width = image.width / spec.spriteCount;
+			spec.creepWidth = image.width / spec.spriteCount;
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
