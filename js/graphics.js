@@ -209,8 +209,6 @@ Game.graphics = (function(){
 		that.draw = function() {
 			if (ready) {
 				context.save();
-				spec.width = 50;
-                spec.height =50;
 				context.translate(spec.center.x, spec.center.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.center.x, -spec.center.y);
@@ -248,9 +246,7 @@ Game.graphics = (function(){
 //////////////////Sprite sheet stuff
       function SpriteSheet(spec){
           var that = {};
-          var image = new Image();
-          console.log("not broken");
-          
+          var image = new Image();    
           spec.sprite = 0; //start sprite
           spec.elapsedTime = 0;
           
@@ -273,6 +269,7 @@ Game.graphics = (function(){
               };
             spec.height = image.height;
 			spec.width = image.width / spec.spriteCount;
+        
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
