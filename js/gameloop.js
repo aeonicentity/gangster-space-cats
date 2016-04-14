@@ -17,6 +17,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var Q = [];
 	var calcMutex = true;
 	var shortestPath = [];
+	var testTarget = null;
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
@@ -101,7 +102,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		pos = towerGrid[maxy][maxx];
 		var path = [];
 		while (pos.parent!=null){
-			path.push({x:pos.x,y:pos.y});
+			path.push({x:((pos.x+1)*50)+25,y:((pos.y+1)*50)+25});
 			pos = pos.parent;
 		}
 		path.push({x:0,y:4});
@@ -195,21 +196,23 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         console.log(tempCreep);
     }
     
-     function addCreepAir(){
-        tempCreep = gameobjects.Creep({
+    function addCreepAir(){
+    	var spec = {
             type: 3,
             spriteCount: 4,
             typepath:'creep_air',
 			pos: {x:100, y:300},
             value: 5,
-            width: 50,
+            creepWidth: 50,
             height: 50,
 			health: 50,
             destination: {x:800, y:300},
             speed: 5,
             rotation: 0,
             path: [],
-        });
+        };
+        console.log(spec);
+        tempCreep = gameobjects.Creep(spec);
         tempCreep.width = 50;
         creeps.push(tempCreep);
         console.log(tempCreep);
@@ -255,6 +258,24 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		});
 	}
 	
+	function targetPractice(){
+		targetx = Math.floor(Math.random() * graphics.gameWidth);
+		targety = Math.floor(Math.random() * graphics.gameHeight)
+		for(var i = 0 ; i < towers.length; i++){
+			towers[i].selectTarget({
+				x: targetx,
+				y: targety,
+			});
+		}
+		testTarget = graphics.Circle({
+			center:{x:targetx,y:targety},
+			radius:10,
+			fill:'rgba(255,255,255,1.0)',
+			line: 0,
+			lineColor:'rgba(255,255,255,1.0)',
+		});
+	}
+	
 	gameStateBuild = (function (){
 		var that = {
 			test:[],
@@ -295,7 +316,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					shortestPath = calcShortestPath();
-					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
+					//console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
 					tempTower = null;
@@ -327,6 +348,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(tempTower != null){
 				tempTower.draw();
 			}
+			
+			if(testTarget != null){
+				testTarget.draw();
+			}
 		};
 		return that;
 	}());
@@ -356,6 +381,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addCreep2: addCreep2,
 		addCreepAir: addCreepAir,
 		addCreepBoss: addCreepBoss,
+		targetPractice: targetPractice,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
