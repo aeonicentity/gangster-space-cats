@@ -51,7 +51,8 @@ Game.gameobjects = (function(graphics,assets){
 			firing: false,
 			target: null,
 			fireOrder: null,
-			rotationSpeed: 1000,//rotation speed for one revolution in seconds
+			idle: true,
+			rotationSpeed: 200,//rotation speed for one revolution in seconds
 		};
 		
 		that.turret = graphics.Texture({
@@ -68,6 +69,13 @@ Game.gameobjects = (function(graphics,assets){
 			that.fireOrder = order;
 		}
 		
+		that.rotateIdle = function(){
+			that.currentFace += (Math.PI*2)/that.rotationSpeed;
+			if(that.currentFace >= (Math.PI*2) ){
+				that.currentFace = 0;
+			}
+		}
+		
 		that.moveTo = function(x,y){
 			that.turret.moveTo(x,y);
 		};
@@ -80,13 +88,30 @@ Game.gameobjects = (function(graphics,assets){
 			that.turret.draw();
 		};
 		
+		that.selectTarget = function(target){
+			that.idle = false;
+			yDiff = Math.abs(target.y - pos.y); //rise
+			xDiff = Math.abs(target.x - pos.x); //run
+			hyp = Math.sqrt(xDiff*xDiff + yDiff * yDiff);
+			//calculate new angle to target to.
+			console.log('turning: '+ ( Math.asin(yDiff/hyp)));
+			//assign that to the dirFace variable
+			that.dirFace = Math.asin(yDiff/hyp);
+		}
+		
 		that.update = function(elapsedTime){
-			console.log('gothere');
-			if(that.dirFace != that.currentFace){
-				if( Math.abs(that.dirFace - that.currentFace) > (Math.PI*2)/that.rotationSpeed ){ //if we cant get there this time...
-					that.dirFace += (Math.PI*2)/that.rotationSpeed;
-				}else{
-					that.currentFace = that.dirFace;
+			if(!that.idle){
+				//console.log('rotating to target: '+Math.abs(that.currentFace)+' to '+Math.abs(that.dirFace));
+				if(Math.abs(that.dirFace) != Math.abs(that.currentFace)){
+					if( Math.abs(that.dirFace - that.currentFace) > (Math.PI*2)/that.rotationSpeed ){ //if we cant get there this time...
+						if(Math.abs(that.currentFace) < Math.abs(that.dirFace)){
+							that.currentFace += (Math.PI*2)/that.rotationSpeed;
+						}else{
+							that.currentFace -= (Math.PI*2)/that.rotationSpeed;
+						}
+					}else{
+						that.currentFace = Math.abs(that.dirFace);
+					}
 				}
 			}
 			that.turret.setRotation(that.currentFace);
@@ -128,7 +153,7 @@ Game.gameobjects = (function(graphics,assets){
 			type: that.upgradePath[that.tier],
 			sellPrice: spec.sellPrice,
 			level: spec.tier,
-			dirFace: 0,
+			dirFace: Math.random()*(2*Math.PI),
 			target: null,
 			rotationSpeed: 8000,
 			fireRate: spec.fireRate,
@@ -140,6 +165,7 @@ Game.gameobjects = (function(graphics,assets){
 		};
 		
 		that.selectTarget = function (target){
+			that.idle = false;
 			that.tower.selectTarget(target);
 		}
 		
@@ -181,12 +207,9 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.update = function(elapsedTime){
 			that.tower.update(elapsedTime);
+			
 			if(that.idle){
-				if(that.tower.dirFace != that.idleRotationAngle){
-					that.tower.faceTo(that.idleRotationAngle);
-				}else{
-					that.idleRotationAngle = (Math.random() * 2 * Math.PI)
-				}
+				that.tower.rotateIdle();
 			}else{
 			}
 		}
@@ -263,7 +286,29 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	function Pellet(spec){
+		var that = {
+			speed:10,//pixels/second
+			type:0,//
+			maxRange:spec.range,
+			origin:spec.origin,
+			target:spec.target,
+			pellet:null,
+		}
 		
+		if(type == 0){
+			that.pellet = graphics.Circle({
+				center: origin,
+				radius: 2,
+				fill: 'rgba(255,255,255,1)',
+				line: 0,
+				lineColor: 'rgba(255,255,255,1)',
+			});
+		}
+		
+		that.update = function(elapsedTime){
+		}
+		that.draw = function(){
+		}
 	}
 	
 	return {

@@ -252,7 +252,7 @@ Game.graphics = (function(){
           var that = {};
           var image = new Image();
           //console.log(spec);
-          
+
           var image = new Image();    
           spec.sprite = 0; //start sprite
           spec.elapsedTime = 0;
@@ -277,7 +277,7 @@ Game.graphics = (function(){
             spec.height = image.height;
 			spec.creepWidth = image.width / spec.spriteCount;
 			spec.width = image.width / spec.spriteCount;
-        
+
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
