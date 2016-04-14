@@ -250,13 +250,10 @@ Game.graphics = (function(){
 //////////////////Sprite sheet stuff
       function SpriteSheet(spec){
           var that = {};
-<<<<<<< HEAD
           var image = new Image();
           //console.log(spec);
           
-=======
           var image = new Image();    
->>>>>>> 76dc549b1e1d1267abd9e186b244146da3af49a8
           spec.sprite = 0; //start sprite
           spec.elapsedTime = 0;
           
@@ -278,18 +275,16 @@ Game.graphics = (function(){
 				context.restore();
               };
             spec.height = image.height;
-<<<<<<< HEAD
 			spec.creepWidth = image.width / spec.spriteCount;
-=======
 			spec.width = image.width / spec.spriteCount;
         
->>>>>>> 76dc549b1e1d1267abd9e186b244146da3af49a8
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
           
 		that.update = function(elapsedTime, forward) {
 			spec.elapsedTime += elapsedTime;
+            
 			//
 			// Check to see if we should update the animation frame
 			if (spec.elapsedTime >= spec.spriteTime[spec.sprite]) {

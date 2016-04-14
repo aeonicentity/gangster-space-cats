@@ -215,6 +215,7 @@ Game.gameobjects = (function(graphics,assets){
         
 		that.update = function(elapsedTime) {
 			that.sprite.update(elapsedTime);
+            that.creepTo(elapsedTime);
 		};
 		
 		that.render = function() {
@@ -233,6 +234,26 @@ Game.gameobjects = (function(graphics,assets){
 			that.pos.x = x;
 			that.pos.y = y;
 		};
+        
+        that.creepTo = function(elapsedTime){
+            //check if in square
+            if(that.pos.x < that.path[0].x + 25 && that.pos.x > that.path[0].x - 25 && that.pos.y < that.path[0].y + 25 && that.pos.y > that.path[0].y - 25){
+                that.path.shift();
+            }
+            
+            if(that.path[0].x > that.pos.x){
+                that.pos.x += that.speed;
+            }
+            else if(that.path[0].x < that.pos.x){
+                that.pos.x -= that.speed;
+            }
+            if(that.path[0].y> that.pos.y){
+                that.pos.y += that.speed;
+            }
+            else if(that.path[0].y<that.pos.y){
+                that.pos.y-=that.speed;
+            }
+        };
         
         that.draw = function(elapsedTime){
 			that.sprite.draw(elapsedTime);
