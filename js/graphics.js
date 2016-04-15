@@ -55,6 +55,10 @@ Game.graphics = (function(){
 			that.center.x = x;
 			that.center.y = y;
 		};
+		
+		that.getPos = function(){
+			return that.center;
+		};
 
 		that.update = function(){};
 		
@@ -181,7 +185,7 @@ Game.graphics = (function(){
 		}
 		
 		that.setRotation = function (angle){
-			spec.rotation = angle;
+			spec.rotation = angle + Math.PI;
 		}
 		
 		
