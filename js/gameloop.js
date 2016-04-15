@@ -169,14 +169,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_1',
 			pos: {x:100, y:300},
             value: 5,
+            spriteTime : [500,500,500,500],
 			health: 50,
+            maxhealth: 50,
             spriteCount: 4,
             width: 50,
             height: 50,
             destination: {x:800, y:300},
             speed: 5,
             rotation: 0,
-            path: [],
+            path: shortestPath,
         });
         creeps.push(tempCreep);
         console.log(tempCreep);
@@ -188,14 +190,17 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_2',
 			pos: {x:100, y:300},
             value: 5,
+            spriteTime : [500,500,500,500],
             width: 50,
             spriteCount: 4,
             height: 50,
 			health: 50,
+            maxhealth: 50,
             destination: {x:800, y:300},
             speed: 5,
             rotation: 0,
-            path: [],
+            path: shortestPath,
+            
         });
         creeps.push(tempCreep);
         console.log(tempCreep);
@@ -208,13 +213,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_air',
 			pos: {x:100, y:300},
             value: 5,
+            spriteTime : [500,500,500,500],
             creepWidth: 50,
             height: 50,
 			health: 50,
+            maxhealth: 50,
             destination: {x:800, y:300},
             speed: 5,
             rotation: 0,
-            path: [],
+            path: shortestPath,
         };
         console.log(spec);
         tempCreep = gameobjects.Creep(spec);
@@ -321,7 +328,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					shortestPath = calcShortestPath();
-					//console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
+					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
 					tempTower = null;
@@ -347,7 +354,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}
             
            for(var c in creeps){
+               creeps[c].update(elapsedTime);
 				creeps[c].draw(elapsedTime);
+               
 			}
 			
 			if(tempTower != null){
@@ -371,6 +380,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		mouse = input.Mouse();
+        shortestPath = calcShortestPath();
+        console.log(shortestPath);
 		gameloop();
 	}
 	
