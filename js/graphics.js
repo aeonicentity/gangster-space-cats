@@ -273,10 +273,12 @@ Game.graphics = (function(){
           
 		that.update = function(elapsedTime, forward) {
 			spec.elapsedTime += elapsedTime;
-            
+            console.log(spec.elapsedTime);
+            console.log(spec.spriteTime[spec.sprite]);
 			//
 			// Check to see if we should update the animation frame
 			if (spec.elapsedTime >= spec.spriteTime[spec.sprite]) {
+                
 				//
 				// When switching sprites, keep the leftover time because
 				// it needs to be accounted for the next sprite animation frame.

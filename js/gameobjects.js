@@ -320,7 +320,6 @@ Game.gameobjects = (function(graphics,assets){
         that.creepTo = function(elapsedTime){
             //check if in square
             var b = that.path.length - 1;
-            console.log(that.path[b].x, that.path[b].y);
             if(that.pos.x < that.path[b].x + 25 && that.pos.x > that.path[b].x - 25 && that.pos.y < that.path[b].y + 25 && that.pos.y > that.path[b].y - 25){
                 if(that.path.length > 1){
                 that.path.pop();
