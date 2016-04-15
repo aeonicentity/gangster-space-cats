@@ -301,11 +301,11 @@ Game.gameobjects = (function(graphics,assets){
 
 
 	function Creep(spec){
-		console.log(spec);
+		//console.log(spec);
         var that = {
             type: spec.type,
             typepath: spec.typepath,
-			pos: spec.pos,
+			pos: {x:spec.pos.x,y:spec.pos.y},
             value: spec.value,
             width: spec.creepWidth,
             height: spec.height,
@@ -315,7 +315,22 @@ Game.gameobjects = (function(graphics,assets){
             rotation: spec.rotation,
             path: spec.path,
         }
-        that.sprite = graphics.SpriteSheet(spec);
+        that.sprite = graphics.SpriteSheet({
+        	type: spec.type,
+            typepath: spec.typepath,
+			pos: {x:spec.pos.x,y:spec.pos.y},
+            value: spec.value,
+            spriteTime : spec.spriteTime,
+			health: spec.health,
+            maxhealth: spec.maxhealth,
+            spriteCount: spec.spriteCount,
+            width: spec.width,
+            height: spec.height,
+            destination: {x:800, y:300},
+            speed: spec.speed,
+            rotation: spec.rotation,
+            path: spec.path,
+        });
         
 		that.update = function(elapsedTime) {
 			that.sprite.update(elapsedTime);
@@ -353,22 +368,24 @@ Game.gameobjects = (function(graphics,assets){
             if(that.pos.x < that.path[b].x + 25 && that.pos.x > that.path[b].x - 25 && that.pos.y < that.path[b].y + 25 && that.pos.y > that.path[b].y - 25){
                 if(that.path.length > 1){
                 that.path.pop();
+                b = that.path.length - 1;
                 console.log(that.path.length);
                 console.log("SHIFT");
                 }
             }
-            if(that.path[0].x > that.pos.x){
+            if(that.path[b].x > that.pos.x){
                 that.pos.x += that.speed;
             }
-            else if(that.path[0].x < that.pos.x){
+            else if(that.path[b].x < that.pos.x){
                 that.pos.x -= that.speed;
             }
-            if(that.path[0].y> that.pos.y){
+            if(that.path[b].y> that.pos.y){
                 that.pos.y += that.speed;
             }
-            else if(that.path[0].y<that.pos.y){
-                that.pos.y-=that.speed;
+            else if(that.path[b].y<that.pos.y){
+                that.pos.y -= that.speed;
             }
+            that.sprite.moveTo(that.pos.x,that.pos.y)
         };
         
         that.reportPos = function(){

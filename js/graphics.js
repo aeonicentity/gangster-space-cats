@@ -314,6 +314,10 @@ Game.graphics = (function(){
         that.getPos = function(){
       		return {x:spec.pos.x, y:spec.pos.y};
       	}
+      	that.moveTo = function(x,y){
+      		spec.pos.x = x;
+      		spec.pos.y = y;
+      	}
       	that.hit = function(damage){
       		spec.health -= damage
       		if(spec.health <= 0){
