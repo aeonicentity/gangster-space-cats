@@ -372,7 +372,7 @@ Game.gameobjects = (function(graphics,assets){
 			});
 		}
 		
-		that.box = CollisionBox(spec.origin.x-25,spec,origin.y-25,spec.origin.x+25,spec.origin.y+25)
+		that.box = CollisionBox(spec.origin.x-25,spec.origin.y-25,spec.origin.x+25,spec.origin.y+25)
 		
 		that.maxDistance = function(){
 			var checkPos = that.pellet.getPos();
