@@ -290,7 +290,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			fill:'rgba(255,255,255,1.0)',
 			line: 0,
 			lineColor:'rgba(255,255,255,1.0)',
+			
 		});
+		testTarget.reportPos = function(){return {x:0,y:0};};
+		testTarget.box = gameobjects.CollisionBox(targetx-10,targety-10,targetx+10,targety+10);
+		testTarget.hit = function(){console.log("target hit registered");};
+		creeps.push(testTarget);
 	}
 	
 	gameStateBuild = (function (){
@@ -325,14 +330,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		that.update = function (elapsedTime){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
-			mouseInputs = mouse.update(elapsedTime);
-			pos = mouse.position;
+			var mouseInputs = mouse.update(elapsedTime);
+			var pos = mouse.position;
 			if(tempTower != null){
 				//console.log(mouseInputs.length);
 				if(mouseInputs.length > 0 && !towerCollision(tempTower.box) && !towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled){
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					shortestPath = calcShortestPath();
+					console.log(shortestPath);
 					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 					tempTower.radiusOff();
 					towers.push(tempTower);
@@ -347,19 +353,37 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			
 			for(var c in creeps){
            		creeps[c].update(elapsedTime);
+           		for(var j=0; j<towers.length; j++){
+					towers[j].update(elapsedTime);
+					var creepLocation = creeps[c].reportPos();
+					//console.log(creepLocation);
+					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
+						//console.log("target aquired!");
+						towers[j].selectTarget(creepLocation);
+					}
+				}
            	}
-			
-			for(var i in towers){
-				towers[i].update(elapsedTime);
-			}
 			
 			for(var i =0; i<pellets.length; i++){
 				if(pellets[i].maxDistance()){
 					pellets.splice(i,1);
 					i--;
-					console.log("despawn pellet");
+					//console.log("despawn pellet");
 				}else{
 					pellets[i].update(ticktime);
+					for(var c=0; c<creeps.length; c++){
+						if(pellets[i].box.collidesWith(creeps[c].box)){
+							pellets.splice(i,1);
+							i--;
+							console.log("creep hit!");
+							if(creeps[c].hit(50)){ //if the creep is dead
+								creeps.splice(c,1);
+								c--;
+								console.log("killing creep");
+							}
+						}
+						//console.log("pellet hit!");
+					}
 				}
 			}
 			

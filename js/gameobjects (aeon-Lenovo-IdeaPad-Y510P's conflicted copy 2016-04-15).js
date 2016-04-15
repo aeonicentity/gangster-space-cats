@@ -61,7 +61,7 @@ Game.gameobjects = (function(graphics,assets){
 			fireOrder: null,
 			idle: true,
 			rotationSpeed: 200,//rotation speed for one revolution in seconds
-			fireRate:500,
+			fireRate:1000,
 			lastFire:null,
 		};
 		
@@ -72,7 +72,7 @@ Game.gameobjects = (function(graphics,assets){
 			image: assets.getAsset(that.type),
 			rotation: that.dirFace,
 			moveRate: 200,
-			rotateRate: Math.PI*4
+			rotateRate: Math.PI*2
 		});
 		
 		that.setFireOrder = function(order){
@@ -107,7 +107,7 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.selectTarget = function(target){
 			that.idle = false;
-			//console.log("selecting target, idle: "+that.idle);
+			console.log("selecting target, idle: "+that.idle);
 			//console.log(target);
 			that.target = target;
 		}
@@ -164,6 +164,7 @@ Game.gameobjects = (function(graphics,assets){
 			}
 			if(!that.idle){
 				var result = computeAngle(that.currentFace, spec.center, that.target);
+				console.log("turning");
 				if(testTolerance(result.angle, 0, 0.04) == false){
 					
 					//that.currentFace = result.angle;
@@ -179,7 +180,7 @@ Game.gameobjects = (function(graphics,assets){
 					if(that.lastFire + that.fireRate <= elapsedTime){
 						//console.log("firing to angle: "+result.angle);
 						//console.log("from position: "+that.pos.x+","+that.pos.y);
-						//console.log('firing');
+						console.log('firing');
 						that.lastFire = elapsedTime;
 						Game.gameLoop.addPellet(Pellet({
 							range:that.range,
@@ -442,7 +443,6 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	return {
-		CollisionBox: CollisionBox,
 		Turret: Turret,
 		Tower: Tower,
 		Creep: Creep,

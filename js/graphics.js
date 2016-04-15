@@ -239,6 +239,8 @@ Game.graphics = (function(){
           spec.elapsedTime = 0;
           
           image.onload = function(){
+          	
+          	
               that.draw = function(){
                 context.save();
                 context.translate(spec.pos.x, spec.pos.y);
@@ -277,7 +279,7 @@ Game.graphics = (function(){
           
 		that.update = function(elapsedTime, forward) {
 			spec.elapsedTime += ticktime;
-            console.log(spec.spriteTime[spec.sprite]);
+            //console.log(spec.spriteTime[spec.sprite]);
 			//
 			// Check to see if we should update the animation frame
 			if (spec.elapsedTime >= spec.spriteTime[spec.sprite]) {
@@ -307,6 +309,15 @@ Game.graphics = (function(){
         that.draw = function(elapsedTime) {
 
           };
+        that.getPos = function(){
+      		return {x:spec.pos.x, y:spec.pos.y};
+      	}
+      	that.hit = function(damage){
+      		spec.health -= damage
+      		if(spec.health < 0){
+      			return true;
+      		}return false;
+      	}
           
           
          
