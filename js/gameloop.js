@@ -376,7 +376,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		startTime = performance.now();
 		mouse = input.Mouse();
         shortestPath = calcShortestPath();
-        console.log(shortestPath);
 		gameloop();
 	}
 	
