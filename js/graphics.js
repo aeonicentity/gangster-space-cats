@@ -296,8 +296,7 @@ Game.graphics = (function(){
           
           
 		that.update = function(elapsedTime, forward) {
-			spec.elapsedTime += elapsedTime;
-            console.log(spec.elapsedTime);
+			spec.elapsedTime += ticktime;
             console.log(spec.spriteTime[spec.sprite]);
 			//
 			// Check to see if we should update the animation frame

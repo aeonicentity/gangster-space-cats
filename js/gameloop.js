@@ -1,3 +1,5 @@
+var ticktime;
+
 Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects){
 	var rqId;
 	var cancelFrame = false;
@@ -112,8 +114,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	return path;
 	}
 
-	function gameloop(){
+    
+	function gameloop(Ntime){
 		var elapsedTime = performance.now() - startTime;
+        ticktime = Ntime -Ltime;
+        Ltime = Ntime;
 		if(cancelFrame){
 			/*When we cancel the game, there may be some code we want to execute here.*/
             /*we tell them they're weak noobs for being quitters*/
@@ -169,7 +174,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_1',
 			pos: {x:0, y:300},
             value: 5,
-            spriteTime : [5000,5000,5000,5000],
+            spriteTime : [500,500,500,500],
 			health: 50,
             maxhealth: 50,
             spriteCount: 4,
@@ -190,7 +195,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_2',
 			pos: {x:0, y:300},
             value: 5,
-            spriteTime : [1000,2000,2000,5000],
+            spriteTime : [500,500,500,500],
             width: 50,
             spriteCount: 4,
             height: 50,
@@ -392,7 +397,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		startTime = performance.now();
 		mouse = input.Mouse();
         shortestPath = calcShortestPath();
-		gameloop();
+		requestAnimationFrame(gameloop);
 	}
 	
 	
@@ -412,3 +417,5 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
+
+var Ltime = performance.now();
