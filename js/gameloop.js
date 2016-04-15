@@ -167,16 +167,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         tempCreep = gameobjects.Creep({
             type: 1,
             typepath:'creep_1',
-			pos: {x:100, y:300},
+			pos: {x:0, y:300},
             value: 5,
-            spriteTime : [500,500,500,500],
+            spriteTime : [5000,5000,5000,5000],
 			health: 50,
             maxhealth: 50,
             spriteCount: 4,
             width: 50,
             height: 50,
             destination: {x:800, y:300},
-            speed: 5,
+            speed: 2,
             rotation: 0,
             path: shortestPath,
         });
@@ -188,7 +188,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         tempCreep = gameobjects.Creep({
             type: 2,
             typepath:'creep_2',
-			pos: {x:100, y:300},
+			pos: {x:0, y:300},
             value: 5,
             spriteTime : [1000,2000,2000,5000],
             width: 50,
@@ -197,7 +197,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			health: 50,
             maxhealth: 50,
             destination: {x:800, y:300},
-            speed: 5,
+            speed: 2,
             rotation: 0,
             path: shortestPath,
             
@@ -211,7 +211,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             type: 3,
             spriteCount: 4,
             typepath:'creep_air',
-			pos: {x:100, y:300},
+			pos: {x:0, y:300},
             value: 5,
             spriteTime : [500,500,500,500],
             creepWidth: 50,
@@ -219,7 +219,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			health: 50,
             maxhealth: 50,
             destination: {x:800, y:300},
-            speed: 5,
+            speed: 2,
             rotation: 0,
             path: shortestPath,
         };
@@ -247,8 +247,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         creeps.push(tempCreep);
         console.log(tempCreep);
     }
-    
-	
+   
 	function towerCollision(obj){
 		console.log(obj);
 		for( i in towers){
