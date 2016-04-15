@@ -48,11 +48,14 @@ Game.gameobjects = (function(graphics,assets){
 			turret: null,
 			dirFace: spec.dirFace,
 			currentFace: spec.dirFace,
+			range: spec.radius,
 			firing: false,
 			target: null,
 			fireOrder: null,
 			idle: true,
 			rotationSpeed: 200,//rotation speed for one revolution in seconds
+			fireRate:1000,
+			lastFire:null,
 		};
 		
 		that.turret = graphics.Texture({
@@ -74,6 +77,7 @@ Game.gameobjects = (function(graphics,assets){
 			if(that.currentFace >= (Math.PI*2) ){
 				that.currentFace = 0;
 			}
+			that.currentFace = 0;
 		}
 		
 		that.moveTo = function(x,y){
@@ -88,30 +92,80 @@ Game.gameobjects = (function(graphics,assets){
 			that.turret.draw();
 		};
 		
+		function crossProduct2d(v1, v2) {
+			return (v1.x * v2.y) - (v1.y * v2.x);
+		}
+		
 		that.selectTarget = function(target){
 			that.idle = false;
-			yDiff = Math.abs(target.y - pos.y); //rise
-			xDiff = Math.abs(target.x - pos.x); //run
-			hyp = Math.sqrt(xDiff*xDiff + yDiff * yDiff);
-			//calculate new angle to target to.
-			console.log('turning: '+ ( Math.asin(yDiff/hyp)));
-			//assign that to the dirFace variable
-			that.dirFace = Math.asin(yDiff/hyp);
+			console.log("selecting target:");
+			console.log(target);
+			that.target = target;
+		}
+		
+		function computeAngle(rotation, ptCenter, ptTarget) {
+			var v1 = {
+					x : Math.cos(rotation),
+					y : Math.sin(rotation)
+				},
+				v2 = {
+					x : ptTarget.x - ptCenter.x,
+					y : ptTarget.y - ptCenter.y
+				},
+				dp,
+				angle;
+
+			v2.len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+			v2.x /= v2.len;
+			v2.y /= v2.len;
+
+			dp = v1.x * v2.x + v1.y * v2.y;
+			angle = Math.acos(dp);
+
+			//
+			// Get the cross product of the two vectors so we can know
+			// which direction to rotate.
+			cp = crossProduct2d(v1, v2);
+			return {
+				angle : angle,
+				crossProduct : cp
+			};
+		}
+		
+		function testTolerance(value, test, tolerance) {
+			if (Math.abs(value - test) < tolerance) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		that.update = function(elapsedTime){
+			if(that.lastFire == null){
+				that.lastFire = elapsedTime;
+			}
 			if(!that.idle){
-				//console.log('rotating to target: '+Math.abs(that.currentFace)+' to '+Math.abs(that.dirFace));
-				if(Math.abs(that.dirFace) != Math.abs(that.currentFace)){
-					if( Math.abs(that.dirFace - that.currentFace) > (Math.PI*2)/that.rotationSpeed ){ //if we cant get there this time...
-						if(Math.abs(that.currentFace) < Math.abs(that.dirFace)){
-							that.currentFace += (Math.PI*2)/that.rotationSpeed;
-						}else{
-							that.currentFace -= (Math.PI*2)/that.rotationSpeed;
-						}
-					}else{
-						that.currentFace = Math.abs(that.dirFace);
-						
+				var result = computeAngle(that.currentFace, that.pos, that.target);
+				if(testTolerance(result.angle, 0, 0.1) == false){
+					
+					if (result.crossProduct > 0) {
+						that.currentFace += (Math.PI*2)/that.rotationSpeed;
+						spec.rotation += spec.rotateRate;
+					} else {
+						that.currentFace += (Math.PI*2)/that.rotationSpeed;
+						spec.rotation -= spec.rotateRate;
+					}
+				}else{ //else we're pointed and firing may commence when ready!
+					//that.currentFace = that.dirFace;
+					if(that.lastFire + that.fireRate <= elapsedTime){
+						console.log("firing to angle: "+result.angle);
+						that.lastFire = elapsedTime;
+						Game.gameLoop.addPellet(Pellet({
+							range:that.range,
+							origin:that.pos,
+							target:that.target,
+							type:0,
+						}));
 					}
 				}
 			}
@@ -294,17 +348,17 @@ Game.gameobjects = (function(graphics,assets){
 	function Pellet(spec){
 		var that = {
 			speed:10,//pixels/second
-			type:0,//
+			type:spec.type,//
 			maxRange:spec.range,
 			origin:spec.origin,
 			target:spec.target,
+			//vectorAngle:
 			pellet:null,
 		}
 		
-		if(type == 0){
+		if(that.type == 0){
 			that.pellet = graphics.Circle({
-				origin: origin,
-				center: origin,
+				center: that.origin,
 				radius: 2,
 				fill: 'rgba(255,255,255,1)',
 				line: 0,
@@ -313,15 +367,20 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.maxDistance = function(){
-			if(that.maxRange <= Math.sqrt(Math.pow(center.x-origin.x,2) + Math.pow(center.y-origin.y,2))){
+			if(that.maxRange <= Math.sqrt(Math.pow(that.pellet.center.x-that.origin.x,2) + Math.pow(that.pellet.center.y-that.origin.y,2))){
 				return true;
 			}return false;
 		}
 		
 		that.update = function(elapsedTime){
+			
 		}
+		
 		that.draw = function(){
+			that.pellet.draw();
 		}
+		
+		return that;
 	}
 	
 	return {
