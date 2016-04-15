@@ -150,7 +150,9 @@ Game.graphics = (function(){
 	}
   
 	function Texture(spec) {
-		var that = {},
+		var that = {
+			center:{x:spec.center.x,y:spec.center.y},
+		},
 			ready = false,
 			image = new Image();
 		
@@ -164,24 +166,24 @@ Game.graphics = (function(){
 		/*image.src = spec.image;
 		*/
 		that.movetoX = function(xPos){
-			spec.center.x = xPos;
+			that.center.x = xPos;
 		}
 		that.movetoY = function(yPos){
-			spec.center.y = yPos;
+			that.center.y = yPos;
 		}
 		that.moveTo = function(xPos,yPos){
-			spec.center.x = xPos;
-			spec.center.y = yPos;
+			that.center.x = xPos;
+			that.center.y = yPos;
 		}
 		
 		that.reportPos = function (){
-			return {x:spec.center.x -spec.width/2,
-					y:spec.center.y - spec.height/2,
-					dx:spec.center.x+spec.height - spec.height/2,
-					dy:spec.center.y+spec.width - spec.height/2};
+			return {x:that.center.x -spec.width/2,
+					y:that.center.y - spec.height/2,
+					dx:that.center.x+spec.height - spec.height/2,
+					dy:that.center.y+spec.width - spec.height/2};
 		}
 		that.reportCenter = function(){
-			return {x:spec.center.x,y:spec.center.y};
+			return {x:that.center.x,y:that.center.y};
 		}
 		
 		that.setRotation = function (angle){
@@ -193,14 +195,14 @@ Game.graphics = (function(){
 		that.draw = function() {
 			if (ready) {
 				context.save();
-				context.translate(spec.center.x, spec.center.y);
+				context.translate(that.center.x, that.center.y);
 				context.rotate(spec.rotation);
-				context.translate(-spec.center.x, -spec.center.y);
+				context.translate(-that.center.x, -that.center.y);
 				
 				context.drawImage(
 					image, 
-					spec.center.x - spec.width/2, 
-					spec.center.y - spec.height/2,
+					that.center.x - spec.width/2, 
+					that.center.y - spec.height/2,
 					spec.width, spec.height);
 				
 				context.restore();
@@ -314,7 +316,7 @@ Game.graphics = (function(){
       	}
       	that.hit = function(damage){
       		spec.health -= damage
-      		if(spec.health < 0){
+      		if(spec.health <= 0){
       			return true;
       		}return false;
       	}
