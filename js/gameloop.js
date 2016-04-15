@@ -102,7 +102,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 		}
-		pos = towerGrid[maxy][maxx];
+		pos = towerGrid[4][maxx-1];
 		var path = [];
 		while (pos.parent!=null){
 			path.push({x:((pos.x+1)*50)+25,y:((pos.y+1)*50)+25});
@@ -346,6 +346,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			
 			for(var c in creeps){
            		creeps[c].update(elapsedTime);
+                if(creeps[c].path.length == 1 && 
+                creeps[c].pos.x < creeps[c].path[0].x + 25 && creeps[c].pos.x > creeps[c].path[0].x - 25 && creeps[c].pos.y < creeps[c].path[0].y + 25 && creeps[c].pos.y > creeps[c].path[0].y - 25){
+                    creeps.splice(c,0);
+                }
            	}
 			
 			for(var i in towers){
@@ -400,7 +404,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		mouse = input.Mouse();
+        calcMutex = false;
         shortestPath = calcShortestPath();
+        console.log(shortestPath);
 		requestAnimationFrame(gameloop);
 	}
 	
