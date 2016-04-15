@@ -11,7 +11,7 @@ Game.gameobjects = (function(graphics,assets){
 			y:y,
 			width:dx-x,
 			height:dy-y,
-			fill:'rgba(255,251,15,0.3)',
+			fill:'rgba(255,0,0,1)',
 			rotation:0,
 		});
 		
@@ -21,6 +21,13 @@ Game.gameobjects = (function(graphics,assets){
 			that.top = y;
 			that.bottom = dy;
 			that.boundingBox.moveTo(x,y)
+		}
+		that.updatePosCenter = function(x,y,r){
+			that.left = x-r;
+			that.right = x+r;
+			that.top = y-r;
+			that.bottom = y+r;
+			that.boundingBox.moveTo(x-r,y-r);
 		}
 		
 		that.collidesWith = function (box){
@@ -77,7 +84,6 @@ Game.gameobjects = (function(graphics,assets){
 			if(that.currentFace >= (Math.PI*2) ){
 				that.currentFace = 0;
 			}
-			that.currentFace = 0;
 		}
 		
 		that.moveTo = function(x,y){
@@ -149,7 +155,7 @@ Game.gameobjects = (function(graphics,assets){
 			}
 			if(!that.idle){
 				var result = computeAngle(that.currentFace, spec.center, that.target);
-				if(testTolerance(result.angle, 0, 0.01) == false){
+				if(testTolerance(result.angle, 0, 0.04) == false){
 					//that.currentFace = result.angle;
 					if (result.crossProduct > 0) {
 						that.currentFace += (Math.PI*2)/that.rotationSpeed;
@@ -360,6 +366,7 @@ Game.gameobjects = (function(graphics,assets){
 			angle: spec.angle,
 			//vectorAngle:
 			pellet:null,
+			radius: null,
 		}
 		
 		if(that.type == 0){
@@ -370,9 +377,10 @@ Game.gameobjects = (function(graphics,assets){
 				line: 0,
 				lineColor: 'rgba(255,255,255,1)',
 			});
+			that.radius = 2;
 		}
 		
-		that.box = CollisionBox(spec.origin.x-25,spec.origin.y-25,spec.origin.x+25,spec.origin.y+25)
+		that.box = CollisionBox(spec.origin.x-that.radius,spec.origin.y-that.radius,spec.origin.x+that.radius,spec.origin.y+that.radius);
 		
 		that.maxDistance = function(){
 			var checkPos = that.pellet.getPos();
@@ -389,10 +397,12 @@ Game.gameobjects = (function(graphics,assets){
 			var newX = checkPos.x + that.speed * tick/1000 * Math.cos(that.angle);
 			var newY = checkPos.y + that.speed * tick/1000 * Math.sin(that.angle);
 			that.pellet.moveTo(newX,newY);
+			that.box.updatePosCenter(newX,newY,2);
 		}
 		
 		that.draw = function(){
 			that.pellet.draw();
+			//that.box.draw();
 		}
 		
 		return that;
