@@ -190,7 +190,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             typepath:'creep_2',
 			pos: {x:100, y:300},
             value: 5,
-            spriteTime : [500,500,500,500],
+            spriteTime : [1000,2000,2000,5000],
             width: 50,
             spriteCount: 4,
             height: 50,

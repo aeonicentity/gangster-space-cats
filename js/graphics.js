@@ -265,6 +265,18 @@ Game.graphics = (function(){
 				context.rotate(spec.rotation);
 				context.translate(-spec.pos.x, -spec.pos.y);
                 
+                //healthbars
+                context.fillStyle = "red";
+                context.beginPath();
+                context.rect(spec.pos.x-25, spec.pos.y-35, 50, 5);
+                context.fill();
+                var per;
+                per = spec.health/spec.maxhealth *100;
+                context.fillStyle = "green";
+                context.beginPath();
+                context.rect(spec.pos.x-25, spec.pos.y-35, per/2, 5);
+                context.fill();
+                
 				context.drawImage(
 					image,
 					spec.width * spec.sprite, 0,	// Which sprite to pick out
@@ -304,7 +316,7 @@ Game.graphics = (function(){
 					spec.sprite -= 1;
 					//
 					// This provides wrap around from the first to the last sprite
-					if (spec.sprite <= 0) {
+					if (spec.sprite < 0) {
 						spec.sprite = spec.spriteCount - 1;
 					}
 				}
@@ -312,28 +324,7 @@ Game.graphics = (function(){
 		};
         
         that.draw = function(elapsedTime) {
-         /*image.onload = function(){
-                context.save();
-                context.translate(spec.pos.x, spec.pos.y);
-				context.rotate(spec.rotation);
-				context.translate(-spec.pos.x, -spec.pos.y);
-                console.log("Drawing");
-                spec.width = 50;
-                spec.height = 50;
-				context.drawImage(
-					image,
-					spec.width * spec.sprite, 0,	// Which sprite to pick out
-					spec.width, spec.height,		// The size of the sprite
-					spec.pos.x - spec.width/2,	// Where to draw the sprite
-					spec.pos.y - spec.height/2,
-					spec.width, spec.height);
-                console.log(image.src);
-                
-                context.drawImage(image, spec.pos.x, spec.pos.y);
-				context.restore();
-              };
-            spec.height = image.height;
-			spec.width = image.width / spec.spriteCount;*/
+
           };
           
           
