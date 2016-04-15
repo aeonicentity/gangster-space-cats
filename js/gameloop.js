@@ -11,6 +11,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var mouse;
 	var towers = [];
     var creeps = [];
+    var pellets = [];
 	var towerGrid = [];
 	var shortestPath = null;
 	var sumVertex = 0;
@@ -105,7 +106,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			path.push({x:((pos.x+1)*50)+25,y:((pos.y+1)*50)+25});
 			pos = pos.parent;
 		}
-		path.push({x:0,y:4});
+		path.push({x:0+25,y:(4*50)+25});
 		
 	}calcMutex = true;
 	return path;
@@ -122,6 +123,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			gameState.render(elapsedTime);
 			rqId = requestAnimationFrame(gameloop)
 		}
+	}
+	
+	function addPellet(p){
+		pellets.push(p);
 	}
 	
 	function addBasicTower(){
@@ -392,6 +397,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addCreepAir: addCreepAir,
 		addCreepBoss: addCreepBoss,
 		targetPractice: targetPractice,
+		addPellet: addPellet,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));

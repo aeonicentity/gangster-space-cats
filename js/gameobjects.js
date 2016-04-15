@@ -111,6 +111,7 @@ Game.gameobjects = (function(graphics,assets){
 						}
 					}else{
 						that.currentFace = Math.abs(that.dirFace);
+						
 					}
 				}
 			}
@@ -303,12 +304,19 @@ Game.gameobjects = (function(graphics,assets){
 		
 		if(type == 0){
 			that.pellet = graphics.Circle({
+				origin: origin,
 				center: origin,
 				radius: 2,
 				fill: 'rgba(255,255,255,1)',
 				line: 0,
 				lineColor: 'rgba(255,255,255,1)',
 			});
+		}
+		
+		that.maxDistance = function(){
+			if(that.maxRange <= Math.sqrt(Math.pow(center.x-origin.x,2) + Math.pow(center.y-origin.y,2))){
+				return true;
+			}return false;
 		}
 		
 		that.update = function(elapsedTime){
