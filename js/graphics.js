@@ -245,6 +245,7 @@ Game.graphics = (function(){
 		}
 		return that;
 	}
+
 	
     
 //////////////////Sprite sheet stuff

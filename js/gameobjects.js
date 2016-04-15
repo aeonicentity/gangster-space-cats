@@ -244,6 +244,7 @@ Game.gameobjects = (function(graphics,assets){
 		that.render = function() {
 			that.sprite.draw();
 		};
+        
 		
 		that.rotateRight = function(elapsedTime) {
 			spec.rotation += spec.rotateRate * (elapsedTime);
@@ -260,10 +261,11 @@ Game.gameobjects = (function(graphics,assets){
         
         that.creepTo = function(elapsedTime){
             //check if in square
+            console.log(that.path[0].x, that.path[0].y);
             if(that.pos.x < that.path[0].x + 25 && that.pos.x > that.path[0].x - 25 && that.pos.y < that.path[0].y + 25 && that.pos.y > that.path[0].y - 25){
                 that.path.shift();
+                console.log("SHIFT");
             }
-            
             if(that.path[0].x > that.pos.x){
                 that.pos.x += that.speed;
             }
