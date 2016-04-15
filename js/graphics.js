@@ -55,6 +55,10 @@ Game.graphics = (function(){
 			that.center.x = x;
 			that.center.y = y;
 		};
+		
+		that.getPos = function(){
+			return that.center;
+		};
 
 		that.update = function(){};
 		

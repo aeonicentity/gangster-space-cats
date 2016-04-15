@@ -81,6 +81,7 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.moveTo = function(x,y){
+			//console.log("moving to: "+x+","+y);
 			that.pos.x = x;
 			that.pos.y = y;
 			that.turret.moveTo(x,y);
@@ -100,7 +101,7 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.selectTarget = function(target){
 			that.idle = false;
-			console.log("selecting target:");
+			//console.log("selecting target:");
 			console.log(target);
 			that.target = target;
 		}
@@ -147,7 +148,7 @@ Game.gameobjects = (function(graphics,assets){
 				that.lastFire = elapsedTime;
 			}
 			if(!that.idle){
-				var result = computeAngle(that.currentFace, that.pos, that.target);
+				var result = computeAngle(that.currentFace, spec.center, that.target);
 				if(testTolerance(result.angle, 0, 0.01) == false){
 					//that.currentFace = result.angle;
 					if (result.crossProduct > 0) {
@@ -160,11 +161,12 @@ Game.gameobjects = (function(graphics,assets){
 				}else{ //else we're pointed and firing may commence when ready!
 					//that.currentFace = that.dirFace;
 					if(that.lastFire + that.fireRate <= elapsedTime){
-						console.log("firing to angle: "+result.angle);
+						//console.log("firing to angle: "+result.angle);
+						//console.log("from position: "+that.pos.x+","+that.pos.y);
 						that.lastFire = elapsedTime;
 						Game.gameLoop.addPellet(Pellet({
 							range:that.range,
-							origin:that.pos,
+							origin:{x: that.pos.x,y: that.pos.y},
 							target:that.target,
 							angle: that.currentFace,
 							type:0,
@@ -207,7 +209,7 @@ Game.gameobjects = (function(graphics,assets){
 			//rotateRate : 3.14159	// Radians per second
 		});
 		that.tower = Turret({
-			center: {x:that.pos.x, y:that.pos.y},
+			center: that.pos,
 			type: that.upgradePath[that.tier],
 			sellPrice: spec.sellPrice,
 			level: spec.tier,
@@ -349,13 +351,11 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	function Pellet(spec){
-		console.log("Spawning pellet:");
-		console.log(spec.origin);
 		var that = {
-			speed:10,//pixels/second
+			speed:100,//pixels/second
 			type:spec.type,//
 			maxRange:spec.range,
-			origin:spec.origin,
+			origin:{x:spec.origin.x,y:spec.origin.y},
 			target:spec.target,
 			angle: spec.angle,
 			//vectorAngle:
@@ -364,7 +364,7 @@ Game.gameobjects = (function(graphics,assets){
 		
 		if(that.type == 0){
 			that.pellet = graphics.Circle({
-				center: that.origin,
+				center: {x: spec.origin.x, y: spec.origin.y},
 				radius: 2,
 				fill: 'rgba(255,255,255,1)',
 				line: 0,
@@ -372,15 +372,22 @@ Game.gameobjects = (function(graphics,assets){
 			});
 		}
 		
+		that.box = CollisionBox(spec.origin.x-25,spec,origin.y-25,spec.origin.x+25,spec.origin.y+25)
+		
 		that.maxDistance = function(){
-			if(that.maxRange <= Math.sqrt(Math.pow(that.pellet.center.x-that.origin.x,2) + Math.pow(that.pellet.center.y-that.origin.y,2))){
+			var checkPos = that.pellet.getPos();
+			var difx = checkPos.x - that.origin.x;
+			var dify = checkPos.y - that.origin.y;
+			var curDistance = Math.sqrt(Math.pow(difx,2) + Math.pow(dify,2));
+			if(that.maxRange <= curDistance){
 				return true;
 			}return false;
 		}
 		
-		that.update = function(elapsedTime){
-			var newX = that.origin.x + that.speed * elapsedTime/1000 * Math.cos(that.angle);
-			var newY = that.origin.y + that.speed * elapsedTime/1000 * Math.sin(that.angle);
+		that.update = function(tick){
+			var checkPos = that.pellet.getPos();
+			var newX = checkPos.x + that.speed * tick/1000 * Math.cos(that.angle);
+			var newY = checkPos.y + that.speed * tick/1000 * Math.sin(that.angle);
 			that.pellet.moveTo(newX,newY);
 		}
 		

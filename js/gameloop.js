@@ -55,6 +55,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		//using dijkstra's.
 		Q = [];
 		var maxx = towerGrid[0].length - 1;
+		console.log(maxx);
 		var maxy = towerGrid.length - 1; 
 		var src = null;
 		for (var i = 0; i < maxy; i++){
@@ -102,7 +103,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 		}
-		pos = towerGrid[maxy][maxx];
+		pos = towerGrid[4][13];
 		var path = [];
 		while (pos.parent!=null){
 			path.push({x:((pos.x+1)*50)+25,y:((pos.y+1)*50)+25});
@@ -353,13 +354,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}
 			
 			for(var i =0; i<pellets.length; i++){
-				/*if(pellets[i].maxDistance()){
-					//pellets.splice(i,1);
-					//i--;
-					//console.log("despawn pellet");
-				}else{*/
-					pellets[i].update(elapsedTime);
-				//}
+				if(pellets[i].maxDistance()){
+					pellets.splice(i,1);
+					i--;
+					console.log("despawn pellet");
+				}else{
+					pellets[i].update(ticktime);
+				}
 			}
 			
 		};
@@ -400,7 +401,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		mouse = input.Mouse();
+		calcMutex = false;
         shortestPath = calcShortestPath();
+        console.log(shortestPath);
 		requestAnimationFrame(gameloop);
 	}
 	
