@@ -184,30 +184,6 @@ Game.graphics = (function(){
 			spec.rotation = angle;
 		}
 		
-		function rotateRight(elapsedTime) {
-			spec.rotation += spec.rotateRate * (elapsedTime / 1000);
-		};
-		
-		function rotateLeft(elapsedTime) {
-			spec.rotation -= spec.rotateRate * (elapsedTime / 1000);
-		};
-		
-		function moveLeft(elapsedTime) {
-			spec.center.x -= spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveRight(elapsedTime) {
-			spec.center.x += spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveUp(elapsedTime) {
-			spec.center.y -= spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveDown(elapsedTime) {
-			spec.center.y += spec.moveRate * (elapsedTime / 1000);
-		};
-		
 		
 		console.log(image);
 		that.draw = function() {

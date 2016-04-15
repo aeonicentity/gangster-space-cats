@@ -81,6 +81,8 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.moveTo = function(x,y){
+			that.pos.x = x;
+			that.pos.y = y;
 			that.turret.moveTo(x,y);
 		};
 		
@@ -146,13 +148,13 @@ Game.gameobjects = (function(graphics,assets){
 			}
 			if(!that.idle){
 				var result = computeAngle(that.currentFace, that.pos, that.target);
-				if(testTolerance(result.angle, 0, 0.1) == false){
-					
+				if(testTolerance(result.angle, 0, 0.01) == false){
+					//that.currentFace = result.angle;
 					if (result.crossProduct > 0) {
 						that.currentFace += (Math.PI*2)/that.rotationSpeed;
 						spec.rotation += spec.rotateRate;
 					} else {
-						that.currentFace += (Math.PI*2)/that.rotationSpeed;
+						that.currentFace -= (Math.PI*2)/that.rotationSpeed;
 						spec.rotation -= spec.rotateRate;
 					}
 				}else{ //else we're pointed and firing may commence when ready!
@@ -164,6 +166,7 @@ Game.gameobjects = (function(graphics,assets){
 							range:that.range,
 							origin:that.pos,
 							target:that.target,
+							angle: that.currentFace,
 							type:0,
 						}));
 					}
@@ -201,7 +204,7 @@ Game.gameobjects = (function(graphics,assets){
 			image: assets.getAsset('towerBase'),
 			rotation : 0,
 			moveRate : 200,			// pixels per second
-			rotateRate : 3.14159	// Radians per second
+			//rotateRate : 3.14159	// Radians per second
 		});
 		that.tower = Turret({
 			center: {x:that.pos.x, y:that.pos.y},
@@ -347,12 +350,15 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	function Pellet(spec){
+		console.log("Spawning pellet:");
+		console.log(spec.origin);
 		var that = {
 			speed:10,//pixels/second
 			type:spec.type,//
 			maxRange:spec.range,
 			origin:spec.origin,
 			target:spec.target,
+			angle: spec.angle,
 			//vectorAngle:
 			pellet:null,
 		}
@@ -374,7 +380,9 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.update = function(elapsedTime){
-			
+			var newX = that.origin.x + that.speed * elapsedTime/1000 * Math.cos(that.angle);
+			var newY = that.origin.y + that.speed * elapsedTime/1000 * Math.sin(that.angle);
+			that.pellet.moveTo(newX,newY);
 		}
 		
 		that.draw = function(){

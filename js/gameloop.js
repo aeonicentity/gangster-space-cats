@@ -348,6 +348,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				towers[i].update(elapsedTime);
 			}
 			
+			for(var i =0; i<pellets.length; i++){
+				/*if(pellets[i].maxDistance()){
+					//pellets.splice(i,1);
+					//i--;
+					//console.log("despawn pellet");
+				}else{*/
+					pellets[i].update(elapsedTime);
+				//}
+			}
+			
 		};
 		that.render = function (elapsedTime){ //placeholder function for game logic on build state.
 			//console.log("update");
@@ -358,13 +368,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}
 			
 			for(var i =0; i<pellets.length; i++){
-				if(pellets[i].maxDistance()){
-					pellets.splice(i,1);
-					i--;
-					console.log("despawn pellet");
-				}else{
-					pellets[i].draw();
-				}
+				pellets[i].draw();
 			}
             
            for(var c in creeps){
