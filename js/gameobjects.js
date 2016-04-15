@@ -309,7 +309,7 @@ Game.gameobjects = (function(graphics,assets){
 			});
 		}
 		
-		that.maxDistance()
+		that.maxDistance = function(){
 			if(that.maxRange <= Math.sqrt(Math.pow(center.x-origin.x,2) + Math.pow(center.y-origin.y,2))){
 				return true;
 			}return false;
