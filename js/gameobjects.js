@@ -298,6 +298,44 @@ Game.gameobjects = (function(graphics,assets){
 		return that;
 	}
 
+    function Particle(spec){
+        var that = {
+            x: 0,
+            y: 0,
+            life: 0,
+            angle: 0,
+            dx: 0,
+            dy: 0,
+            color: "#FFFFFF"
+        }
+        
+			that.pellet = graphics.Circle({
+				center: {x: spec.x, y: spec.y},
+				radius: 2,
+				fill: spec.color,
+				line: 0,
+				lineColor: spec.color,
+			});
+			that.radius = 2;
+        
+        that.update = function(ticktime){
+            spec.life -= ticktime;
+            
+            if(spec.life > 0){
+                //move particle
+                spec.x += spec.dx;
+                spec.y += spec.dy;
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        
+        that.draw = function(){
+            that.particle.draw()
+        }
+    }
 
 
 	function Creep(spec){

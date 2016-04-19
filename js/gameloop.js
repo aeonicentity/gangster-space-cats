@@ -14,6 +14,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var towers = [];
     var creeps = [];
     var pellets = [];
+    var particles = [];
 	var towerGrid = [];
 	var shortestPath = null;
 	var sumVertex = 0;
@@ -365,6 +366,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					}
 				}
            	}
+               
+            for(var p=0;p<particles.length;p++){
+                if(particles[p].update(elapsedTime)==true){
+                    //whoop whoop still alive 
+                }
+                else{
+                    particles.splice(p,1);
+                }
+            }
 			
 			for(var i =0; i<pellets.length; i++){
 				if(pellets[i].maxDistance()){
@@ -405,6 +415,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
            for(var c in creeps){
 				creeps[c].draw(elapsedTime);
 			}
+            
+            for(var p=0;p<particles.length;p++){
+                particles[p].draw();
+            }
 			
 			if(tempTower != null){
 				tempTower.draw();
