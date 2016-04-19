@@ -41,6 +41,13 @@ Game.gameobjects = (function(graphics,assets){
 				   that.bottom <= box.top);
 		}
 		
+		that.clickedOn = function(x,y){
+			return !(  that.left >= x || 
+				   that.right <= x || 
+				   that.top >= y ||
+				   that.bottom <= y);
+		}
+		
 		that.draw = function(){
 			that.boundingBox.draw();
 		}
@@ -74,6 +81,11 @@ Game.gameobjects = (function(graphics,assets){
 			moveRate: 200,
 			rotateRate: Math.PI*4
 		});
+		
+		that.upgrade = function (type){
+			that.type=type;
+			that.turret.setImage(assets.getAsset(that.type));
+		}
 		
 		that.setFireOrder = function(order){
 			that.fireOrder = order;
@@ -190,6 +202,8 @@ Game.gameobjects = (function(graphics,assets){
 						}));
 					}
 				}
+			}else{
+				//that.rotateIdle();
 			}
 			that.turret.setRotation(that.currentFace);
 		};
@@ -201,7 +215,10 @@ Game.gameobjects = (function(graphics,assets){
 		console.log(spec);
 		var that = {
 			tier: spec.tier,
+			typeName: spec.typeName,
+			sellPrice: spec.sellPrice,
 			upgradePath: spec.upgradePath,
+			upgradeFunc: spec.upgradeActions,
 			pos: spec.pos,
 			showRadius: true,
 			showBounding: false,
@@ -259,9 +276,12 @@ Game.gameobjects = (function(graphics,assets){
 		}
 		
 		that.upgrade = function (){
-			if (that.teir < 3){
-				that.teir++;
+			if (that.tier < 2){
+				that.tier++;
 			}
+			that.tower.level = that.tier;
+			that.tower.upgrade(that.upgradePath[that.tier]);
+			that.upgradeFunc[that.tier](that);
 		}
 		
 		that.moveTo = function(x,y){
@@ -373,13 +393,13 @@ Game.gameobjects = (function(graphics,assets){
                 console.log("SHIFT");
                 }
             }
-            if(that.path[b].x > that.pos.x){
+            if(that.path[b].x >= that.pos.x){
                 that.pos.x += that.speed;
             }
             else if(that.path[b].x < that.pos.x){
                 that.pos.x -= that.speed;
             }
-            if(that.path[b].y> that.pos.y){
+            if(that.path[b].y>= that.pos.y){
                 that.pos.y += that.speed;
             }
             else if(that.path[b].y<that.pos.y){

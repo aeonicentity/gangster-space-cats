@@ -190,6 +190,10 @@ Game.graphics = (function(){
 			spec.rotation = angle + Math.PI;
 		}
 		
+		that.setImage = function(newImg){
+			image.src = newImg.src;
+		}
+		
 		
 		console.log(image);
 		that.draw = function() {

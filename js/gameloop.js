@@ -21,6 +21,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var calcMutex = true;
 	var shortestPath = [];
 	var testTarget = null;
+	var selectedTower = null;
+	var catnip = 500;
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
@@ -135,38 +137,122 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		pellets.push(p);
 	}
 	
+	function updateSelectedTowerHTML(towerType,tier,sellPrice){
+		document.getElementById('selected_towertype').innerHTML = towerType;
+		document.getElementById('selected_towerlevel').innerHTML = tier+1;
+		if(tier < 2){
+			document.getElementById('selected_upgradecost').innerHTML = sellPrice*tier + (50*(tier+1));
+		}else{
+			document.getElementById('selected_upgradecost').innerHTML = "---";
+		}
+		document.getElementById('selected_sellprice').innerHTML = sellPrice;
+		document.getElementById('sell').disabled = false;
+		if(tier < 2){
+			document.getElementById('upgrade').disabled = false;
+		}else{
+			document.getElementById('upgrade').disabled = true;
+		}
+	}
+	
+	function clearSelectedTowerHTML(){
+		document.getElementById('selected_towertype').innerHTML = "---";
+		document.getElementById('selected_towerlevel').innerHTML = "---";
+		document.getElementById('selected_upgradecost').innerHTML = "---";
+		document.getElementById('selected_sellprice').innerHTML = "---";
+		document.getElementById('sell').disabled = true;
+		document.getElementById('upgrade').disabled = true;
+	}
+	
+	function upgradeSelectedTower(){
+		var upgradeCost = towers[selectedTower].sellPrice*towers[selectedTower].tier + (50*(towers[selectedTower].tier+1));
+		if(towers[selectedTower].tier < 2 && catnip >= upgradeCost){
+			towers[selectedTower].upgrade();
+			console.log("upgrading tower to tier "+towers[selectedTower].tier);
+			updateSelectedTowerHTML(towers[selectedTower].typeName, towers[selectedTower].tier, towers[selectedTower].sellPrice)
+			catnip -= upgradeCost;
+		}
+	}
+	
+	function sellSelectedTower(){
+		var gonzo = towers.splice(selectedTower,1);
+		console.log ("selling tower");
+		console.log(gonzo[0].sellPrice);
+		catnip += gonzo[0].sellPrice;
+		selectedTower = null;
+		clearSelectedTowerHTML();
+	}
+	
 	function addBasicTower(){
-		tempTower = gameobjects.Tower({
-			pos:{x:100,y:100},
-			tier:0,
-			upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
-			sellPrice:100,
-			fireRate: 2,
-			radius: 100,
-		});
+		if(catnip >= 100){
+			tempTower = gameobjects.Tower({
+				typeName:"Basic Tower",
+				pos:{x:100,y:100},
+				tier:0,
+				upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
+				sellPrice:100,
+				fireRate: 2,
+				radius: 150,
+				upgradeActions: [
+					null,
+					function(that){that.tower.fireRate = 250;},
+					function(that){that.tower.fireRate = 100;}
+				],
+			});
+			catnip -= 100;
+		}
+		
 	}
 	
 	function addBombTower(){
-		tempTower = gameobjects.Tower({
-			pos:{x:100,y:100},
-			tier:0,
-			upgradePath:['bomb_tower_1','bomb_tower_2','bomb_tower_3'],
-			sellPrice:100,
-			fireRate: 2,
-			radius: 100,
-		});
+		if(catnip >= 150){
+			tempTower = gameobjects.Tower({
+				typeName:"Bomb Tower",
+				pos:{x:100,y:100},
+				tier:0,
+				upgradePath:['bomb_tower_1','bomb_tower_2','bomb_tower_3'],
+				sellPrice:150,
+				fireRate: 2,
+				radius: 100,
+				upgradeActions:[null,null,null],
+			});
+			catnip -= 150;
+		}
+		
 	}
    
 	
 	function addAirTower(){
-		tempTower = gameobjects.Tower({
-			pos:{x:100,y:100},
-			tier:0,
-			upgradePath:['air_tower_1','air_tower_2','air_tower_3'],
-			sellPrice:100,
-			fireRate: 2,
-			radius: 100,
-		});
+		if(catnip >= 150){
+			tempTower = gameobjects.Tower({
+				typeName:"Air Tower",
+				pos:{x:100,y:100},
+				tier:0,
+				upgradePath:['air_tower_1','air_tower_2','air_tower_3'],
+				sellPrice:150,
+				fireRate: 2,
+				radius: 175,
+				upgradeActions:[null,null,null],
+			});
+			catnip -= 150;
+		}
+		
+	}
+	
+	function addSlowTower(){
+		if(catnip >= 200){
+			tempTower = gameobjects.Tower({
+				typeName:"Slow Tower",
+				pos:{x:100,y:100},
+				tier:0,
+				upgradePath:['slow_tower_1','slow_tower_2','slow_tower_3'],
+				sellPrice:200,
+				fireRate: 2,
+				radius: 100,
+				upgradeActions:[null,null,null],
+			});
+			catnip -= 200;
+		}
+		
 	}
     
     function addCreep1(){
@@ -266,16 +352,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}return false;
 	}
 	
-	function addSlowTower(){
-		tempTower = gameobjects.Tower({
-			pos:{x:100,y:100},
-			tier:0,
-			upgradePath:['slow_tower_1','slow_tower_2','slow_tower_3'],
-			sellPrice:100,
-			fireRate: 2,
-			radius: 100,
-		});
-	}
+	
 	
 	function targetPractice(){
 		targetx = Math.floor(Math.random() * graphics.gameWidth);
@@ -330,6 +407,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 		
 		that.update = function (elapsedTime){
+			
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
 			var mouseInputs = mouse.update(elapsedTime);
@@ -349,6 +427,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					if(pos.x >= 25 && pos.x <= graphics.gameWidth-25 && pos.y >= 25 && pos.y <= graphics.gameHeight-25){
 						tempTower.moveTo(Math.round(pos.x/50)*50,Math.round(pos.y/50)*50);
 						
+					}
+				}
+			}else if(mouseInputs.length > 0){
+				for (var i =0; i < towers.length; i++){
+					if(towers[i].box.clickedOn(pos.x,pos.y)){
+						console.log(towers[i]);
+						selectedTower = i;
+						updateSelectedTowerHTML(towers[i].typeName, towers[i].tier, towers[i].sellPrice);
 					}
 				}
 			}
@@ -391,7 +477,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			
 		};
 		that.render = function (elapsedTime){ //placeholder function for game logic on build state.
-			//console.log("update");
+			//update HTML elements
+			document.getElementById('current_catnip').innerHTML = catnip;
+		
+			//updating game elements
 			graphics.clear();
 			
 			for(var i in towers){
@@ -446,6 +535,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addCreepAir: addCreepAir,
 		addCreepBoss: addCreepBoss,
 		targetPractice: targetPractice,
+		sellSelectedTower:sellSelectedTower,
+		upgradeSelectedTower:upgradeSelectedTower,
 		addPellet: addPellet,
 	};
 	
