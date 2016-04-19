@@ -6,32 +6,53 @@
 		
 	</head>
 	<body>
-		<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
-        
-        <div id="menu">
-            <span id="current_catnip">catnip : 0</span>
-            <button type="button" id="about">About</button>
-            <center>
-            <h2>I can has towers?</h2>
-            <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
-            <button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
-            <button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
-            <button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
-            <br>
-            <hr>
-            <h4>Currently Selected</h4>
-            Type:<span id="selected_towertype">---</span>
-            <br>
-            Level:<span id="selected_towerlevel">---</span>
-            <br>
-            Upgrade Cost:<span id="selected_upgradecost">---</span>
-            <br>
-            Sell Price:<span id="selected_sellprice">---</span>
-            <br>
-            <br>
-            <button type="button" id="upgrade" onclick="Game.gameLoop.upgradeSelectedTower()" disabled>Upgrade Tower</button>
-            <button type="button" id="sell" onclick="Game.gameLoop.sellSelectedTower()" disabled>Sell Tower</button>
-            </center>
+		<div id="gameZone">
+			<div id="state-game" class="MenuContext">
+				<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
+				
+				<div id="menu">
+				    <span id="current_catnip">catnip : 0</span>
+				    <button type="button" id="about">About</button>
+				    <center>
+				    <h2>I can has towers?</h2>
+				    <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
+				    <button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
+				    <button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
+				    <button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
+				    <br>
+				    <hr>
+				    <h4>Currently Selected</h4>
+				    Type:<span id="selected_towertype">---</span>
+				    <br>
+				    Level:<span id="selected_towerlevel">---</span>
+				    <br>
+				    Upgrade Cost:<span id="selected_upgradecost">---</span>
+				    <br>
+				    Sell Price:<span id="selected_sellprice">---</span>
+				    <br>
+				    <br>
+				    <button type="button" id="upgrade" onclick="Game.gameLoop.upgradeSelectedTower()" disabled>Upgrade Tower</button>
+				    <button type="button" id="sell" onclick="Game.gameLoop.sellSelectedTower()" disabled>Sell Tower</button>
+				    </center>
+				</div>
+		    </div>
+		    <div id="state-mainmenu" class="MenuContext">
+		    	<button>Join the Fight!</button>
+		    	<button>Who made this crap?!</button>
+		    	<button>Controls? Maybe?</button>
+		    	<button>Biggest Not Losers</button>
+		    </div>
+		    <div id="state-about" class="MenuContext">
+		    	<h1>A brief list of who to blame:</h1>
+		    	<ul>
+		    		<li>David Brilliant</li>
+		    		<li>Mikaila Young</li>
+		    	</ul>
+		    	<button>Back</button>
+		    </div>
+		    <div id="state-controls" class="MenuContext">
+		    	<button>Back</button>
+		    </div>
         </div>
 	</body>
 	<script>Game = {}</script>

@@ -1,6 +1,6 @@
 var ticktime;
 
-Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects){
+Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects, screens){
 	var rqId;
 	var cancelFrame = false;
 	//Game states.
@@ -418,12 +418,18 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				if(mouseInputs.length > 0 && !towerCollision(tempTower.box) && !towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled){
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
+					var lastPath = shortestPath
 					shortestPath = calcShortestPath();
-					//console.log(shortestPath);
-					console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
-					tempTower.radiusOff();
-					towers.push(tempTower);
-					tempTower = null;
+					if(shortestPath.length > 1){
+						console.log(shortestPath);
+						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
+						tempTower.radiusOff();
+						towers.push(tempTower);
+						tempTower = null;
+					}else{
+						towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = false;
+						shortestPath = lastPath;
+					}
 				}else{
 					if(pos.x >= 25 && pos.x <= graphics.gameWidth-25 && pos.y >= 25 && pos.y <= graphics.gameHeight-25){
 						tempTower.moveTo(Math.round(pos.x/50)*50,Math.round(pos.y/50)*50);
@@ -523,6 +529,24 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	gameStateBattle = function(){ //placeholder function for game logic on battle state.
 	}
 	
+	function showScreen(id) {
+		var screen = 0,
+			active = null;
+		//
+		// Remove the active state from all screens.  There should only be one...
+		active = document.getElementsByClassName('Active');
+		for (screen = 0; screen < active.length; screen++) {
+			active[screen].classList.remove('Active');
+		}
+		//
+		// Tell the screen to start actively running
+		screens[id].initialize();
+		screens[id].run();
+		//
+		// Then, set the new screen to be active
+		document.getElementById(id).classList.add('Active');
+	}
+	
 	function initializeGame(){
 		/*We should use this to initialize variables we declare below*/
 		console.log ("Initializing...");
@@ -551,9 +575,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		targetPractice: targetPractice,
 		sellSelectedTower:sellSelectedTower,
 		upgradeSelectedTower:upgradeSelectedTower,
+		showScreen:showScreen,
 		addPellet: addPellet,
 	};
 	
-}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));
+}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));
 
 var Ltime = performance.now();
