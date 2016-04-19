@@ -300,21 +300,19 @@ Game.gameobjects = (function(graphics,assets){
 
     function Particle(spec){
         var that = {
-            x: 0,
-            y: 0,
-            life: 0,
-            angle: 0,
-            dx: 0,
-            dy: 0,
-            color: "#FFFFFF"
+            pos: {x:spec.pos.x,y:spec.pos.y},
+            life: spec.life,
+            dx: spec.dx,
+            dy: spec.dy,
+            color: spec.color
         }
         
-			that.pellet = graphics.Circle({
-				center: {x: spec.x, y: spec.y},
+			that.particle = graphics.Circle({
+				center: {x: that.pos.x, y: that.pos.y},
 				radius: 2,
-				fill: spec.color,
+				fill: 'rgba(0,66,0,1)',
 				line: 0,
-				lineColor: spec.color,
+				lineColor: 'rgba(255,251,15,0.3)',
 			});
 			that.radius = 2;
         
@@ -330,11 +328,13 @@ Game.gameobjects = (function(graphics,assets){
             else{
                 return false;
             }
-        }
+        };
         
         that.draw = function(){
             that.particle.draw()
-        }
+            
+        };
+        return that;
     }
 
 
@@ -502,5 +502,6 @@ Game.gameobjects = (function(graphics,assets){
 		Tower: Tower,
 		Creep: Creep,
 		Pellet: Pellet,
+        Particle: Particle,
 	};
 }(Game.graphics, Game.assets));

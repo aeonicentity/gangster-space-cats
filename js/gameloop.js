@@ -10,6 +10,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var startTime;
 	var tempTower = null;
     var tempCreep = null;
+    var tempParticle = null;
 	var mouse;
 	var towers = [];
     var creeps = [];
@@ -135,6 +136,19 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	function addPellet(p){
 		pellets.push(p);
 	}
+    
+    function generateCreepDeathPoof(xin,yin){
+        for(var p=0;p<15;p++){
+            tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin},
+                life: 1000,
+                dx: 0,
+                dy: 5,
+                color: '#006600'
+            });
+            particles.push(tempParticle);
+        }
+    }
 	
 	function addBasicTower(){
 		tempTower = gameobjects.Tower({
@@ -368,11 +382,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
            	}
                
             for(var p=0;p<particles.length;p++){
-                if(particles[p].update(elapsedTime)==true){
+                if(particles[p].update(ticktime)==true){
                     //whoop whoop still alive 
                 }
                 else{
                     particles.splice(p,1);
+                    p--;
+                    
+                    
                 }
             }
 			
@@ -408,8 +425,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				towers[i].draw();
 			}
 			
-			for(var i =0; i<pellets.length; i++){
-				pellets[i].draw();
+			for(var v=0; v<pellets.length; v++){
+				pellets[v].draw();
 			}
             
            for(var c in creeps){
@@ -461,6 +478,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addCreepBoss: addCreepBoss,
 		targetPractice: targetPractice,
 		addPellet: addPellet,
+        generateCreepDeathPoof: generateCreepDeathPoof,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects));

@@ -40,6 +40,8 @@ Game.graphics = (function(){
 		};
 		
 		that.draw = function(){
+            console.log("drawing");
+            console.log(that.center.x, that.center.y, that.radius);
 			context.save();
 			context.beginPath();
 			context.arc(that.center.x, that.center.y, that.radius, 0 ,2 * Math.PI, false);
