@@ -91,3 +91,10 @@ button:disabled:hover{
     background-color: #603030;
     background-image: none;
 }
+
+.MenuContext{
+	display:none;
+}
+.Active{
+	display:block !important;
+}

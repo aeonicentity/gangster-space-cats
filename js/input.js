@@ -61,6 +61,7 @@ Game.input = (function (){
 		
 		function keyPress(e) {
 			that.keys[e.keyCode] = e.timeStamp;
+			console.log("key "+e.keyCode+" pressed");
 		}
 		
 		function keyRelease(e) {
@@ -74,6 +75,7 @@ Game.input = (function (){
 		// ------------------------------------------------------------------
 		that.registerCommand = function(key, handler) {
 			that.handlers.push({ key : key, handler : handler});
+			console.log("handler size:"+that.handlers.length);
 		};
 		
 		that.clearCommands = function(){
@@ -86,17 +88,42 @@ Game.input = (function (){
 		//
 		// ------------------------------------------------------------------
 		that.update = function(elapsedTime) {
+			
 			for (handler = 0; handler < that.handlers.length; handler++) {
-				if (that.keys.hasOwnProperty(that.handlers[handler].key)) {
+				var keyComboFlag = true;
+				for(var i =0; i < that.handlers[handler].key.length; i++){
+					//console.log('checking key:'+that.handlers[handler].key[i]);
+					if (!that.keys.hasOwnProperty(that.handlers[handler].key[i])) {
+						keyComboFlag = false;
+					}
+				}
+				if(keyComboFlag){
 					that.handlers[handler].handler(elapsedTime);
 				}
 			}
+			//console.log(that.keys);
 		};
 		
 		//
 		// These are used to keep track of which keys are currently pressed
 		window.addEventListener('keydown', keyPress);
 		window.addEventListener('keyup', keyRelease);
+		
+		
+		that.setSellTower = function (keycombo){
+			that.registerCommand(keycombo,function(){Game.gameLoop.sellSelectedTower()});
+			
+		};
+		
+		that.setUpgradeTower = function (keycombo){
+			console.log("setting upgrade to:");
+			console.log(keycombo);
+			that.registerCommand(keycombo,function(){Game.gameLoop.upgradeSelectedTower()});
+		};
+		
+		that.setNextWave = function(keycombo){
+			that.registerCommand(keycombo,function(){Game.gameLoop.sendNextWave()});
+		};
 		
 		return that;
 	}
@@ -112,6 +139,49 @@ Game.input = (function (){
 // Source: http://stackoverflow.com/questions/1465374/javascript-event-keycode-constants
 //
 //------------------------------------------------------------------
+if (typeof ReverseEvent === 'undefined'){
+	var ReverseKeyLookup = {
+		48: "0",
+		49: "1",
+		50: "2",
+		51: "3",
+		52: "4",
+		53: "5",
+		54: "6",
+		55: "7",
+		56: "8",
+		57: "9",
+		65: "A",
+		66: "B",
+		67: "C",
+		68: "D",
+		69: "E",
+		70: "F",
+		71: "G",
+		72: "H",
+		73: "I",
+		74: "J",
+		75: "K",
+		76: "L",
+		77: "M",
+		78: "N",
+		79: "O",
+		80: "P",
+		81: "Q",
+		82: "R",
+		83: "S",
+		84: "T",
+		85: "U",
+		86: "V",
+		87: "W",
+		88: "X",
+		89: "Y",
+		90: "Z",
+		16: "SHIFT",
+		17: "CTRL",
+		18: "ALT",
+	}
+}
 if (typeof KeyEvent === 'undefined') {
 	var KeyEvent = {
 		DOM_VK_CANCEL: 3,
