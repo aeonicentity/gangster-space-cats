@@ -36,11 +36,14 @@
 				    </center>
 				</div>
 		    </div>
-		    <div id="state-mainmenu" class="MenuContext">
-		    	<button>Join the Fight!</button>
-		    	<button>Who made this crap?!</button>
-		    	<button>Controls? Maybe?</button>
-		    	<button>Biggest Not Losers</button>
+		    <div id="state-mainmenu" class="MenuContext Active">
+		    	<h1>Gangsta' Space Cats</h1>
+		    	<h3>VS</h3>
+		    	<h1>Zombie Nazis in Space</h1>
+		    	<button onclick="Game.gameLoop.showScreen('state-game')">Join the Fight!</button>
+		    	<button onclick="Game.gameLoop.showScreen('state-about')">Who made this crap?!</button>
+		    	<button onclick="Game.gameLoop.showScreen('state-controls')">Controls? Maybe?</button>
+		    	<button onclick="Game.gameLoop.showScreen('state-scores')">Biggest Not Losers</button>
 		    </div>
 		    <div id="state-about" class="MenuContext">
 		    	<h1>A brief list of who to blame:</h1>
@@ -48,14 +51,31 @@
 		    		<li>David Brilliant</li>
 		    		<li>Mikaila Young</li>
 		    	</ul>
-		    	<button>Back</button>
+		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
 		    </div>
 		    <div id="state-controls" class="MenuContext">
-		    	<button>Back</button>
+		    	<h1>Control Configuration</h1>
+		    	<h2>Sell Tower</h2>
+		    		<span id="currentSellKeys"></span>
+		    		<button onclick="Game.gameLoop.setSellKey()">Set Sell Key</button>
+		    	<h2>Upgrade Tower</h2>
+		    		<span id="currentUpgradeKeys"></span>
+		    		<button onclick="Game.gameLoop.setUpgradeKey()">Set Upgrade Key</button>
+		    	<h2>Next Wave</h2>
+		    		<span id="currentWaveKeys"></span>
+		    		<button onclick="Game.gameLoop.setWaveKey()">Set Next Wave Key</button>
+		    	<br>
+		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+		    </div>
+		    <div id="state-scores" class="MenuContext">
+		    	<span id="id-score-zone"></span>
+		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+		    	<button id="id-score-clear">Clear</button>
 		    </div>
         </div>
 	</body>
 	<script>Game = {}</script>
+	<script src="js/context.js"></script>
 	<script src="js/input.js"></script>
 	<script src="js/graphics.js"></script>
 	<script src="js/asset.js"></script>

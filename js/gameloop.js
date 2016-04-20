@@ -11,7 +11,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var tempTower = null;
     var tempCreep = null;
     var tempParticle = null;
-	var mouse;
+	var mouse = input.Mouse();
+	var keyboard = input.Keyboard();
 	var towers = [];
     var creeps = [];
     var pellets = [];
@@ -25,6 +26,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var testTarget = null;
 	var selectedTower = null;
 	var catnip = 500;
+	
+	var upgradeKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_U];
+	var sellKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_S];
+	var nextLevelKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_G];
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
@@ -327,22 +332,30 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
 	
 	function upgradeSelectedTower(){
-		var upgradeCost = towers[selectedTower].sellPrice*towers[selectedTower].tier + (50*(towers[selectedTower].tier+1));
-		if(towers[selectedTower].tier < 2 && catnip >= upgradeCost){
-			towers[selectedTower].upgrade();
-			console.log("upgrading tower to tier "+towers[selectedTower].tier);
-			updateSelectedTowerHTML(towers[selectedTower].typeName, towers[selectedTower].tier, towers[selectedTower].sellPrice)
-			catnip -= upgradeCost;
+		if(selectedTower != null){
+			var upgradeCost = towers[selectedTower].sellPrice*towers[selectedTower].tier + (50*(towers[selectedTower].tier+1));
+			if(towers[selectedTower].tier < 2 && catnip >= upgradeCost){
+				towers[selectedTower].upgrade();
+				console.log("upgrading tower to tier "+towers[selectedTower].tier);
+				updateSelectedTowerHTML(towers[selectedTower].typeName, towers[selectedTower].tier, towers[selectedTower].sellPrice)
+				catnip -= upgradeCost;
+			}
 		}
 	}
 	
 	function sellSelectedTower(){
-		var gonzo = towers.splice(selectedTower,1);
-		console.log ("selling tower");
-		console.log(gonzo[0].sellPrice);
-		catnip += gonzo[0].sellPrice;
-		selectedTower = null;
-		clearSelectedTowerHTML();
+		if(selectedTower != null){
+			var gonzo = towers.splice(selectedTower,1);
+			console.log ("selling tower");
+			console.log(gonzo[0].sellPrice);
+			catnip += gonzo[0].sellPrice;
+			selectedTower = null;
+			clearSelectedTowerHTML();
+		}
+	}
+	
+	function sendNextWave(){
+		Game.gameLoop.addCreep1()
 	}
 	
 	function addBasicTower(){
@@ -608,6 +621,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 			
+			//handling keyboard inputs...
+			
+			keyboard.update(ticktime);
+			
+			
 			for(var c in creeps){
            		creeps[c].update(elapsedTime);
            		for(var j=0; j<towers.length; j++){
@@ -718,14 +736,21 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		populateTowerGrid();
 		gameState = gameStateBuild;
 		startTime = performance.now();
-		mouse = input.Mouse();
+		
 		calcMutex = false;
         shortestPath = calcShortestPath();
         console.log(shortestPath);
 		requestAnimationFrame(gameloop);
 	}
 	
+	function setSellKey(){
+	}
 	
+	function setUpgradeKey(){
+	}
+	
+	function setWaveKey(){
+	}
 	
 	return {
 		start: initializeGame,
@@ -742,7 +767,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		upgradeSelectedTower:upgradeSelectedTower,
 		showScreen:showScreen,
 		addPellet: addPellet,
+		sendNextWave:sendNextWave,
         generateCreepDeathPoof: generateCreepDeathPoof,
+        upgradeKey: upgradeKey,
+		sellKey: sellKey,
+		nextLevelKey: nextLevelKey,
+		setSellKey: setSellKey,
+		setUpgradeKey: setUpgradeKey,
+		setWaveKey: setWaveKey,
+		keyboard:keyboard,
         generateTowerSalePoof: generateTowerSalePoof,
         generateBombTrailDot: generateBombTrailDot,
         generateBombBoomPoof: generateBombBoomPoof,
