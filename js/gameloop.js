@@ -145,14 +145,162 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
     
     function generateCreepDeathPoof(xin,yin){
+        var b = -1;
         for(var p=0;p<15;p++){
+            if(p>=8){
+                b = 1;
+            }
             tempParticle = gameobjects.Particle({
-                pos:{x:(xin+Math.random()*10),y:yin},
-                life: 1000,
-                dx: 0,
+                pos:{x:(xin+Math.random()*30),y:yin+Math.random()*10},
+                life: 500,
+                dx: b,
                 dy: 5,
-                color: '#006600'
+                color: 'rgba(0,110,0,0.8)'
             });
+            particles.push(tempParticle);
+        }
+    }
+    
+    function generateTowerSalePoof(xin, yin){
+        var b = -1;
+        for(var p=0;p<15;p++){
+            if(p>=8){
+                b = 1;
+            }
+            tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*30),y:yin+Math.random()*10},
+                life: 500,
+                dx: b,
+                dy: -5,
+                color: 'rgba(0,110,0,0.8)'
+            });
+            particles.push(tempParticle);
+        }
+    }
+    
+    
+    function generateBombTrailDot(xin, yin){
+        for(var p=0;p<4;p++){
+            if(p==0){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: -1,
+                dy: 0,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            else if(p==1){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+              else if(p==2){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 1,
+                dy: 0,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            particles.push(tempParticle);
+        }
+    }
+    
+    function generateBombBoomPoof(xin, yin){
+            for(var p=0;p<24;p++){
+            if(p<=5){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: -2,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else if(p<=11){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -2,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+              else if(p<=17){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 2,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -2,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+            particles.push(tempParticle);
+        }
+    }
+    
+     function generateMissilePoof(xin, yin){
+            for(var p=0;p<16;p++){
+            if(p<=3){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: -1,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else if(p<=7){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+              else if(p<=11){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 1,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
             particles.push(tempParticle);
         }
     }
@@ -493,7 +641,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
                
             for(var p=0;p<particles.length;p++){
                 if(particles[p].update(ticktime)==true){
-                    //whoop whoop still alive 
+                    //and believe me I am still alive. Doing science and I'm still alive
                 }
                 else{
                     particles.splice(p,1);
@@ -628,6 +776,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		setUpgradeKey: setUpgradeKey,
 		setWaveKey: setWaveKey,
 		keyboard:keyboard,
+        generateTowerSalePoof: generateTowerSalePoof,
+        generateBombTrailDot: generateBombTrailDot,
+        generateBombBoomPoof: generateBombBoomPoof,
+        generateMissilePoof: generateMissilePoof,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));

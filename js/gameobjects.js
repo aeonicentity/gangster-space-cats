@@ -327,6 +327,32 @@ Game.gameobjects = (function(graphics,assets){
             color: spec.color
         }
         
+        
+        that.update = function(ticktime){
+            spec.life -= ticktime;
+            
+            if(spec.life > 0){
+                //move particle
+                that.pos.y += that.dy;
+                that.pos.x += that.dx;
+                
+             that.particle = graphics.Circle({
+				center: {x: that.pos.x, y: that.pos.y},
+				radius: 2,
+				fill: spec.color,
+				line: 0,
+				lineColor: spec.color,
+			});
+			that.radius = 2;
+                return true;
+            }
+            else{
+                return false;
+            }
+            
+
+        };
+        
 			that.particle = graphics.Circle({
 				center: {x: that.pos.x, y: that.pos.y},
 				radius: 2,
@@ -335,20 +361,6 @@ Game.gameobjects = (function(graphics,assets){
 				lineColor: 'rgba(255,251,15,0.3)',
 			});
 			that.radius = 2;
-        
-        that.update = function(ticktime){
-            spec.life -= ticktime;
-            
-            if(spec.life > 0){
-                //move particle
-                spec.x += spec.dx;
-                spec.y += spec.dy;
-                return true;
-            }
-            else{
-                return false;
-            }
-        };
         
         that.draw = function(){
             that.particle.draw()
