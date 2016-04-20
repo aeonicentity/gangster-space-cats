@@ -172,6 +172,133 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             particles.push(tempParticle);
         }
     }
+    
+    
+    function generateBombTrailDot(xin, yin){
+        for(var p=0;p<4;p++){
+            if(p==0){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: -1,
+                dy: 0,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            else if(p==1){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+              else if(p==2){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 1,
+                dy: 0,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*10},
+                life: 200,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(212,212,212,0.3)'
+            });
+            }
+            particles.push(tempParticle);
+        }
+    }
+    
+    function generateBombBoomPoof(xin, yin){
+            for(var p=0;p<24;p++){
+            if(p<=5){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: -2,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else if(p<=11){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -2,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+              else if(p<=17){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 2,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*40},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -2,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+            particles.push(tempParticle);
+        }
+    }
+    
+     function generateMissilePoof(xin, yin){
+            for(var p=0;p<16;p++){
+            if(p<=3){
+                tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: -1,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else if(p<=7){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+              else if(p<=11){
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 1,
+                dy: 0,
+                color: 'rgba(225,115,0,0.3)'
+            });
+            }
+            else{
+               tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*10),y:yin+Math.random()*20},
+                life: 200+Math.random()*60,
+                dx: 0,
+                dy: -1,
+                color: 'rgba(225,200,0,0.3)'
+            });
+            }
+            particles.push(tempParticle);
+        }
+    }
 	
 	function updateSelectedTowerHTML(towerType,tier,sellPrice){
 		document.getElementById('selected_towertype').innerHTML = towerType;
@@ -496,8 +623,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
                
             for(var p=0;p<particles.length;p++){
                 if(particles[p].update(ticktime)==true){
-                     console.log("y pos in gameloop " + particles[p].pos.y);
-                    //whoop whoop still alive 
+                    //and believe me I am still alive. Doing science and I'm still alive
                 }
                 else{
                     particles.splice(p,1);
@@ -618,6 +744,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addPellet: addPellet,
         generateCreepDeathPoof: generateCreepDeathPoof,
         generateTowerSalePoof: generateTowerSalePoof,
+        generateBombTrailDot: generateBombTrailDot,
+        generateBombBoomPoof: generateBombBoomPoof,
+        generateMissilePoof: generateMissilePoof,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));
