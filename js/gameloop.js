@@ -140,13 +140,34 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
     
     function generateCreepDeathPoof(xin,yin){
+        var b = -1;
         for(var p=0;p<15;p++){
+            if(p>=8){
+                b = 1;
+            }
             tempParticle = gameobjects.Particle({
-                pos:{x:(xin+Math.random()*10),y:yin},
-                life: 1000,
-                dx: 0,
+                pos:{x:(xin+Math.random()*30),y:yin+Math.random()*10},
+                life: 500,
+                dx: b,
                 dy: 5,
-                color: '#006600'
+                color: 'rgba(0,110,0,0.8)'
+            });
+            particles.push(tempParticle);
+        }
+    }
+    
+    function generateTowerSalePoof(xin, yin){
+        var b = -1;
+        for(var p=0;p<15;p++){
+            if(p>=8){
+                b = 1;
+            }
+            tempParticle = gameobjects.Particle({
+                pos:{x:(xin+Math.random()*30),y:yin+Math.random()*10},
+                life: 500,
+                dx: b,
+                dy: -5,
+                color: 'rgba(0,110,0,0.8)'
             });
             particles.push(tempParticle);
         }
@@ -475,6 +496,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
                
             for(var p=0;p<particles.length;p++){
                 if(particles[p].update(ticktime)==true){
+                     console.log("y pos in gameloop " + particles[p].pos.y);
                     //whoop whoop still alive 
                 }
                 else{
@@ -595,6 +617,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		showScreen:showScreen,
 		addPellet: addPellet,
         generateCreepDeathPoof: generateCreepDeathPoof,
+        generateTowerSalePoof: generateTowerSalePoof,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));
