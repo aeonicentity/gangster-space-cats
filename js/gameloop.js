@@ -661,7 +661,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					for(var c=0; c<creeps.length; c++){
 						if(pellets[i].box.collidesWith(creeps[c].box)){
 							pellets.splice(i,1);
-							i--;
+							--i;
 							console.log("creep hit!");
 							if(creeps[c].hit(50)){ //if the creep is dead
 								creeps.splice(c,1);
