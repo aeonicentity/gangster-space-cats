@@ -11,17 +11,17 @@
 				<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
 				
 				<div id="menu">
-				    <span id="current_catnip">catnip : 0</span>
-				    <button type="button" id="about">About</button>
+					lives :<span id="current_lives">10</span>
+				    catnip :<span id="current_catnip">0</span>
 				    <center>
-				    <h2>I can has towers?</h2>
+				    <b>I can has towers?</b><br>
 				    <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
 				    <button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
 				    <button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
 				    <button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
 				    <br>
 				    <hr>
-				    <h4>Currently Selected</h4>
+				    <b>Currently Selected</b><br>
 				    Type:<span id="selected_towertype">---</span>
 				    <br>
 				    Level:<span id="selected_towerlevel">---</span>

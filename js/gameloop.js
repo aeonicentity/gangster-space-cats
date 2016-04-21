@@ -27,9 +27,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var selectedTower = null;
 	var catnip = 500;
 	
-	var upgradeKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_U];
-	var sellKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_S];
-	var nextLevelKey = [KeyEvent.DOM_VK_ALT,KeyEvent.DOM_VK_G];
+	var setKeyType = null;
+	
+	var upgradeKey = [KeyEvent.DOM_VK_U];
+	var sellKey = [KeyEvent.DOM_VK_S];
+	var nextLevelKey = [KeyEvent.DOM_VK_G];
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
@@ -58,7 +60,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	
 	
-	function calcShortestPath(){
+	function calcShortestPath(startx,starty,endx,endy){
 	console.log('begin');
 	if(!calcMutex){
 		//using dijkstra's.
@@ -115,10 +117,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		pos = towerGrid[4][13];
 		var path = [];
 		while (pos.parent!=null){
-			path.push({x:((pos.x+1)*50)+25,y:((pos.y+1)*50)+25});
+			path.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
 			pos = pos.parent;
 		}
-		path.push({x:0+25,y:(4*50)+25});
+		path.push({x:0,y:(4*50)});
 		
 	}calcMutex = true;
 	return path;
@@ -347,7 +349,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		if(selectedTower != null){
 			var gonzo = towers.splice(selectedTower,1);
 			console.log ("selling tower");
-			console.log(gonzo[0].sellPrice);
+			console.log(gonzo);
+			//console.log(gonzo[0].sellPrice);
+			towerGrid[(Math.round(gonzo[0].pos.y/50)-1)][(Math.round(gonzo[0].pos.x/50)-1)].filled = false;
 			catnip += gonzo[0].sellPrice;
 			selectedTower = null;
 			clearSelectedTowerHTML();
@@ -712,6 +716,78 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	gameStateBattle = function(){ //placeholder function for game logic on battle state.
 	}
 	
+	gameStateSetKeyCode = (function(){
+		var that = {capturedKeyCombo: {}}
+		var beginCaptureFlag = false; //this flag will indicate we're starting capture.
+		var actionCaptured = false;
+		var capturedKeyCombo = {};
+		var maxKeyPressed = -1;
+		
+		function keysSame(dic1,dic2){
+			
+			for(var key in dic1){
+				if(!(key in dic2)){
+					return false;
+				}
+			}
+			/*console.log(dic1);
+			console.log('vs');
+			console.log(dic2);*/
+			return true;
+		}
+		
+		that.update = function(elapsedTime){
+			keyboard.update(elapsedTime);
+			if(keyboard.totalKeysPressed > 0 && !beginCaptureFlag){
+				beginCaptureFlag = true;
+			}
+			if( (keyboard.totalKeysPressed >= maxKeyPressed) && beginCaptureFlag){
+				capturedKeyCombo = keyboard.getCopyOfKeys(); //grab a copy of the currently depressed keys
+				maxKeyPressed = keyboard.totalKeysPressed;
+				actionCaptured = true;
+				
+			}else{
+				beginCaptureFlag=false;
+			}
+			if(keyboard.totalKeysPressed == 0 && actionCaptured){
+				//switch statement for action set types
+				
+				console.log('captured key combo');
+				console.log(capturedKeyCombo);
+				
+				var tempConvertedKeyCombo = [];
+				
+				for(var attr in capturedKeyCombo){
+					tempConvertedKeyCombo.push(parseInt(attr));
+				}
+				console.log(tempConvertedKeyCombo);
+				
+				switch(setKeyType){
+					case "Sell":
+						Game.gameLoop.sellKey = tempConvertedKeyCombo;
+						console.log("setting sell key to : ");
+						console.log(Game.gameLoop.sellKey);
+						break;
+					case "Upgrade":
+						Game.gameLoop.upgradeKey = tempConvertedKeyCombo;
+						
+						break;
+					case "Level":
+						Game.gameLoop.nextLevelKey = tempConvertedKeyCombo;
+						break;
+				}
+				
+				//change game state.
+				showScreen('state-controls');
+				actionCaptured = false;
+				gameState = gameStateBuild;
+			}
+		}
+		that.render = function(elapsedTime){
+		}
+		return that;
+	}());
+	
 	function showScreen(id) {
 		var screen = 0,
 			active = null;
@@ -744,12 +820,20 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
 	
 	function setSellKey(){
+		console.log("key set pressed");
+		setKeyType = "Sell";
+		gameState = gameStateSetKeyCode;
 	}
 	
 	function setUpgradeKey(){
+		setKeyType = "Upgrade";
+		gameState = gameStateSetKeyCode;
 	}
 	
 	function setWaveKey(){
+		setKeyType = "Level";
+		gameState = gameStateSetKeyCode;
+		
 	}
 	
 	return {
