@@ -72,6 +72,7 @@ Game.gameobjects = (function(graphics,assets){
 			lastFire:null,
 			damage:spec.damage,
 			pelletType:spec.pelletType,
+			aa:spec.aa,
 		};
 		
 		that.turret = graphics.Texture({
@@ -115,8 +116,9 @@ Game.gameobjects = (function(graphics,assets){
 			that.turret.draw();
 		};
 		
-		function crossProduct2d(v1, v2) {
-			return (v1.x * v2.y) - (v1.y * v2.x);
+		that.clearTarget = function(){
+			that.idle = true;
+			that.target = null;
 		}
 		
 		that.selectTarget = function(target){
@@ -133,6 +135,10 @@ Game.gameobjects = (function(graphics,assets){
 			if(that.range >= curDistance){
 				return true;
 			}return false;
+		}
+		
+		function crossProduct2d(v1, v2) {
+			return (v1.x * v2.y) - (v1.y * v2.x);
 		}
 		
 		function computeAngle(rotation, ptCenter, ptTarget) {
@@ -202,6 +208,7 @@ Game.gameobjects = (function(graphics,assets){
 							angle: that.currentFace,
 							type: that.pelletType,
 							damage: that.damage,
+							aa:that.aa,
 						}));
 					}
 				}
@@ -229,6 +236,7 @@ Game.gameobjects = (function(graphics,assets){
 			idleRotationAngle: null,
 			box: CollisionBox(spec.pos.x-25,spec.pos.y-25,spec.pos.x+25,spec.pos.y+25),
 			damage: spec.damage,
+			aa:spec.aa,
 		};
 		that.radius = graphics.Circle({
 			center: that.pos,
@@ -258,6 +266,7 @@ Game.gameobjects = (function(graphics,assets){
 			radius: spec.radius,
 			damage: that.damage,
 			pelletType: spec.pelletType,
+			aa:that.aa,
 		});
 		
 		that.isInRange = function(x,y){
@@ -267,6 +276,11 @@ Game.gameobjects = (function(graphics,assets){
 		that.rotateTo = function (angle){
 			that.tower.faceTo(angle);
 		};
+		
+		that.clearTarget = function (target){
+			that.idle = true;
+			that.tower.clearTarget();
+		}
 		
 		that.selectTarget = function (target){
 			that.idle = false;
@@ -390,6 +404,7 @@ Game.gameobjects = (function(graphics,assets){
             speed: spec.speed,
             rotation: spec.rotation,
             path: spec.path,
+            air: spec.air,
         }
         that.sprite = graphics.SpriteSheet({
         	type: spec.type,
@@ -486,6 +501,40 @@ Game.gameobjects = (function(graphics,assets){
 			pellet:null,
 			radius: null,
 			damage: spec.damage,
+			aa:spec.aa,
+		}
+		
+		function crossProduct2d(v1, v2) {
+			return (v1.x * v2.y) - (v1.y * v2.x);
+		}
+		
+		function computeAngle(rotation, ptCenter, ptTarget) {
+			var v1 = {
+					x : Math.cos(rotation),
+					y : Math.sin(rotation)
+				},
+				v2 = {
+					x : ptTarget.x - ptCenter.x,
+					y : ptTarget.y - ptCenter.y
+				},
+				dp,
+				angle;
+
+			v2.len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+			v2.x /= v2.len;
+			v2.y /= v2.len;
+
+			dp = v1.x * v2.x + v1.y * v2.y;
+			angle = Math.acos(dp);
+
+			//
+			// Get the cross product of the two vectors so we can know
+			// which direction to rotate.
+			cp = crossProduct2d(v1, v2);
+			return {
+				angle : angle,
+				crossProduct : cp
+			};
 		}
 		
 		if(that.type == 0){
@@ -546,6 +595,29 @@ Game.gameobjects = (function(graphics,assets){
 			var checkPos = that.pellet.getPos();
 			var newX = checkPos.x + that.speed * tick/1000 * Math.cos(that.angle);
 			var newY = checkPos.y + that.speed * tick/1000 * Math.sin(that.angle);
+			switch(that.type){
+				case 0:
+					break;
+				case 1:
+					Game.gameLoop.generateBombTrailDot(newX,newY);
+					break;
+				case 2:
+					//modify angle
+					var result = computeAngle(that.angle, checkPos, that.target);
+					if (result.crossProduct > 0) {
+						that.angle += (Math.PI*2)/50;
+					} else {
+						that.angle -= (Math.PI*2)/50;
+					}
+					//recalculate 
+					var newX = checkPos.x + that.speed * tick/1000 * Math.cos(that.angle);
+					var newY = checkPos.y + that.speed * tick/1000 * Math.sin(that.angle);
+					break;
+				case 3:
+					break;
+				
+			}
+			
 			that.pellet.moveTo(newX,newY);
 			that.box.updatePosCenter(newX,newY,2);
 		}

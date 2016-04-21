@@ -18,6 +18,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     var pellets = [];
     var particles = [];
 	var towerGrid = [];
+	var boundaryBoxes = [];
 	var shortestPath = null;
 	var sumVertex = 0;
 	var Q = [];
@@ -490,6 +491,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
+            air:false,
             path: shortestPath,
         });
         creeps.push(tempCreep);
@@ -511,6 +513,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
+            air:false,
             path: shortestPath,
             
         });
@@ -533,6 +536,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
+            air:true,
             path: shortestPath,
         };
         console.log(spec);
@@ -676,8 +680,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					var creepLocation = creeps[c].reportPos();
 					//console.log(creepLocation);
 					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
-						//console.log("target aquired!");
-						towers[j].selectTarget(creepLocation);
+						console.log(towers[j].tower.pelletType);
+						if(creeps[c].air == false && (towers[j].tower.pelletType == 1 || towers[j].tower.pelletType == 3)){ //bomb and frost towers ground only
+							towers[j].selectTarget(creepLocation);
+						}else if(creeps[c].air == true && towers[j].tower.pelletType == 2){ //missle towers air only
+							towers[j].selectTarget(creepLocation);
+						}else{
+							towers[j].selectTarget(creepLocation);
+						}
+					}else{
+						towers[j].clearTarget();
 					}
 				}
            	}
@@ -685,7 +697,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             for(var p=0;p<particles.length;p++){
                 if(particles[p].update(ticktime)==true){
                     //and believe me I am still alive. Doing science and I'm still alive
-                }
+                }//<<---- what is this shit?! This isn't even the ONE TRUE BRACE STYLE!!
                 else{
                     particles.splice(p,1);
                     p--;
@@ -702,22 +714,39 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}else{
 					pellets[i].update(ticktime);
 					for(var c=0; c<creeps.length; c++){
-                        console.log("PELLET: " + pellets[i].box);
-                        console.log("CREEP " + creeps[c].box);
+                        //console.log("PELLET: " + pellets[i].box);
+                        //console.log("CREEP " + creeps[c].box);
 						if(pellets[i].box.collidesWith(creeps[c].box)){
 							var damage = pellets[i].damage;
+							var type = pellets[i].type;
+							var loc = pellets[i].pellet.getPos();
+							switch(type){
+								case 1: //generate bomb poof
+									generateBombBoomPoof(loc.x,loc.y);
+									explodeSound.play();
+									break;
+								case 2: //Generate missile Poof
+									generateMissilePoof(loc.x,loc.y);
+									explodeSound.play();
+									break;
+								case 3: //reduce creep speed
+									creeps[c].speed = (3*creeps[c].speed)/4 
+									break;
+							}
 							//console.log(pellets[i]);
 							pellets.splice(i,1);
 							i--;
 							console.log("creep hit!");
 							//console.log(pellets[i]);
 							if(creeps[c].hit(damage)){ //if the creep is dead
+								var creepLoc = creeps[c].pos;
+								generateCreepDeathPoof(creepLoc.x,creepLoc.y);
 								creeps.splice(c,1);
                                 deathSound.play();
                                 //console.log(creeps[c].pos.x);
                                 //generateCreepDeathPoof(creeps[c].pos.x, creeps[c].pos.y);
                                 c--;
-								console.log("killing creep");
+								console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
 							}
 						}
 						//console.log("pellet hit!");
@@ -732,6 +761,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		
 			//updating game elements
 			graphics.clear();
+			
+			for(var b=0; b<boundaryBoxes.length; b++){
+				boundaryBoxes[b].draw();
+			}
 			
 			for(var i in towers){
 				towers[i].draw();
@@ -859,6 +892,64 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		populateTowerGrid();
 		gameState = gameStateBuild;
 		startTime = performance.now();
+		
+		/*initialize boundary boxes to create the border*/
+		boundaryBoxes.push(graphics.Rectangle({
+			x:0,
+			y:0,
+			width:25,
+			height:(graphics.gameHeight/2)-25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:0,
+			y:(graphics.gameHeight/2)+25,
+			width:25,
+			height:(graphics.gameHeight/2)-25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:graphics.gameWidth-25,
+			y:0,
+			width:25,
+			height:(graphics.gameHeight/2)-25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:graphics.gameWidth-25,
+			y:(graphics.gameHeight/2)+25,
+			width:25,
+			height:(graphics.gameHeight/2)-25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:0,
+			y:0,
+			width:(graphics.gameWidth/2)-25,
+			height:25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:(graphics.gameWidth/2)+25,
+			y:0,
+			width:(graphics.gameWidth/2)-25,
+			height:25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:0,
+			y:graphics.gameHeight-25,
+			width:(graphics.gameWidth/2)-25,
+			height:25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
+		boundaryBoxes.push(graphics.Rectangle({
+			x:(graphics.gameWidth/2)+25,
+			y:graphics.gameHeight-25,
+			width:(graphics.gameWidth/2)-25,
+			height:25,
+			fill:'rgba(255,255,255,0.5)',
+		}));
 		
 		calcMutex = false;
         shortestPath = calcShortestPath();
