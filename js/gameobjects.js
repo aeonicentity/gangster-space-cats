@@ -445,8 +445,6 @@ Game.gameobjects = (function(graphics,assets){
                 if(that.path.length > 1){
                 that.path.pop();
                 b = that.path.length - 1;
-                console.log(that.path.length);
-                console.log("SHIFT");
                 }
             }
             if(that.path[b].x >= that.pos.x){

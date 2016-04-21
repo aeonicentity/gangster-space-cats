@@ -72,14 +72,22 @@
 		    	<button id="id-score-clear">Clear</button>
 		    </div>
         </div>
+        <div id="audio">
+            <audio controls autoplay>
+                <source src="assets/MeowMix.mp3" type="audio/mpeg">
+                 Your browser does not support the audio element.
+            </audio>
+            </div>
 	</body>
 	<script>Game = {}</script>
+    <script src="js/audio.js"></script>
 	<script src="js/context.js"></script>
 	<script src="js/input.js"></script>
 	<script src="js/graphics.js"></script>
 	<script src="js/asset.js"></script>
 	<script src="js/gameobjects.js"></script>
 	<script src="js/gameloop.js"></script>
+    
 	<script>
 		Game.gameLoop.start()
 	</script>

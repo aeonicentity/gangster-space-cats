@@ -144,6 +144,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	function addPellet(p){
 		pellets.push(p);
+        fireSound.play();
 	}
     
     function generateCreepDeathPoof(xin,yin){
@@ -348,6 +349,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	function sellSelectedTower(){
 		if(selectedTower != null){
 			var gonzo = towers.splice(selectedTower,1);
+            towersellSound.play();
 			console.log ("selling tower");
 			console.log(gonzo);
 			//console.log(gonzo[0].sellPrice);
@@ -640,6 +642,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 						tempTower.radiusOff();
 						towers.push(tempTower);
+                        towerplaceSound.play();
 						tempTower = null;
 					}else{
 						towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = false;
@@ -699,16 +702,21 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}else{
 					pellets[i].update(ticktime);
 					for(var c=0; c<creeps.length; c++){
+                        console.log("PELLET: " + pellets[i].box);
+                        console.log("CREEP " + creeps[c].box);
 						if(pellets[i].box.collidesWith(creeps[c].box)){
 							var damage = pellets[i].damage;
 							//console.log(pellets[i]);
 							pellets.splice(i,1);
-							--i;
+							i--;
 							console.log("creep hit!");
 							//console.log(pellets[i]);
 							if(creeps[c].hit(damage)){ //if the creep is dead
 								creeps.splice(c,1);
-								c--;
+                                deathSound.play();
+                                //console.log(creeps[c].pos.x);
+                                //generateCreepDeathPoof(creeps[c].pos.x, creeps[c].pos.y);
+                                c--;
 								console.log("killing creep");
 							}
 						}
