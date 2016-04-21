@@ -55,19 +55,28 @@ Game.input = (function (){
 	function Keyboard() {
 		var that = {
 				keys : {},
-				handlers : []
+				handlers : [],
+				keysDown: false,
+				endActionFlag: false,
+				totalKeysPressed: 0,
 			},
 			handler;
 		
 		function keyPress(e) {
 			that.keys[e.keyCode] = e.timeStamp;
-			console.log("key "+e.keyCode+" pressed");
+			that.keysDown = true;
 		}
 		
 		function keyRelease(e) {
 			delete that.keys[e.keyCode];
+			that.keysDown = false;
+			that.totalKeysPressed = Object.keys(that.keys).length //we need up update this length
+			
+			if(that.totalKeysPressed == 0){
+				that.endActionFlag = false; //if there are no keys pressed, reset the end action flag.
+			}
+			
 		}
-		
 		// ------------------------------------------------------------------
 		//
 		// Allows the client code to register a keyboard handler
@@ -88,7 +97,7 @@ Game.input = (function (){
 		//
 		// ------------------------------------------------------------------
 		that.update = function(elapsedTime) {
-			
+			that.totalKeysPressed = Object.keys(that.keys).length
 			for (handler = 0; handler < that.handlers.length; handler++) {
 				var keyComboFlag = true;
 				for(var i =0; i < that.handlers[handler].key.length; i++){
@@ -102,6 +111,16 @@ Game.input = (function (){
 				}
 			}
 			//console.log(that.keys);
+		};
+		
+		that.getCopyOfKeys = function(){
+			var copy = that.keys.constructor();
+			for (var attr in that.keys){
+				if (that.keys.hasOwnProperty(attr)){
+					copy[attr] = that.keys[attr];
+				}
+			}
+			return copy;
 		};
 		
 		//
@@ -118,11 +137,21 @@ Game.input = (function (){
 		that.setUpgradeTower = function (keycombo){
 			console.log("setting upgrade to:");
 			console.log(keycombo);
-			that.registerCommand(keycombo,function(){Game.gameLoop.upgradeSelectedTower()});
+			that.registerCommand(keycombo,function(){
+				if(!that.endActionFlag){
+					Game.gameLoop.upgradeSelectedTower()
+					that.endActionFlag = true;
+				}
+			});
 		};
 		
 		that.setNextWave = function(keycombo){
-			that.registerCommand(keycombo,function(){Game.gameLoop.sendNextWave()});
+			that.registerCommand(keycombo,function(){
+				if(!that.endActionFlag){
+					Game.gameLoop.sendNextWave();
+					that.endActionFlag = true;
+				}
+			});
 		};
 		
 		return that;
