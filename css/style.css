@@ -39,7 +39,15 @@ button{
     padding-right: 20px;
 }
 
+h4{
+    margin: 3px;
+}
 
+
+#upgrade{
+    height:50px;
+    padding: 0px;
+}
 
 #basic{
     background-image:url("../assets/proj_tower_1.png");

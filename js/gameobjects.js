@@ -11,7 +11,7 @@ Game.gameobjects = (function(graphics,assets){
 			y:y,
 			width:dx-x,
 			height:dy-y,
-			fill:'rgba(255,0,0,1)',
+			fill:'rgba(255,0,0,0.2)',
 			rotation:0,
 		});
 		
