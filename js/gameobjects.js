@@ -68,8 +68,10 @@ Game.gameobjects = (function(graphics,assets){
 			fireOrder: null,
 			idle: true,
 			rotationSpeed: 200,//rotation speed for one revolution in seconds
-			fireRate:500,
+			fireRate:spec.fireRate,
 			lastFire:null,
+			damage:spec.damage,
+			pelletType:spec.pelletType,
 		};
 		
 		that.turret = graphics.Texture({
@@ -198,7 +200,8 @@ Game.gameobjects = (function(graphics,assets){
 							origin:{x: that.pos.x,y: that.pos.y},
 							target:that.target,
 							angle: that.currentFace,
-							type:0,
+							type: that.pelletType,
+							damage: that.damage,
 						}));
 					}
 				}
@@ -225,6 +228,7 @@ Game.gameobjects = (function(graphics,assets){
 			idle: true,
 			idleRotationAngle: null,
 			box: CollisionBox(spec.pos.x-25,spec.pos.y-25,spec.pos.x+25,spec.pos.y+25),
+			damage: spec.damage,
 		};
 		that.radius = graphics.Circle({
 			center: that.pos,
@@ -252,6 +256,8 @@ Game.gameobjects = (function(graphics,assets){
 			rotationSpeed: 8000,
 			fireRate: spec.fireRate,
 			radius: spec.radius,
+			damage: that.damage,
+			pelletType: spec.pelletType,
 		});
 		
 		that.isInRange = function(x,y){
@@ -481,7 +487,7 @@ Game.gameobjects = (function(graphics,assets){
 			//vectorAngle:
 			pellet:null,
 			radius: null,
-			damage: 0,
+			damage: spec.damage,
 		}
 		
 		if(that.type == 0){
@@ -493,7 +499,33 @@ Game.gameobjects = (function(graphics,assets){
 				lineColor: 'rgba(255,255,255,1)',
 			});
 			that.radius = 2;
-			that.damage = 1;
+		}else if(that.type == 1){ //bomb type!
+			that.pellet = graphics.Circle({
+				center: {x: spec.origin.x, y: spec.origin.y},
+				radius: 4,
+				fill: 'rgba(140,140,140,1)',
+				line: 0,
+				lineColor: 'rgba(140,140,140,1)',
+			});
+			that.radius = 4;
+		}else if(that.type == 2){ //missile type!
+			that.pellet = graphics.Circle({
+				center: {x: spec.origin.x, y: spec.origin.y},
+				radius: 2,
+				fill: 'rgba(255,255,255,1)',
+				line: 0,
+				lineColor: 'rgba(255,255,255,1)',
+			});
+			that.radius = 2;
+		}else if(that.type == 3){//freeze type!
+			that.pellet = graphics.Circle({
+				center: {x: spec.origin.x, y: spec.origin.y},
+				radius: 2,
+				fill: 'rgba(66,203,245,1)',
+				line: 0,
+				lineColor: 'rgba(66,203,245,1)',
+			});
+			that.radius = 2;
 		}
 		
 		that.box = CollisionBox(spec.origin.x-that.radius,spec.origin.y-that.radius,spec.origin.x+that.radius,spec.origin.y+that.radius);

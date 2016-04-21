@@ -353,6 +353,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			//console.log(gonzo[0].sellPrice);
 			towerGrid[(Math.round(gonzo[0].pos.y/50)-1)][(Math.round(gonzo[0].pos.x/50)-1)].filled = false;
 			catnip += gonzo[0].sellPrice;
+			generateTowerSalePoof(gonzo[0].pos.x,gonzo[0].pos.y);
 			selectedTower = null;
 			clearSelectedTowerHTML();
 		}
@@ -370,8 +371,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				tier:0,
 				upgradePath:['proj_tower_1','proj_tower_2','proj_tower_3'],
 				sellPrice:100,
-				fireRate: 2,
+				fireRate: 500,
 				radius: 150,
+				aa:true,
+				damage: 50,
+				pelletType:0,
 				upgradeActions: [
 					null,
 					function(that){that.tower.fireRate = 250;},
@@ -391,9 +395,20 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				tier:0,
 				upgradePath:['bomb_tower_1','bomb_tower_2','bomb_tower_3'],
 				sellPrice:150,
-				fireRate: 2,
+				fireRate: 1000,
 				radius: 100,
-				upgradeActions:[null,null,null],
+				aa:false,
+				damage:0,
+				pelletType:1,
+				upgradeActions:[
+					null,
+					function(that){
+						//increase damage
+					},
+					function(that){
+						that.tower.range = 150;
+					}
+				],
 			});
 			catnip -= 150;
 		}
@@ -409,9 +424,22 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				tier:0,
 				upgradePath:['air_tower_1','air_tower_2','air_tower_3'],
 				sellPrice:150,
-				fireRate: 2,
+				fireRate: 500,
 				radius: 175,
-				upgradeActions:[null,null,null],
+				aa:true,
+				damage:50,
+				pelletType:2,
+				upgradeActions:[
+					null,
+					function(that){
+						//increase damage
+						that.tower.damage = 100;
+					},
+					function(that){
+						//increase damage
+						that.tower.damage = 150;
+					}
+				],
 			});
 			catnip -= 150;
 		}
@@ -426,9 +454,17 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				tier:0,
 				upgradePath:['slow_tower_1','slow_tower_2','slow_tower_3'],
 				sellPrice:200,
-				fireRate: 2,
-				radius: 100,
-				upgradeActions:[null,null,null],
+				fireRate: 500,
+				radius: 150,
+				aa:false,
+				damage:2,
+				pelletType:3,
+				upgradeActions:[
+					null,
+					function(that){that.tower.fireRate = 250;},
+					function(that){
+						//increase slow ammt
+					}],
 			});
 			catnip -= 200;
 		}
@@ -664,10 +700,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					pellets[i].update(ticktime);
 					for(var c=0; c<creeps.length; c++){
 						if(pellets[i].box.collidesWith(creeps[c].box)){
+							var damage = pellets[i].damage;
+							//console.log(pellets[i]);
 							pellets.splice(i,1);
 							--i;
 							console.log("creep hit!");
-							if(creeps[c].hit(50)){ //if the creep is dead
+							//console.log(pellets[i]);
+							if(creeps[c].hit(damage)){ //if the creep is dead
 								creeps.splice(c,1);
 								c--;
 								console.log("killing creep");
