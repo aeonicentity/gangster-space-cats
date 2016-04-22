@@ -78,7 +78,7 @@ h4{
 }
 
 #audio{
-    visibility: hidden;
+    visibility: visible;
 }
 
 button:hover{
