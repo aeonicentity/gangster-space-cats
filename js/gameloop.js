@@ -386,11 +386,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				aa:true,
 				damage: 50,
 				pelletType:0,
-				upgradeActions: [
-					null,
-					function(that){that.tower.fireRate = 250;},
-					function(that){that.tower.fireRate = 100;}
-				],
+				upgradeActions: [null,function(that){that.tower.fireRate = 250;},function(that){that.tower.fireRate = 100;}],
 			});
 			catnip -= 100;
 		}
@@ -410,15 +406,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				aa:false,
 				damage:50,
 				pelletType:1,
-				upgradeActions:[
-					null,
-					function(that){
-						//increase damage
-					},
-					function(that){
-						that.tower.range = 150;
-					}
-				],
+				upgradeActions:[null,function(that){that.tower.damage = 75;},function(that){that.tower.range = 150;}],
 			});
 			catnip -= 150;
 		}
@@ -439,17 +427,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				aa:true,
 				damage:50,
 				pelletType:2,
-				upgradeActions:[
-					null,
-					function(that){
-						//increase damage
-						that.tower.damage = 100;
-					},
-					function(that){
-						//increase damage
-						that.tower.damage = 150;
-					}
-				],
+				upgradeActions:[null,function(that){that.tower.damage = 100;},function(that){that.tower.damage = 150;}],
 			});
 			catnip -= 150;
 		}
@@ -469,12 +447,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				aa:false,
 				damage:2,
 				pelletType:3,
-				upgradeActions:[
-					null,
-					function(that){that.tower.fireRate = 250;},
-					function(that){
-						//increase slow ammt
-					}],
+				upgradeActions:[null,function(that){that.tower.fireRate = 250;},function(that){that.tower.damage = 50;}],
 			});
 			catnip -= 200;
 		}
