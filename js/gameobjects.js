@@ -278,7 +278,7 @@ Game.gameobjects = (function(graphics,assets){
 		};
 		
 		that.clearTarget = function (target){
-			that.idle = true;
+			//that.idle = true;
 			that.tower.clearTarget();
 		}
 		
@@ -405,6 +405,7 @@ Game.gameobjects = (function(graphics,assets){
             rotation: spec.rotation,
             path: spec.path,
             air: spec.air,
+            live: true,
         }
         that.sprite = graphics.SpriteSheet({
         	type: spec.type,
@@ -502,6 +503,7 @@ Game.gameobjects = (function(graphics,assets){
 			radius: null,
 			damage: spec.damage,
 			aa:spec.aa,
+			live:true,
 		}
 		
 		function crossProduct2d(v1, v2) {

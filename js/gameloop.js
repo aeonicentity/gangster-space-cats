@@ -489,7 +489,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             width: 50,
             height: 50,
             destination: {x:800, y:300},
-            speed: 2,
+            speed: 1,
             rotation: 0,
             air:false,
             path: shortestPath,
@@ -671,12 +671,19 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			//handling keyboard inputs...
 			
 			keyboard.update(ticktime);
+			for(var c=0; c<creeps.length; c++){
+				creeps[c].update(elapsedTime);
+				if(!creeps[c].live){
+					creeps.splice(c,1);
+				}
+			}
 			
-			
-			for(var c in creeps){
-           		creeps[c].update(elapsedTime);
-           		for(var j=0; j<towers.length; j++){
-					towers[j].update(elapsedTime);
+			for(var j=0; j<towers.length; j++){
+				towers[j].update(elapsedTime);
+				if(creeps.length == 0){
+					towers[j].clearTarget();
+				}
+           		for(var c=0; c<creeps.length; c++){
 					var creepLocation = creeps[c].reportPos();
 					//console.log(creepLocation);
 					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
@@ -691,6 +698,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					}else{
 						towers[j].clearTarget();
 					}
+					break;
 				}
            	}
                
@@ -707,50 +715,49 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             }
 			
 			for(var i =0; i<pellets.length; i++){
-				if(pellets[i].maxDistance()){
+				pellets[i].update(ticktime);
+				
+				for(var c=0; c<creeps.length && pellets.length > 0; c++){
+                    //console.log("PELLET: " + pellets[i].box);
+                    //console.log("CREEP " + creeps[c].box);
+					if(pellets[i].box.collidesWith(creeps[c].box) && creeps[c].live){
+						pellets[i].live = false;
+						var damage = pellets[i].damage;
+						var type = pellets[i].type;
+						var loc = pellets[i].pellet.getPos();
+						switch(type){
+							case 1: //generate bomb poof
+								generateBombBoomPoof(loc.x,loc.y);
+								explodeSound.play();
+								break;
+							case 2: //Generate missile Poof
+								generateMissilePoof(loc.x,loc.y);
+								explodeSound.play();
+								break;
+							case 3: //reduce creep speed
+								creeps[c].speed = (3*creeps[c].speed)/4 
+								break;
+						}
+						//console.log(pellets[i]);
+						console.log("creep hit!");
+						//console.log(pellets[i]);
+						if(creeps[c].hit(damage)){ //if the creep is dead
+							var creepLoc = creeps[c].pos;
+							generateCreepDeathPoof(creepLoc.x,creepLoc.y);
+							creeps[c].live = false;
+                            deathSound.play();
+                            //console.log(creeps[c].pos.x);
+                            //generateCreepDeathPoof(creeps[c].pos.x, creeps[c].pos.y);
+                            
+							console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
+						}
+						
+					}
+					//console.log("pellet hit!");
+				}
+				if(pellets[i].maxDistance() || !pellets[i].live){
 					pellets.splice(i,1);
 					i--;
-					//console.log("despawn pellet");
-				}else{
-					pellets[i].update(ticktime);
-					for(var c=0; c<creeps.length; c++){
-                        //console.log("PELLET: " + pellets[i].box);
-                        //console.log("CREEP " + creeps[c].box);
-						if(pellets[i].box.collidesWith(creeps[c].box)){
-							var damage = pellets[i].damage;
-							var type = pellets[i].type;
-							var loc = pellets[i].pellet.getPos();
-							switch(type){
-								case 1: //generate bomb poof
-									generateBombBoomPoof(loc.x,loc.y);
-									explodeSound.play();
-									break;
-								case 2: //Generate missile Poof
-									generateMissilePoof(loc.x,loc.y);
-									explodeSound.play();
-									break;
-								case 3: //reduce creep speed
-									creeps[c].speed = (3*creeps[c].speed)/4 
-									break;
-							}
-							//console.log(pellets[i]);
-							pellets.splice(i,1);
-							i--;
-							console.log("creep hit!");
-							//console.log(pellets[i]);
-							if(creeps[c].hit(damage)){ //if the creep is dead
-								var creepLoc = creeps[c].pos;
-								generateCreepDeathPoof(creepLoc.x,creepLoc.y);
-								creeps.splice(c,1);
-                                deathSound.play();
-                                //console.log(creeps[c].pos.x);
-                                //generateCreepDeathPoof(creeps[c].pos.x, creeps[c].pos.y);
-                                c--;
-								console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
-							}
-						}
-						//console.log("pellet hit!");
-					}
 				}
 			}
 			
