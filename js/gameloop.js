@@ -73,9 +73,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		return temp;
 	}
 	
-	function calcShortestPath(startx,starty,endx,endy){ //4,0,4,13
-	console.log('begin');
+	function calcShortestPath(startx,starty,endx,endy, creep){ //4,0,4,13
 	var temppath = [];
+    if(creep != null){
+        towerGrid[starty][startx].filled = true;
+    }
 	if(!calcMutex){
 		//using dijkstra's.
 		Q = [];
@@ -137,7 +139,17 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		//temppath.push({x:(startx*50)+50,y:(starty*50)+50});
 		
 	}calcMutex = true;
+    if(endx>endy){
+    temppath.unshift({x:801,y:250});
+    }
+    else{
+        temppath.unshift({x:400,y:501});
+    }
+    if(creep != null){
+        towerGrid[starty][startx].filled = false;
+    }
 	return temppath;
+    
 	}
 
     
@@ -476,15 +488,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		
 	}
     
-    function addCreep1(dir){
-        var start = {x: 0, y:0};
-        var destination = dir;
+    function addCreep1(){
     	console.log("spawing creep along:");
     	console.log(shortestPath);
         tempCreep = gameobjects.Creep({
             type: 1,
             typepath:'creep_1',
 			pos: {x:-50, y:250},
+            grid:{x:0, y:4},
             value: 5,
             spriteTime : [500,500,500,500],
 			health: 150,
@@ -506,7 +517,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         tempCreep = gameobjects.Creep({
             type: 2,
             typepath:'creep_2',
-			pos: {x:-50, y:300},
+			pos: {x:-50, y:250},
+            grid:{x:0,y:4},
             value: 5,
             spriteTime : [500,500,500,500],
             width: 50,
@@ -530,7 +542,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             type: 3,
             spriteCount: 4,
             typepath:'creep_air',
-			pos: {x:0, y:300},
+			pos: {x:-50, y:250},
+            grid:{x:0,y:4},
             value: 5,
             spriteTime : [500,500,500,500],
             creepWidth: 50,
@@ -680,6 +693,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 						//console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 						tempTower.radiusOff();
 						towers.push(tempTower);
+                        
+                        for(var u=0;u<creeps.length;u++){ 
+                           console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
+                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//FIX MEEEEEE
+                           console.log(creeps[u].path);
+                           
+                        }
                         towerplaceSound.play();
 						tempTower = null;
 					}else{

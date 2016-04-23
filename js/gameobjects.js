@@ -222,7 +222,7 @@ Game.gameobjects = (function(graphics,assets){
 	}
 	
 	function Tower(spec){
-		console.log(spec);
+
 		var that = {
 			tier: spec.tier,
 			typeName: spec.typeName,
@@ -436,6 +436,7 @@ Game.gameobjects = (function(graphics,assets){
             type: spec.type,
             typepath: spec.typepath,
 			pos: {x:spec.pos.x,y:spec.pos.y},
+            grid:{x:spec.grid.x, y:spec.grid.y},
             value: spec.value,
             width: spec.creepWidth,
             height: spec.height,
@@ -500,6 +501,9 @@ Game.gameobjects = (function(graphics,assets){
             var b = that.path.length - 1;
             if(that.pos.x < that.path[b].x + 25 && that.pos.x > that.path[b].x - 25 && that.pos.y < that.path[b].y + 25 && that.pos.y > that.path[b].y - 25){
                 if(that.path.length > 1){
+                    that.grid.x = (that.path[b].x-25)/50 - 0.5;
+                    that.grid.y = (that.path[b].y-25)/50 - 0.5;
+                    console.log(that.grid.x, that.grid.y);
                 that.path.pop();
                 b = that.path.length - 1;
                 }
@@ -519,22 +523,6 @@ Game.gameobjects = (function(graphics,assets){
             else if(that.path[b].y<that.pos.y){
                 that.pos.y -= that.speed;
             }
-            }
-            else{
-                if(that.pos.x>that.pos.y){
-                    if(that.pos.y>325){
-                        that.pos.y-=that.speed;
-                    }
-                    else if(that.pos.y<225){
-                        that.pos.y+=that.speed;
-                    }
-                    else{
-                        that.pos.x += that.speed;
-                    }
-                }
-                else{
-                    that.pos.y+= that.speed;
-                }
             }
             that.sprite.moveTo(that.pos.x,that.pos.y)
         };
