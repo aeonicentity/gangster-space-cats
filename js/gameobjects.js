@@ -478,7 +478,7 @@ Game.gameobjects = (function(graphics,assets){
                 that.pos.y -= that.speed;
             }
             }
-            else{
+            /*else{
                 if(that.pos.x>that.pos.y){
                     if(that.pos.y>325){
                         that.pos.y-=that.speed;
@@ -493,7 +493,7 @@ Game.gameobjects = (function(graphics,assets){
                 else{
                     that.pos.y+= that.speed;
                 }
-            }
+            }*/
             that.sprite.moveTo(that.pos.x,that.pos.y)
         };
         
