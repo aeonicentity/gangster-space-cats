@@ -1,20 +1,20 @@
 Game.levels = (function(gameobjects){
 	var that = {}
 	
-	function addCreep1(path){
+	function addCreep1(path,pathType,startGridX,startGridY,startPos){
         var tempCreep = gameobjects.Creep({
             type: 1,
             typepath:'creep_1',
-			pos: {x:0, y:300},
-			grid: {x:0,y:4},
+			pos: {x:startPos.x, y:startPos.y},
+			grid: {x:startGridX,y:startGridY},
             value: 5,
             spriteTime : [500,500,500,500],
 			health: 150,
             maxhealth: 150,
             spriteCount: 4,
             width: 50,
-            height: 50,
-            destination: {x:800, y:300},
+            height: 50, 
+            horizontal: pathType,
             speed: 1,
             rotation: 0,
             air:false,
@@ -23,20 +23,20 @@ Game.levels = (function(gameobjects){
         return tempCreep;
     }
     
-    function addCreep2(path){
+    function addCreep2(path,pathType,startGridX,startGridY,startPos){
         var tempCreep = gameobjects.Creep({
             type: 2,
             typepath:'creep_2',
-			pos: {x:0, y:300},
-			grid: {x:0,y:4},
+			pos: {x:startPos.x, y:startPos.y},
+			grid: {x:startGridX,y:startGridY},
             value: 5,
             spriteTime : [500,500,500,500],
             width: 50,
             spriteCount: 4,
             height: 50,
+            horizontal: pathType,
 			health: 100,
             maxhealth: 100,
-            destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
             air:false,
@@ -46,20 +46,20 @@ Game.levels = (function(gameobjects){
         return tempCreep;
     }
     
-    function addCreepAir(path){
+    function addCreepAir(path,pathType,startGridX,startGridY,startPos){
     	var tempCreep = gameobjects.Creep({
             type: 3,
             spriteCount: 4,
             typepath:'creep_air',
-			pos: {x:0, y:300},
-			grid: {x:0,y:4},
+			pos: {x:startPos.x, y:startPos.y},
+			grid: {x:startGridX,y:startGridY},
             value: 5,
             spriteTime : [500,500,500,500],
             creepWidth: 50,
             height: 50,
 			health: 50,
+			horizontal: pathType,
             maxhealth: 50,
-            destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
             air:true,
@@ -105,11 +105,14 @@ Game.levels = (function(gameobjects){
 			offset: 500,
 		}
 		
+		/*for(var i=0; i < 10; i++){
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+		}*/
 		for(var i=0; i < 10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
 		}
-		that.creepQueue[1000] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
 		
 		that.update = function(tickTime){
 			var creepReturn = [];
@@ -140,7 +143,7 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i< 15; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		
 		that.update = function(tickTime){
@@ -172,11 +175,11 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*(i+2),500);
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),false,0,4,{x:0,y:250});
 		}
 		
 		that.update = function(tickTime){
@@ -208,15 +211,15 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*(i+2),500);
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		for(var i=0; i<5; i++){
 			var timing = randomTime(that.offset*(1+2),500);
-			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath(),true,0,4,{x:0,y:250});
 		}
 		
 		that.update = function(tickTime){
@@ -248,17 +251,17 @@ Game.levels = (function(gameobjects){
 		//Ground type 1 creeps, make more of these than the other two.
 		for(var i=0; i<(10 + (5*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		//Ground type 2 creeps, make a smaller number of these.
 		for(var i=0; i<(10 + (3*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
 		//Make about half as many air creeps as ground type 2 creeps.
 		for(var i=0; i<(10 + (2*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath(),true,0,4,{x:0,y:250});
 		}
 		
 		
@@ -296,11 +299,15 @@ Game.levels = (function(gameobjects){
 		}
 		
 	}
-	function updateUnspawnedPaths(newSP){
+	function updateUnspawnedPaths(newHorizontalSP,newVertSP){
 		for(var i in curLevel.creepQueue){
 			if(curLevel.creepQueue.hasOwnProperty(i)){
-				if(!curLevel.creepQueue.air){
-					curLevel.creepQueue[i].path = deepCopy(newSP);
+				if(!curLevel.creepQueue[i].air){
+					if(curLevel.creepQueue[i].horizontal){
+						curLevel.creepQueue[i].path = deepCopy(newHorizontalSP);
+					}else{
+						curLevel.creepQueue[i].path = deepCopy(newVertSP);
+					}
 				}
 			}
 		}

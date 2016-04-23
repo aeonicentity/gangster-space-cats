@@ -440,6 +440,7 @@ Game.gameobjects = (function(graphics,assets){
             value: spec.value,
             width: spec.creepWidth,
             height: spec.height,
+            horizontal: spec.horizontal,
 			health: spec.health,
             destination: spec.destination,
             speed: spec.speed,
