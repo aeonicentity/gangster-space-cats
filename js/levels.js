@@ -34,8 +34,8 @@ Game.levels = (function(gameobjects){
             width: 50,
             spriteCount: 4,
             height: 50,
-			health: 5000,
-            maxhealth: 5000,
+			health: 100,
+            maxhealth: 100,
             destination: {x:800, y:300},
             speed: 2,
             rotation: 0,
@@ -101,6 +101,158 @@ Game.levels = (function(gameobjects){
 			var timing = randomTime(that.offset*i,500);
 			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
 		}
+		that.creepQueue[5000] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+		
+		that.update = function(tickTime){
+			var creepReturn = [];
+			that.elapsedLevelTime += tickTime;
+			for(var i in that.creepQueue){
+				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
+					console.log('spawning at '+i);
+					creepReturn.push(that.creepQueue[i]);
+					delete that.creepQueue[i];
+				}
+			}
+			if(Object.keys(that.creepQueue).length === 0){
+				that.levelComplete = true;
+			}
+			return creepReturn;
+		};
+		
+		return that;
+	}
+
+	function level2(){
+		that = {
+			elapsedLevelTime: null,
+			creepQueue: {},
+			offset: 500,
+			levelComplete: false,
+		}
+		
+		for(var i=0; i< 15; i++){
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+		}
+		
+		that.update = function(tickTime){
+			var creepReturn = [];
+			that.elapsedLevelTime += tickTime;
+			for(var i in that.creepQueue){
+				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
+					console.log('spawning at '+i);
+					creepReturn.push(that.creepQueue[i]);
+					delete that.creepQueue[i];
+				}
+			}
+			if(Object.keys(that.creepQueue).length === 0){
+				that.levelComplete = true;
+			}
+			return creepReturn;
+		};
+		
+		return that;
+	}
+	
+	function level3(){
+		that = {
+			elapsedLevelTime: null,
+			creepQueue: {},
+			offset: 300,
+			levelComplete: false,
+		}
+		
+		for(var i=0; i<10; i++){
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+		}
+		for(var i=0; i<10; i++){
+			var timing = randomTime(that.offset*(i+2),500);
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+		}
+		
+		that.update = function(tickTime){
+			var creepReturn = [];
+			that.elapsedLevelTime += tickTime;
+			for(var i in that.creepQueue){
+				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
+					console.log('spawning at '+i);
+					creepReturn.push(that.creepQueue[i]);
+					delete that.creepQueue[i];
+				}
+			}
+			if(Object.keys(that.creepQueue).length === 0){
+				that.levelComplete = true;
+			}
+			return creepReturn;
+		};
+		
+		return that;
+	}
+	
+	function level4(){
+		that = {
+			elapsedLevelTime: null,
+			creepQueue: {},
+			offset: 300,
+			levelComplete: false,
+		}
+		
+		for(var i=0; i<10; i++){
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+		}
+		for(var i=0; i<10; i++){
+			var timing = randomTime(that.offset*(i+2),500);
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+		}
+		for(var i=0; i<5; i++){
+			var timing = randomTime(that.offset*(1+2),500);
+			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+		}
+		
+		that.update = function(tickTime){
+			var creepReturn = [];
+			that.elapsedLevelTime += tickTime;
+			for(var i in that.creepQueue){
+				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
+					console.log('spawning at '+i);
+					creepReturn.push(that.creepQueue[i]);
+					delete that.creepQueue[i];
+				}
+			}
+			if(Object.keys(that.creepQueue).length === 0){
+				that.levelComplete = true;
+			}
+			return creepReturn;
+		};
+		
+		return that;
+	}
+
+	function generateRandomLevel(levelIndex){
+		that = {
+			elapsedLevelTime: null,
+			creepQueue: {},
+			offset:300-(5*levelIndex),
+			levelComplete: false,
+		}
+		//Ground type 1 creeps, make more of these than the other two.
+		for(var i=0; i<(10 + (5*levelIndex-3)); i++){
+			var timing = randomTime(that.offset*i,500-(5*levelIndex));
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
+		}
+		//Ground type 2 creeps, make a smaller number of these.
+		for(var i=0; i<(10 + (3*levelIndex-3)); i++){
+			var timing = randomTime(that.offset*i,500-(5*levelIndex));
+			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath());
+		}
+		//Make about half as many air creeps as ground type 2 creeps.
+		for(var i=0; i<(10 + (2*levelIndex-3)); i++){
+			var timing = randomTime(that.offset*i,500-(5*levelIndex));
+			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+		}
+		
 		
 		that.update = function(tickTime){
 			var creepReturn = [];
@@ -114,50 +266,6 @@ Game.levels = (function(gameobjects){
 			}
 			return creepReturn;
 		};
-		
-		return that;
-	}
-
-	function level2(){
-		that = {
-			elapsedLevelTime: null,
-			creepQueue: {},
-		}
-		
-		that.update = function(tickTime){}
-		
-		return that;
-	}
-	
-	function level3(){
-		that = {
-			elapsedLevelTime: null,
-			creepQueue: {},
-		}
-		
-		that.update = function(tickTime){}
-		
-		return that;
-	}
-	
-	function level4(){
-		that = {
-			elapsedLevelTime: null,
-			creepQueue: {},
-		}
-		
-		that.update = function(tickTime){}
-		
-		return that;
-	}
-
-	function generateRandomLevel(levelIndex){
-		that = {
-			elapsedLevelTime: null,
-			creepQueue: {},
-		}
-		
-		that.update = function(tickTime){}
 		
 		return that;
 	}

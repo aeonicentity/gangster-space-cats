@@ -1,7 +1,7 @@
 var ticktime;
 
 Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects, screens, levels){
-	var rqId;
+	var rqId = null;
 	var cancelFrame = false;
 	//Game states.
 	var gameState;
@@ -30,9 +30,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var catnip = 5000;
     var lives = 10;
     var currentLevel = 0;
+    var score = 0;
+    var allowNextLevel = false;
 	
 	var setKeyType = null;
-	var drawablePath = [];
 	var startSpawn = false;
 	
 	var upgradeKey = [KeyEvent.DOM_VK_U];
@@ -65,6 +66,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 	}
 	
+	function calcDistance(x0,y0,x1,y1){
+		return Math.sqrt((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1));
+	}
+	
 	function deepCopy (array){
 		var temp = []
 		for(var i=0 ; i<array.length; i++){
@@ -78,7 +83,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     if(creep != null){
         towerGrid[starty][startx].filled = true;
     }
-	if(!calcMutex){
 		//using dijkstra's.
 		Q = [];
 		var maxx = towerGrid[0].length;
@@ -138,9 +142,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 		//temppath.push({x:(startx*50)+50,y:(starty*50)+50});
 		
-	}calcMutex = true;
+	
     if(endx>endy){
-    temppath.unshift({x:801,y:250});
+    	temppath.unshift({x:801,y:250});
     }
     else{
         temppath.unshift({x:400,y:501});
@@ -166,6 +170,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			gameState.render(elapsedTime);
 			rqId = requestAnimationFrame(gameloop)
 		}
+	}
+	
+	function setScore(){
+		document.getElementById('current_score').innerHTML = score;
 	}
 	
 	function addPellet(p){
@@ -394,11 +402,19 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			generateTowerSalePoof(gonzo[0].pos.x,gonzo[0].pos.y);
 			selectedTower = null;
 			clearSelectedTowerHTML();
+			
+			//update creep paths
+			shortestPath = calcShortestPath(0,4,13,4);
+			for(var c=0; c<creeps.length; c++){
+				creeps[c].path = calcShortestPath(creeps[c].grid.x, creeps[c].grid.y, 13, 4,1)
+			}
 		}
 	}
 	
 	function sendNextWave(){
-		Game.gameLoop.addCreep1();
+		startSpawn = true;
+		document.getElementById('nextWave').disabled = true;
+		//Game.gameLoop.addCreep1();
 		//Game.gameLoop.addCreep1();
 		//Game.gameLoop.addCreep1();
 	}
@@ -488,99 +504,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		
 	}
     
-    function addCreep1(){
-    	console.log("spawing creep along:");
-    	console.log(shortestPath);
-        tempCreep = gameobjects.Creep({
-            type: 1,
-            typepath:'creep_1',
-			pos: {x:-50, y:250},
-            grid:{x:0, y:4},
-            value: 5,
-            spriteTime : [500,500,500,500],
-			health: 150,
-            maxhealth: 150,
-            spriteCount: 4,
-            width: 50,
-            height: 50,
-            destination: {x:800, y:800},
-            speed: 1,
-            rotation: 0,
-            air:false,
-            path: deepCopy(shortestPath)
-        });
-        creeps.push(tempCreep);
-        console.log(tempCreep);
-    }
-    
-    function addCreep2(){
-        tempCreep = gameobjects.Creep({
-            type: 2,
-            typepath:'creep_2',
-			pos: {x:-50, y:250},
-            grid:{x:0,y:4},
-            value: 5,
-            spriteTime : [500,500,500,500],
-            width: 50,
-            spriteCount: 4,
-            height: 50,
-			health: 5000,
-            maxhealth: 5000,
-            destination: {x:800, y:300},
-            speed: 2,
-            rotation: 0,
-            air:false,
-            path: deepCopy(shortestPath),
-            
-        });
-        creeps.push(tempCreep);
-        console.log(tempCreep);
-    }
-    
-    function addCreepAir(){
-    	var spec = {
-            type: 3,
-            spriteCount: 4,
-            typepath:'creep_air',
-			pos: {x:-50, y:250},
-            grid:{x:0,y:4},
-            value: 5,
-            spriteTime : [500,500,500,500],
-            creepWidth: 50,
-            height: 50,
-			health: 50,
-            maxhealth: 50,
-            destination: {x:800, y:300},
-            speed: 2,
-            rotation: 0,
-            air:true,
-            path: deepCopy(shortestPath),
-        };
-        console.log(spec);
-        tempCreep = gameobjects.Creep(spec);
-        tempCreep.width = 50;
-        creeps.push(tempCreep);
-        console.log(tempCreep);
-    }
-    
-    function addCreepBoss(){
-        tempCreep = gameobjects.Creep({
-            type: 4,
-            typepath:'creep_boss',
-			pos: {x:100, y:300},
-            value: 5,
-            width: 50,
-            height: 50,
-			health: 50,
-            destination: {x:800, y:300},
-            speed: 5,
-            rotation: 0,
-            path: [],
-        });
-        creeps.push(tempCreep);
-        console.log(tempCreep);
-    }
-    
     function drawTowerGrid(grid){
     	
     	for(var i=0; i<grid.length; i++){
@@ -665,6 +588,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 		
 		that.update = function (elapsedTime){
+			//first check to see if we lost
+			if(lives<0){
+				for(var t=0; t<towers.length; t++){
+					score += towers[t].sellPrice*2;
+				}
+				score = 100 * currentLevel+1
+				gameState = gameStateFailure;
+			}
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
 			
@@ -674,6 +605,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				
 				for (var i=0; i< levelSpawns.length; i++){
 					creeps.push(levelSpawns[i]);
+				}
+				if(levels.getCurLevel().levelComplete){
+					currentLevel++;
+					levels.setLevel(currentLevel);
+					startSpawn = false;
+					document.getElementById('nextWave').disabled = false;
 				}
 			}
 			
@@ -696,7 +633,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
                         
                         for(var u=0;u<creeps.length;u++){ 
                            console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
-                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//FIX MEEEEEE
+                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//Fixed! having a bug though where this crashes the computer on occasions.
                            console.log(creeps[u].path);
                            
                         }
@@ -739,6 +676,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 				if(!creeps[c].live){
 					generateScoreParticle(creeps[c].pos.x,creeps[c].pos.y,creeps[c].value);
+					score += creeps[c].value;
 					catnip += creeps[c].value;
 					creeps.splice(c,1);
 					c--;
@@ -757,22 +695,43 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				if(creeps.length == 0){
 					towers[j].clearTarget();
 				}
+				var target = null;
            		for(var c=0; c<creeps.length; c++){
 					var creepLocation = creeps[c].reportPos();
 					//console.log(creepLocation);
-					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
+					if(target != null){
+						var distance = calcDistance(target.x,target.y,creepLocation.x,creepLocation.y);
+					}
+					var inRange = towers[j].isInRange(creepLocation.x,creepLocation.y);
+					if(	inRange && 
+						((target != null && distance<target.distance) || target == null)
+						){
 						//console.log(towers[j].tower.pelletType);
 						if(creeps[c].air == false && (towers[j].tower.pelletType == 1 || towers[j].tower.pelletType == 3)){ //bomb and frost towers ground only
-							towers[j].selectTarget(creepLocation);
+							//towers[j].selectTarget(creepLocation);
+							target = creepLocation;
+							target.distance = distance;
 						}else if(creeps[c].air == true && towers[j].tower.pelletType == 2){ //missle towers air only
-							towers[j].selectTarget(creepLocation);
+							//towers[j].selectTarget(creepLocation);
+							target = creepLocation;
+							target.distance = distance;
 						}else if(towers[j].tower.pelletType == 0){
-							towers[j].selectTarget(creepLocation);
+							//towers[j].selectTarget(creepLocation);
+							target = creepLocation;
+							target.distance = distance;
 						}
+						
 					}else{
-						towers[j].clearTarget();
+						if(inRange){
+							break;
+						}
 					}
-					break;
+					
+				}
+				if(target != null){
+					towers[j].selectTarget(creepLocation);
+				}else{
+					towers[j].clearTarget();
 				}
            	}
                
@@ -825,7 +784,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 							if(creeps[c].hit(damage)){ //if the creep is dead
 								var creepLoc = creeps[c].pos;
 								generateCreepDeathPoof(creepLoc.x,creepLoc.y);
-								//generateScoreParticle(creepLoc.x,creepLoc.y,creeps[c].value);
+								score += creeps[c].value;
 								catnip += creeps[c].value;
 		                        deathSound.play();
 		                        creeps[c].live = false;
@@ -844,6 +803,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					i--;
 				}
 			}
+			setScore();
 			
 		};
 		that.render = function (elapsedTime){ //placeholder function for game logic on build state.
@@ -881,18 +841,61 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(testTarget != null){
 				testTarget.draw();
 			}
-			/*
+			//Debugging code for checking intersects and pathing.
 			drawTowerGrid(towerGrid);
 			drawPath(shortestPath);
 			drawPath(shortestPathTop);
-			*/
+			
 			
 		};
 		return that;
 	}());
 	
-	gameStateBattle = function(){ //placeholder function for game logic on battle state.
-	}
+	gameStateFailure = (function(){ //placeholder function for game logic on Game Loss
+		var that = {};
+		
+		that.kitler = graphics.Texture({
+			center: {x:graphics.gameWidth/2,y:100},
+			width:200,
+			height:200,
+			image: assets.getAsset('adolfkitler'),
+			rotation : 0,
+			moveRate : 200,
+		});
+		
+		that.gameOverText = graphics.Text({
+			x: graphics.gameWidth/2, 
+			y: graphics.gameHeight/2,
+			txt: "Game Over",
+			font: '80px Arial',
+		});
+		that.insultText = graphics.Text({
+			x: graphics.gameWidth/2,
+			y: (graphics.gameHeight/2)+20,
+			txt: "You're litterally worse than Kitler.",
+			font: '20px Arial',
+		});
+		that.instructionText = graphics.Text({
+			x: graphics.gameWidth/2,
+			y: graphics.gameHeight/2+50,
+			txt: "Press N for new game",
+			font: '30px Arial',
+		});
+		
+		that.update = function(elapsedTime){
+			keyboard.update(ticktime);
+			
+		}
+		
+		that.render = function(elapsedTime){
+			that.kitler.draw();
+			that.gameOverText.draw();
+			that.insultText.draw();
+			that.instructionText.draw();
+		}
+		
+		return that;
+	}())
 	
 	gameStateSetKeyCode = (function(){
 		var that = {capturedKeyCombo: {}}
@@ -985,8 +988,21 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	}
 	
 	function initializeGame(){
+		/*Clear Variables*/
+		towers = [];
+		creeps = [];
+		pellets = [];
+		particles = [];
+		towerGrid = [];
+		boundaryBoxes = [];
+		explodingBombBoxes = [];
+		lives = 10;
+		currentLevel = 0;
+		score = 0;
+		//cancelFrame = false;
 		/*We should use this to initialize variables we declare below*/
 		console.log ("Initializing...");
+		
 		populateTowerGrid();
 		gameState = gameStateBuild;
 		startTime = performance.now();
@@ -1053,9 +1069,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		calcMutex = false;
         shortestPath = calcShortestPath(0,4,13,4);
         //shortestPathTop = calcShortestPath(0,7,7,7);
-        console.log(shortestPath);
+        //console.log(shortestPath);
+        startSpawn = false;
         levels.setLevel(0);
-		requestAnimationFrame(gameloop);
+        if(rqId == null){
+			requestAnimationFrame(gameloop);
+		}
 	}
 	
 	function setSellKey(){
@@ -1079,20 +1098,21 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		return deepCopy(shortestPath);
 	}
 	
+	function getHorizontalAirPath(){
+		return [{x:801,y:250}];
+	}
+	
 	function startSpawningCreeps(){
 		startSpawn = true;
 	}
 	
 	return {
 		start: initializeGame,
+		cancelFrame:cancelFrame,
 		addBasicTower: addBasicTower,
 		addBombTower: addBombTower,
 		addAirTower: addAirTower,
 		addSlowTower: addSlowTower,
-		addCreep1: addCreep1,
-		addCreep2: addCreep2,
-		addCreepAir: addCreepAir,
-		addCreepBoss: addCreepBoss,
 		sellSelectedTower:sellSelectedTower,
 		upgradeSelectedTower:upgradeSelectedTower,
 		showScreen:showScreen,
@@ -1112,6 +1132,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         generateBombBoomPoof: generateBombBoomPoof,
         generateMissilePoof: generateMissilePoof,
         getHorizontalPath: getHorizontalPath,
+        getHorizontalAirPath:getHorizontalAirPath,
         
         towerGrid: towerGrid,
 	};

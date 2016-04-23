@@ -154,6 +154,13 @@ Game.input = (function (){
 			});
 		};
 		
+		that.setNewGame = function(keycombo){
+			that.registerCommand(keycombo,function(){
+				Game.gameLoop.cancelFrame = true;
+				Game.gameLoop.start();
+			});
+		}
+		
 		return that;
 	}
 	

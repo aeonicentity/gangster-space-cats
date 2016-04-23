@@ -13,6 +13,7 @@
 				<div id="menu">
 					lives :<span id="current_lives">10</span>
 				    catnip :<span id="current_catnip">0</span>
+				    score :<span id="current_score">0</span>
 				    <center>
 				    <b>I can has towers?</b><br>
 				    <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
@@ -32,6 +33,7 @@
 				    <br>
 				    <button type="button" id="upgrade" onclick="Game.gameLoop.upgradeSelectedTower()" disabled>Upgrade Tower</button>
 				    <button type="button" id="sell" onclick="Game.gameLoop.sellSelectedTower()" disabled>Sell Tower</button>
+				    <button type="button" id="nextWave" onclick="Game.gameLoop.startSpawningCreeps()" disabled>Next Level</button>
 				    </center>
 				</div>
 		    </div>
@@ -81,8 +83,9 @@
 	</body>
 	<script>Game = {}</script>
     <script src="js/audio.js"></script>
-	<script src="js/context.js"></script>
+	
 	<script src="js/input.js"></script>
+	<script src="js/context.js"></script>
 	<script src="js/graphics.js"></script>
 	<script src="js/asset.js"></script>
 	<script src="js/gameobjects.js"></script>

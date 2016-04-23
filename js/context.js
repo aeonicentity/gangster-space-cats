@@ -67,6 +67,7 @@ Game.screens['state-game'] = (function(game) {
 		Game.gameLoop.keyboard.setSellTower(Game.gameLoop.sellKey);
 		Game.gameLoop.keyboard.setUpgradeTower(Game.gameLoop.upgradeKey);
 		Game.gameLoop.keyboard.setNextWave(Game.gameLoop.nextLevelKey);
+		Game.gameLoop.keyboard.setNewGame([KeyEvent.DOM_VK_N]);
 	}
 	
 	function run(input) {

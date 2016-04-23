@@ -123,8 +123,8 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.selectTarget = function(target){
 			that.idle = false;
-			//console.log("selecting target, idle: "+that.idle);
-			//console.log(target);
+			console.log("selecting target");
+			console.log(target);
 			that.target = target;
 		}
 		
@@ -278,7 +278,7 @@ Game.gameobjects = (function(graphics,assets){
 		};
 		
 		that.clearTarget = function (target){
-			//that.idle = true;
+			that.idle = true;
 			that.tower.clearTarget();
 		}
 		
@@ -503,7 +503,7 @@ Game.gameobjects = (function(graphics,assets){
                 if(that.path.length > 1){
                     that.grid.x = (that.path[b].x-25)/50 - 0.5;
                     that.grid.y = (that.path[b].y-25)/50 - 0.5;
-                    console.log(that.grid.x, that.grid.y);
+                    //console.log(that.grid.x, that.grid.y);
                 that.path.pop();
                 b = that.path.length - 1;
                 }
@@ -532,7 +532,7 @@ Game.gameobjects = (function(graphics,assets){
 		}
         
         that.draw = function(elapsedTime){
-        	that.box.draw();
+        	//that.box.draw();
 			that.sprite.draw(elapsedTime);
 		};
 		
