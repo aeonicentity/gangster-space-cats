@@ -34,17 +34,31 @@ Game.screens['state-about'] = (function(game) {
 Game.screens['state-scores'] = (function(game) {
 
 	function getScoreString(){
-		return "";
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			if(xhttp.readyState == 4 && xhttp.status == 200){
+				//callback
+				var htmlString = "<ol>";
+				var scoreArr = JSON.parse(xhttp.responseText);
+				for(var i = 0; i<scoreArr.length; i++){
+					htmlString += "<li>"+scoreArr[i]+"</li>";
+				}
+				htmlString += "</ol>";
+				document.getElementById('id-score-zone').innerHTML = htmlString;
+			}
+		};
+		xhttp.open("GET", 'http://localhost:3000/v1/scores', true);
+		xhttp.send();
 	}
 
 	function initialize(){
 
 		
-		document.getElementById('id-score-zone').innerHTML = getScoreString();
+		getScoreString();
 			
 		document.getElementById('id-score-clear').addEventListener(
 			'click',
-			function() {Game.storage.removeAllScores();});
+			function() {Game.gameLoop.clearScores();});
 	}
 	
 	function run(input){
@@ -68,6 +82,7 @@ Game.screens['state-game'] = (function(game) {
 		Game.gameLoop.keyboard.setUpgradeTower(Game.gameLoop.upgradeKey);
 		Game.gameLoop.keyboard.setNextWave(Game.gameLoop.nextLevelKey);
 		Game.gameLoop.keyboard.setNewGame([KeyEvent.DOM_VK_N]);
+		Game.gameLoop.keyboard.setBackKey([KeyEvent.DOM_VK_ESC]);
 	}
 	
 	function run(input) {

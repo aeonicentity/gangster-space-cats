@@ -609,7 +609,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				for(var t=0; t<towers.length; t++){
 					score += towers[t].sellPrice*2;
 				}
-				score = 100 * currentLevel+1
+				score += 100 * (currentLevel+1)
+				reportScore(score);
 				gameState = gameStateFailure;
 			}
 			//console.log(that.test);
@@ -1127,9 +1128,38 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	function getHorizontalAirPath(){
 		return [{x:801,y:250}];
 	}
+	function getVerticalAirPath(){
+		return [{x:400,y:501}];
+	}
 	
 	function startSpawningCreeps(){
 		startSpawn = true;
+	}
+	
+	function reportScore(){
+		if(score != null && score != 0){
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function(){
+				if(xhttp.readyState == 4 && xhttp.status == 200){
+					console.log("score reported");
+				}
+			};
+			xhttp.open("POST", 'http://localhost:3000/v1/scores/'+score, true);
+			xhttp.send();
+		}
+	}
+	
+	function clearScores(){
+		if(score != null && score != 0){
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function(){
+				if(xhttp.readyState == 4 && xhttp.status == 200){
+					console.log("scores cleared");
+				}
+			};
+			xhttp.open("POST", 'http://localhost:3000/v1/scores/clear', true);
+			xhttp.send();
+		}
 	}
 	
 	return {
@@ -1159,9 +1189,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         generateMissilePoof: generateMissilePoof,
         getHorizontalPath: getHorizontalPath,
         getVerticalPath: getVerticalPath,
-        getHorizontalAirPath:getHorizontalAirPath,
+        getHorizontalAirPath: getHorizontalAirPath,
+        getVerticalAirPath: getVerticalAirPath,
         
         towerGrid: towerGrid,
+        reportScore: reportScore,
+        clearScores: clearScores,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens, Game.levels));

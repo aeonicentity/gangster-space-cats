@@ -2,6 +2,7 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	people = require('./public/routes/people'),
+	scores = require('./public/routes/scores'),
 	app = express();
 
 // all environments
@@ -23,6 +24,10 @@ app.get('/', function(request, response) {
 
 app.get('/v1/people', people.all);
 app.post('/v1/people', people.add);
+
+app.get('/v1/scores',scores.all);
+app.post('/v1/scores/:score',scores.add);
+app.put('/v1/scores/clear',scores.clear);
 
 //------------------------------------------------------------------
 //

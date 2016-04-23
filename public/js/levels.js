@@ -80,6 +80,10 @@ Game.levels = (function(gameobjects){
 		return temp;
 	}
 	
+	function randomBool(){
+		return Math.random()<0.5;
+	}
+	
 	function randomCreep(path){
 		var randInt = Math.floor(Math.random() * 3);
 		switch(randInt){
@@ -97,6 +101,30 @@ Game.levels = (function(gameobjects){
 				break;
 		}
 	}
+	
+	function randomCreep1(){
+		if(randomBool()){
+			return addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+		}else{
+			return addCreep1(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
+		}
+	}
+	
+	function randomCreep2(){
+		if(randomBool()){
+			return addCreep2(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+		}else{
+			return addCreep2(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
+		}
+	}
+	
+	function randomCreepAir(){
+		if(randomBool()){
+			return addCreepAir(Game.gameLoop.getHorizontalAirPath(),true,0,4,{x:0,y:250});
+		}else{
+			return addCreepAir(Game.gameLoop.getVerticalAirPath(),false,7,0,{x:400,y:0});
+		}
+	}
 
 	function level1(){
 		that = {
@@ -105,14 +133,14 @@ Game.levels = (function(gameobjects){
 			offset: 500,
 		}
 		
-		/*for(var i=0; i < 10; i++){
-			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
-		}*/
 		for(var i=0; i < 10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
 		}
+		/*for(var i=0; i < 10; i++){
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
+		}*/
 		
 		that.update = function(tickTime){
 			var creepReturn = [];
@@ -143,7 +171,7 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i< 15; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getVerticalPath(),false,7,0,{x:400,y:0});
 		}
 		
 		that.update = function(tickTime){
@@ -175,11 +203,11 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep1();
 		}
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*(i+2),500);
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),false,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep2();
 		}
 		
 		that.update = function(tickTime){
@@ -211,15 +239,15 @@ Game.levels = (function(gameobjects){
 		
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*i,500);
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep1();
 		}
 		for(var i=0; i<10; i++){
 			var timing = randomTime(that.offset*(i+2),500);
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep2();
 		}
 		for(var i=0; i<5; i++){
 			var timing = randomTime(that.offset*(1+2),500);
-			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreepAir();
 		}
 		
 		that.update = function(tickTime){
@@ -251,17 +279,17 @@ Game.levels = (function(gameobjects){
 		//Ground type 1 creeps, make more of these than the other two.
 		for(var i=0; i<(10 + (5*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep1();
 		}
 		//Ground type 2 creeps, make a smaller number of these.
 		for(var i=0; i<(10 + (3*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreep2(Game.gameLoop.getHorizontalPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreep2();
 		}
 		//Make about half as many air creeps as ground type 2 creeps.
 		for(var i=0; i<(10 + (2*levelIndex-3)); i++){
 			var timing = randomTime(that.offset*i,500-(5*levelIndex));
-			that.creepQueue[timing] = addCreepAir(Game.gameLoop.getHorizontalAirPath(),true,0,4,{x:0,y:250});
+			that.creepQueue[timing] = randomCreepAir();
 		}
 		
 		
