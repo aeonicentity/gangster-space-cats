@@ -123,8 +123,8 @@ Game.gameobjects = (function(graphics,assets){
 		
 		that.selectTarget = function(target){
 			that.idle = false;
-			console.log("selecting target");
-			console.log(target);
+			//console.log("selecting target");
+			//console.log(target);
 			that.target = target;
 		}
 		

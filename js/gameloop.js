@@ -80,7 +80,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	function calcShortestPath(startx,starty,endx,endy, creep){ //4,0,4,13
 	var temppath = [];
+	var oldState;
     if(creep != null){
+    	oldState = towerGrid[starty][startx].filled;
         towerGrid[starty][startx].filled = true;
     }
 		//using dijkstra's.
@@ -150,12 +152,23 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         temppath.unshift({x:400,y:501});
     }
     if(creep != null){
-        towerGrid[starty][startx].filled = false;
+        towerGrid[starty][startx].filled = oldState;
     }
 	return temppath;
     
 	}
 
+	function recalculateCreepsShortestPath(){
+		for(var u=0;u<creeps.length;u++){ 
+           //console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
+           if(!creeps[u].air){
+           	creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//Fixed! having a bug though where this crashes the computer on occasions.
+           //console.log(creeps[u].path);
+           }
+           
+        }
+        levels.updateUnspawnedPaths(shortestPath);
+	}
     
 	function gameloop(Ntime){
 		var elapsedTime = performance.now() - startTime;
@@ -405,9 +418,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			
 			//update creep paths
 			shortestPath = calcShortestPath(0,4,13,4);
-			for(var c=0; c<creeps.length; c++){
-				creeps[c].path = calcShortestPath(creeps[c].grid.x, creeps[c].grid.y, 13, 4,1)
-			}
+			recalculateCreepsShortestPath();
 		}
 	}
 	
@@ -631,12 +642,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 						tempTower.radiusOff();
 						towers.push(tempTower);
                         
-                        for(var u=0;u<creeps.length;u++){ 
-                           console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
-                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//Fixed! having a bug though where this crashes the computer on occasions.
-                           console.log(creeps[u].path);
-                           
-                        }
+                        
+                        recalculateCreepsShortestPath();
+                        
                         towerplaceSound.play();
 						tempTower = null;
 					}else{

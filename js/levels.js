@@ -6,7 +6,7 @@ Game.levels = (function(gameobjects){
             type: 1,
             typepath:'creep_1',
 			pos: {x:0, y:300},
-			grid: {x:0,y:0},
+			grid: {x:0,y:4},
             value: 5,
             spriteTime : [500,500,500,500],
 			health: 150,
@@ -28,7 +28,7 @@ Game.levels = (function(gameobjects){
             type: 2,
             typepath:'creep_2',
 			pos: {x:0, y:300},
-			grid: {x:0,y:0},
+			grid: {x:0,y:4},
             value: 5,
             spriteTime : [500,500,500,500],
             width: 50,
@@ -52,7 +52,7 @@ Game.levels = (function(gameobjects){
             spriteCount: 4,
             typepath:'creep_air',
 			pos: {x:0, y:300},
-			grid: {x:0,y:0},
+			grid: {x:0,y:4},
             value: 5,
             spriteTime : [500,500,500,500],
             creepWidth: 50,
@@ -70,6 +70,14 @@ Game.levels = (function(gameobjects){
 
 	function randomTime(offset, range){
 		return offset + Math.floor(Math.random() * range);
+	}
+	
+	function deepCopy (array){
+		var temp = []
+		for(var i=0 ; i<array.length; i++){
+			temp.push(array[i]);
+		}
+		return temp;
 	}
 	
 	function randomCreep(path){
@@ -101,7 +109,7 @@ Game.levels = (function(gameobjects){
 			var timing = randomTime(that.offset*i,500);
 			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
 		}
-		that.creepQueue[5000] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
+		that.creepQueue[1000] = addCreepAir(Game.gameLoop.getHorizontalAirPath());
 		
 		that.update = function(tickTime){
 			var creepReturn = [];
@@ -288,10 +296,20 @@ Game.levels = (function(gameobjects){
 		}
 		
 	}
+	function updateUnspawnedPaths(newSP){
+		for(var i in curLevel.creepQueue){
+			if(curLevel.creepQueue.hasOwnProperty(i)){
+				if(!curLevel.creepQueue.air){
+					curLevel.creepQueue[i].path = deepCopy(newSP);
+				}
+			}
+		}
+	}
 	
 	return {
 		setLevel: setLevel,
 		curLevel: curLevel,
+		updateUnspawnedPaths: updateUnspawnedPaths,
 		getCurLevel: function(){return curLevel;},
 	};
 }(Game.gameobjects)  );
