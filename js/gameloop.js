@@ -71,9 +71,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		return temp;
 	}
 	
-	function calcShortestPath(startx,starty,endx,endy){ //4,0,4,13
-	console.log('begin');
+	function calcShortestPath(startx,starty,endx,endy, creep){ //4,0,4,13
 	var temppath = [];
+    if(creep != null){
+        towerGrid[starty][startx].filled = true;
+    }
 	if(!calcMutex){
 		//using dijkstra's.
 		Q = [];
@@ -141,7 +143,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     else{
         temppath.unshift({x:400,y:501});
     }
+    if(creep != null){
+        towerGrid[starty][startx].filled = false;
+    }
 	return temppath;
+    
 	}
 
     
@@ -674,10 +680,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 						tempTower.radiusOff();
 						towers.push(tempTower);
-                        towerplaceSound.play();
-                        for(var u;u<creeps.length;u++){
-                            //genpath
+                        
+                        for(var u=0;u<creeps.length;u++){ 
+                           console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
+                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//FIX MEEEEEE
+                           console.log(creeps[u].path);
+                           
                         }
+                        towerplaceSound.play();
 						tempTower = null;
 					}else{
 						towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = false;
@@ -738,7 +748,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					var creepLocation = creeps[c].reportPos();
 					//console.log(creepLocation);
 					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
-						console.log(towers[j].tower.pelletType);
+						//console.log(towers[j].tower.pelletType);
 						if(creeps[c].air == false && (towers[j].tower.pelletType == 1 || towers[j].tower.pelletType == 3)){ //bomb and frost towers ground only
 							towers[j].selectTarget(creepLocation);
 						}else if(creeps[c].air == true && towers[j].tower.pelletType == 2){ //missle towers air only
