@@ -27,7 +27,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     var shortestPathTop = [];
 	var testTarget = null;
 	var selectedTower = null;
-	var catnip = 5000;
+	var catnip = 500;
     var lives = 10;
     var currentLevel = 0;
     var score = 0;
@@ -78,11 +78,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		return temp;
 	}
 	
-	function calcShortestPath(startx,starty,endx,endy, creep){ //4,0,4,13
-	var temppath = [];
-    if(creep != null){
-        towerGrid[starty][startx].filled = true;
-    }
+	function calcShortestPath(startx,starty,endx,endy,creep){ 
+		var temppath = [];
+		var oldState;
+		if(creep == 1){
+			oldState = towerGrid[starty][startx].filled;
+		    towerGrid[starty][startx].filled = true;
+		}
 		//using dijkstra's.
 		Q = [];
 		var maxx = towerGrid[0].length;
@@ -134,7 +136,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 		}
-		pos = towerGrid[endy][endx+1];
+		
+		pos = towerGrid[endy][endx];
 		//temppath.push({x:((endx+1)*50)+50,y:((endy)*50)+50});
 		while (pos.p!=null){
 			temppath.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
@@ -143,19 +146,34 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		//temppath.push({x:(startx*50)+50,y:(starty*50)+50});
 		
 	
-    if(endx>endy){
-    	temppath.unshift({x:801,y:250});
-    }
-    else{
-        temppath.unshift({x:400,y:501});
-    }
-    if(creep != null){
-        towerGrid[starty][startx].filled = false;
-    }
-	return temppath;
+		if(endx>endy){
+			temppath.unshift({x:801,y:250});
+		}
+		else{
+		    temppath.unshift({x:400,y:501});
+		}
+		if(creep == 1){
+		    towerGrid[starty][startx].filled = oldState;
+		}
+		return temppath;
     
 	}
 
+	function recalculateCreepsShortestPath(){
+		for(var u=0;u<creeps.length;u++){ 
+           //console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
+           if(!creeps[u].air){
+           		if(creeps[u].horizontal){
+           			creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 14, 4,1)
+           		}else{
+           			creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 7, 8,1)
+           		}
+           //console.log(creeps[u].path);
+           }
+           
+        }
+        levels.updateUnspawnedPaths(shortestPath,shortestPathTop);
+	}
     
 	function gameloop(Ntime){
 		var elapsedTime = performance.now() - startTime;
@@ -404,10 +422,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			clearSelectedTowerHTML();
 			
 			//update creep paths
-			shortestPath = calcShortestPath(0,4,13,4);
-			for(var c=0; c<creeps.length; c++){
-				creeps[c].path = calcShortestPath(creeps[c].grid.x, creeps[c].grid.y, 13, 4,1)
-			}
+			shortestPath = calcShortestPath(0,4,14,4);
+			recalculateCreepsShortestPath();
 		}
 	}
 	
@@ -622,26 +638,22 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					var lastPath = shortestPath
-					shortestPath = calcShortestPath(0,4,13,4);
-                    //shortestPathTop = calcShortestPath(0,7,7,7);
-					if(shortestPath.length > 1){
-						console.log(shortestPath);
-						console.log(shortestPathTop);
-						//console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
+					var lastPathTop = shortestPathTop;
+					shortestPath = calcShortestPath(0,4,14,4);
+                    shortestPathTop = calcShortestPath(7,0,7,8);
+					if(shortestPath.length > 1 && shortestPathTop.length >1){
 						tempTower.radiusOff();
 						towers.push(tempTower);
                         
-                        for(var u=0;u<creeps.length;u++){ 
-                           console.log("creep grid: " + creeps[u].grid.x, creeps[u].grid.y);
-                           creeps[u].path = calcShortestPath(creeps[u].grid.x, creeps[u].grid.y, 13, 4,1)//Fixed! having a bug though where this crashes the computer on occasions.
-                           console.log(creeps[u].path);
-                           
-                        }
+                        
+                        recalculateCreepsShortestPath();
+                        
                         towerplaceSound.play();
 						tempTower = null;
 					}else{
 						towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = false;
 						shortestPath = lastPath;
+						shortestPathTop = lastPathTop;
 					}
 				}else{
 					if(pos.x >= 25 && pos.x <= graphics.gameWidth-25 && pos.y >= 25 && pos.y <= graphics.gameHeight-25){
@@ -654,7 +666,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					if(towers[i].box.clickedOn(pos.x,pos.y)){
 						console.log(towers[i]);
 						selectedTower = i;
+						towers[i].showRadius = true;
 						updateSelectedTowerHTML(towers[i].typeName, towers[i].tier, towers[i].sellPrice);
+					}else{
+						towers[i].showRadius = false;
 					}
 				}
 			}
@@ -854,6 +869,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	gameStateFailure = (function(){ //placeholder function for game logic on Game Loss
 		var that = {};
 		
+		that.insults = [
+			"You're litterally worse than Kitler!",
+			"You belong in Meowshwitz!",
+			"Catastrophic Failure!",
+			"What a Catastrophy!",
+		];
+		
 		that.kitler = graphics.Texture({
 			center: {x:graphics.gameWidth/2,y:100},
 			width:200,
@@ -872,7 +894,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		that.insultText = graphics.Text({
 			x: graphics.gameWidth/2,
 			y: (graphics.gameHeight/2)+20,
-			txt: "You're litterally worse than Kitler.",
+			txt: that.insults[0],
 			font: '20px Arial',
 		});
 		that.instructionText = graphics.Text({
@@ -996,8 +1018,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		towerGrid = [];
 		boundaryBoxes = [];
 		explodingBombBoxes = [];
-		lives = 10;
+		lives = 9;
 		currentLevel = 0;
+		catnip = 500;
 		score = 0;
 		//cancelFrame = false;
 		/*We should use this to initialize variables we declare below*/
@@ -1066,9 +1089,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			fill:'rgba(255,255,255,0.5)',
 		}));
 		
-		calcMutex = false;
-        shortestPath = calcShortestPath(0,4,13,4);
-        //shortestPathTop = calcShortestPath(0,7,7,7);
+        shortestPath = calcShortestPath(0,4,14,4);
+        shortestPathTop = calcShortestPath(7,0,7,8);
         //console.log(shortestPath);
         startSpawn = false;
         levels.setLevel(0);
@@ -1096,6 +1118,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	function getHorizontalPath(){
 		return deepCopy(shortestPath);
+	}
+	
+	function getVerticalPath(){
+		return deepCopy(shortestPathTop);
 	}
 	
 	function getHorizontalAirPath(){
@@ -1132,6 +1158,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         generateBombBoomPoof: generateBombBoomPoof,
         generateMissilePoof: generateMissilePoof,
         getHorizontalPath: getHorizontalPath,
+        getVerticalPath: getVerticalPath,
         getHorizontalAirPath:getHorizontalAirPath,
         
         towerGrid: towerGrid,
