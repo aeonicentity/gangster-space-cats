@@ -290,9 +290,19 @@ Game.graphics = (function(){
           };
           image.src = 'assets/'+spec.typepath+'.png';
           
+        that.rotateRight = function(tickTime) {
+            console.log("roating right:");
+			spec.rotation += spec.rotateRate * (tickTime);
+		};
+		
+		that.rotateLeft = function(tickTime) {
+            console.log("rotating left");
+			spec.rotation -= spec.rotateRate * (tickTime);
+		};
           
 		that.update = function(elapsedTime, forward) {
 			spec.elapsedTime += ticktime;
+            
             //console.log(spec.spriteTime[spec.sprite]);
 			//
 			// Check to see if we should update the animation frame
@@ -303,6 +313,7 @@ Game.graphics = (function(){
 				// it needs to be accounted for the next sprite animation frame.
 				spec.elapsedTime -= spec.spriteTime[spec.sprite];
 				//
+                
 				// Depending upon the direction of the animation...
 				if (forward === true) {
 					spec.sprite += 1;

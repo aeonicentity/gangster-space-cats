@@ -444,6 +444,8 @@ Game.gameobjects = (function(graphics,assets){
             destination: spec.destination,
             speed: spec.speed,
             rotation: spec.rotation,
+            dirFace: spec.dirFace,
+            rotationSpeed: 8000,
             path: spec.path,
             air: spec.air,
             live: true,
@@ -467,6 +469,7 @@ Game.gameobjects = (function(graphics,assets){
         
 		that.update = function(elapsedTime) {
 			that.sprite.update(elapsedTime);
+            that.rotateRight(ticktime);
             that.creepTo(elapsedTime);
             that.box.updatePosCenter(that.pos.x,that.pos.y,25);
 		};
@@ -476,13 +479,17 @@ Game.gameobjects = (function(graphics,assets){
 		};
         
 		
-		that.rotateRight = function(elapsedTime) {
-			spec.rotation += spec.rotateRate * (elapsedTime);
+		that.rotateRight = function(ticktime) {
+			spec.rotation += spec.rotateRate * (ticktime);
 		};
 		
-		that.rotateLeft = function(elapsedTime) {
-			spec.rotation -= spec.rotateRate * (elapsedTime);
+		that.rotateLeft = function(ticktime) {
+			spec.rotation -= spec.rotateRate * (ticktime);
 		};
+        
+        that.faceTo = function(angle){
+			that.dirFace = angle;
+		}
         
         that.moveTo = function(x,y){
 			that.pos.x = x;
@@ -513,6 +520,7 @@ Game.gameobjects = (function(graphics,assets){
             if(that.path.length >= 1){
             if(that.path[b].x >= that.pos.x){
                 that.pos.x += that.speed;
+                that.sprite.rotateRight(elapsedTime);
             }
             else if(that.path[b].x < that.pos.x){
                 that.pos.x -= that.speed;
