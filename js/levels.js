@@ -1,4 +1,6 @@
-Game.levels = (function(game,gameobjects){
+Game.levels = (function(gameobjects){
+	var that = {}
+	
 	function addCreep1(path){
         var tempCreep = gameobjects.Creep({
             type: 1,
@@ -87,24 +89,28 @@ Game.levels = (function(game,gameobjects){
 
 	function level1(){
 		that = {
-			elapsedLevelTime: null,
+			elapsedLevelTime: 0,
 			creepQueue: {},
+			offset: 500,
 		}
 		
 		for(var i=0; i < 10; i++){
-			var timing = randomTime(offset*i,500);
-			creepQueue[timing] = addCreep1(game.getHorizontalPath());
+			var timing = randomTime(that.offset*i,500);
+			that.creepQueue[timing] = addCreep1(Game.gameLoop.getHorizontalPath());
 		}
 		
 		that.update = function(tickTime){
-			var creepReturn = []
-			that.elapsedLevelTime+=tickTime;
+			var creepReturn = [];
+			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
+					console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
+					delete that.creepQueue[i];
 				}
+			}
 			return creepReturn;
-		}
+		};
 		
 		return that;
 	}
@@ -153,22 +159,28 @@ Game.levels = (function(game,gameobjects){
 		return that;
 	}
 	
-	function getLevel(level){
+	var curLevel = null;
+	
+	function setLevel(level){
 		if(level == 0){ //Only send ground 1 from left to right
-			return level1();
+			curLevel = level1();
+			console.log(curLevel);
+			console.log("setting level: 1");
 		}else if(level == 1){ //Send only ground 1 from both entrances
-			return level2();
+			curLevel = level2();
 		}else if(level == 2){ //Send only grounds from both entances
-			return level3();
+			curLevel = level3();
 		}else if(level == 3){ //send everything from everywhere
-			return level4();
+			curLevel = level4();
 		}else{
-			return generateRandomLevel(level);
+			curLevel = generateRandomLevel(level);
 		}
 		
 	}
 	
 	return {
-		getLevel: getLevel,
-	}
-}(Game.gameLoop, Game.gameobjects));
+		setLevel: setLevel,
+		curLevel: curLevel,
+		getCurLevel: function(){return curLevel;},
+	};
+}(Game.gameobjects)  );

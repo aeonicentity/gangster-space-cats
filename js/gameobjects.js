@@ -505,7 +505,7 @@ Game.gameobjects = (function(graphics,assets){
                 }
                 
             }
-            console.log('moving to: '+that.path[b].x+','+that.path[b].y);
+            //console.log('moving to: '+that.path[b].x+','+that.path[b].y);
             if(that.path.length >= 1){
             if(that.path[b].x >= that.pos.x){
                 that.pos.x += that.speed;

@@ -1,6 +1,6 @@
 var ticktime;
 
-Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects, screens){
+Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects, screens, levels){
 	var rqId;
 	var cancelFrame = false;
 	//Game states.
@@ -20,7 +20,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var towerGrid = [];
 	var boundaryBoxes = [];
 	var explodingBombBoxes = [];
-	var shortestPath = null;
 	var sumVertex = 0;
 	var Q = [];
 	var calcMutex = true;
@@ -30,9 +29,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var selectedTower = null;
 	var catnip = 5000;
     var lives = 10;
+    var currentLevel = 0;
 	
 	var setKeyType = null;
 	var drawablePath = [];
+	var startSpawn = false;
 	
 	var upgradeKey = [KeyEvent.DOM_VK_U];
 	var sellKey = [KeyEvent.DOM_VK_S];
@@ -50,6 +51,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 		towerGrid[4][0].distance = 0;
 		towerGrid[4][0].filled = true;
+		towerGrid[0][7].filled = true;
 		towerGrid[4][towerGrid[4].length-1].filled = false;
 		console.log(towerGrid);
 	}
@@ -606,7 +608,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				line: 0,
 				lineColor: 'rgba(255,255,255,1)',
 			});
-			drawablePath.push(temp);
+			temp.draw();
     	}
     }
    
@@ -652,6 +654,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		that.update = function (elapsedTime){
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
+			
+			//console.log(levels);
+			if(levels.getCurLevel() != null && startSpawn){
+				var levelSpawns = levels.getCurLevel().update(ticktime);
+				
+				for (var i=0; i< levelSpawns.length; i++){
+					creeps.push(levelSpawns[i]);
+				}
+			}
+			
 			var mouseInputs = mouse.update(elapsedTime);
 			var pos = mouse.position;
 			if(tempTower != null){
@@ -661,10 +673,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					var lastPath = shortestPath
 					shortestPath = calcShortestPath(0,4,13,4);
-                    //shortestPathTop = calcShortestPath(0,6,6,6);
+                    //shortestPathTop = calcShortestPath(0,7,7,7);
 					if(shortestPath.length > 1){
 						console.log(shortestPath);
-						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
+						console.log(shortestPathTop);
+						//console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
 						tempTower.radiusOff();
 						towers.push(tempTower);
                         towerplaceSound.play();
@@ -728,7 +741,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					var creepLocation = creeps[c].reportPos();
 					//console.log(creepLocation);
 					if(towers[j].isInRange(creepLocation.x,creepLocation.y)){
-						console.log(towers[j].tower.pelletType);
+						//console.log(towers[j].tower.pelletType);
 						if(creeps[c].air == false && (towers[j].tower.pelletType == 1 || towers[j].tower.pelletType == 3)){ //bomb and frost towers ground only
 							towers[j].selectTarget(creepLocation);
 						}else if(creeps[c].air == true && towers[j].tower.pelletType == 2){ //missle towers air only
@@ -787,7 +800,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 									break;
 							}
 							//console.log(pellets[i]);
-							console.log("creep hit!");
+							//console.log("creep hit!");
 							//console.log(pellets[i]);
 							if(creeps[c].hit(damage)){ //if the creep is dead
 								var creepLoc = creeps[c].pos;
@@ -796,10 +809,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 								catnip += creeps[c].value;
 		                        deathSound.play();
 		                        creeps[c].live = false;
-								console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
+								//console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
 							}
 						}else{
-							console.log('wrong pellet hit');
+							//console.log('wrong pellet hit');
 						}
 						
 						
@@ -848,11 +861,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(testTarget != null){
 				testTarget.draw();
 			}
+			/*
 			drawTowerGrid(towerGrid);
 			drawPath(shortestPath);
-			for(var p=0; p<drawablePath.length; p++){
-				drawablePath[p].draw();
-			}
+			drawPath(shortestPathTop);
+			*/
 			
 		};
 		return that;
@@ -958,6 +971,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		
+		console.log(levels.getCurLevel());
 		/*initialize boundary boxes to create the border*/
 		boundaryBoxes.push(graphics.Rectangle({
 			x:0,
@@ -1020,6 +1034,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         shortestPath = calcShortestPath(0,4,13,4);
         //shortestPathTop = calcShortestPath(0,7,7,7);
         console.log(shortestPath);
+        levels.setLevel(0);
 		requestAnimationFrame(gameloop);
 	}
 	
@@ -1038,6 +1053,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		setKeyType = "Level";
 		gameState = gameStateSetKeyCode;
 		
+	}
+	
+	function getHorizontalPath(){
+		return deepCopy(shortestPath);
+	}
+	
+	function startSpawningCreeps(){
+		startSpawn = true;
 	}
 	
 	return {
@@ -1063,14 +1086,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		setUpgradeKey: setUpgradeKey,
 		setWaveKey: setWaveKey,
 		keyboard:keyboard,
+		startSpawningCreeps:startSpawningCreeps,
         generateTowerSalePoof: generateTowerSalePoof,
         generateBombTrailDot: generateBombTrailDot,
         generateBombBoomPoof: generateBombBoomPoof,
         generateMissilePoof: generateMissilePoof,
+        getHorizontalPath: getHorizontalPath,
         
         towerGrid: towerGrid,
 	};
 	
-}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));
+}(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens, Game.levels));
 
 var Ltime = performance.now();
