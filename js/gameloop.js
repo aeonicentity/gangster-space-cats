@@ -25,9 +25,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	var Q = [];
 	var calcMutex = true;
 	var shortestPath = [];
+    var shortestPathTop = [];
 	var testTarget = null;
 	var selectedTower = null;
 	var catnip = 500;
+    var lives = 10;
 	
 	var setKeyType = null;
 	
@@ -62,7 +64,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	
 	
-	function calcShortestPath(startx,starty,endx,endy){
+	function calcShortestPath(startx,starty,endx,endy){ //4,0,4,13
 	console.log('begin');
 	if(!calcMutex){
 		//using dijkstra's.
@@ -78,7 +80,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}
 		}
 		
-		Q.push(towerGrid[4][0]);
+		Q.push(towerGrid[startx][starty]);
 		
 		while (Q.length > 0){
 			var current = Q.shift();
@@ -116,14 +118,13 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				}
 			}
 		}
-		pos = towerGrid[4][13];
+		pos = towerGrid[endx][endy];
 		var path = [];
 		while (pos.parent!=null){
 			path.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
 			pos = pos.parent;
 		}
 		//path.push({x:0,y:(4*50)});
-		
 	}calcMutex = true;
 	return path;
 	}
@@ -464,13 +465,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		
 	}
     
-    function addCreep1(){
+    function addCreep1(dir){
+        var start = {x: 0, y:0};
+        var destination = dir;
     	console.log("spawing creep along:");
     	console.log(shortestPath);
         tempCreep = gameobjects.Creep({
             type: 1,
             typepath:'creep_1',
-			pos: {x:0, y:300},
+			pos: {x:-50, y:250},
             value: 5,
             spriteTime : [500,500,500,500],
 			health: 150,
@@ -478,11 +481,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             spriteCount: 4,
             width: 50,
             height: 50,
-            destination: {x:800, y:300},
+            destination: {x:800, y:800},
             speed: 1,
             rotation: 0,
             air:false,
-            path: shortestPath,
+            path: shortestPath
         });
         creeps.push(tempCreep);
         console.log(tempCreep);
@@ -492,7 +495,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         tempCreep = gameobjects.Creep({
             type: 2,
             typepath:'creep_2',
-			pos: {x:0, y:300},
+			pos: {x:-50, y:300},
             value: 5,
             spriteTime : [500,500,500,500],
             width: 50,
@@ -594,7 +597,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 		
 		that.update = function (elapsedTime){
-			
 			//console.log(that.test);
 			//that.test.rotate(2*Math.Pi*elapsedTime%1000)
 			var mouseInputs = mouse.update(elapsedTime);
@@ -605,7 +607,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					var lastPath = shortestPath
-					shortestPath = calcShortestPath();
+					shortestPath = calcShortestPath(4,0,4,13);
+                    shortestPathTop = calcShortestPath(0,6,6,6);
 					if(shortestPath.length > 1){
 						console.log(shortestPath);
 						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
@@ -636,7 +639,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			//handling keyboard inputs...
 			
 			keyboard.update(ticktime);
+
 			for(var c=0; c<creeps.length; c++){
+
 				creeps[c].update(elapsedTime);
 				for(var b=0; b<explodingBombBoxes.length; b++){
 					var difx = creeps[c].pos.x - explodingBombBoxes.x;
@@ -653,7 +658,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					c--;
 				}
 			}
-			
+            for(var v=0;v<creeps.length;v++){
+               if(creeps[v].pos.x > 800 || creeps[v].pos.y > 500){
+                    creeps.splice(v,1);
+                    lives -= 1;
+                   
+                }
+                
+            }
 			for(var j=0; j<towers.length; j++){
 				towers[j].update(elapsedTime);
 				if(creeps.length == 0){
@@ -751,6 +763,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		that.render = function (elapsedTime){ //placeholder function for game logic on build state.
 			//update HTML elements
 			document.getElementById('current_catnip').innerHTML = catnip;
+            document.getElementById('current_lives').innerHTML = lives;
 		
 			//updating game elements
 			graphics.clear();
@@ -945,7 +958,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}));
 		
 		calcMutex = false;
-        shortestPath = calcShortestPath();
+        shortestPath = calcShortestPath(4,0,4,13);
+        shortestPathTop = calcShortestPath(0,6,6,6);
         console.log(shortestPath);
 		requestAnimationFrame(gameloop);
 	}
