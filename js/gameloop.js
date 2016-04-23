@@ -122,7 +122,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			path.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
 			pos = pos.parent;
 		}
-		path.push({x:0,y:(4*50)});
+		//path.push({x:0,y:(4*50)});
 		
 	}calcMutex = true;
 	return path;
@@ -183,6 +183,16 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         }
     }
     
+    function generateScoreParticle(xin,yin,score){
+    	tempParticle = gameobjects.TextParticle({
+    		pos:{x:xin,y:yin},
+    		life:2000,
+    		dx:0,
+    		dy:-1,
+    		text:"+"+score,
+    	});
+    	particles.push(tempParticle);
+    }
     
     function generateBombTrailDot(xin, yin){
         for(var p=0;p<4;p++){
@@ -365,8 +375,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	function sendNextWave(){
 		Game.gameLoop.addCreep1();
-		Game.gameLoop.addCreep1();
-		Game.gameLoop.addCreep1();
+		//Game.gameLoop.addCreep1();
+		//Game.gameLoop.addCreep1();
 	}
 	
 	function addCreep(creep){
@@ -554,31 +564,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}return false;
 	}
 	
-	
-	
-	function targetPractice(){
-		targetx = Math.floor(Math.random() * graphics.gameWidth);
-		targety = Math.floor(Math.random() * graphics.gameHeight)
-		for(var i = 0 ; i < towers.length; i++){
-			towers[i].selectTarget({
-				x: targetx,
-				y: targety,
-			});
-		}
-		testTarget = graphics.Circle({
-			center:{x:targetx,y:targety},
-			radius:10,
-			fill:'rgba(255,255,255,1.0)',
-			line: 0,
-			lineColor:'rgba(255,255,255,1.0)',
-			
-		});
-		testTarget.reportPos = function(){return {x:0,y:0};};
-		testTarget.box = gameobjects.CollisionBox(targetx-10,targety-10,targetx+10,targety+10);
-		testTarget.hit = function(){console.log("target hit registered");};
-		creeps.push(testTarget);
-	}
-	
 	gameStateBuild = (function (){
 		var that = {
 			test:[],
@@ -662,7 +647,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					}
 				}
 				if(!creeps[c].live){
+					generateScoreParticle(creeps[c].pos.x,creeps[c].pos.y,creeps[c].value);
+					catnip += creeps[c].value;
 					creeps.splice(c,1);
+					c--;
 				}
 			}
 			
@@ -710,9 +698,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
                     //console.log("CREEP " + creeps[c].box);
 					if(pellets[i].box.collidesWith(creeps[c].box) && creeps[c].live){
 						//check for pellet type vs creep type
-						if(	pellets[i].type == 0  || 
+						if(	(pellets[i].type == 0  || 
 							((pellets[i].type == 1 || pellets[i].type == 3) && !creeps[c].air) || 
-							(pellets[i].type == 2 && creeps[c].air) ){
+							(pellets[i].type == 2 && creeps[c].air) ) &&
+							pellets[i].live
+							){
 							pellets[i].live = false;
 							var damage = pellets[i].damage;
 							var type = pellets[i].type;
@@ -737,11 +727,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 							if(creeps[c].hit(damage)){ //if the creep is dead
 								var creepLoc = creeps[c].pos;
 								generateCreepDeathPoof(creepLoc.x,creepLoc.y);
-								creeps[c].live = false;
+								//generateScoreParticle(creepLoc.x,creepLoc.y,creeps[c].value);
+								catnip += creeps[c].value;
 		                        deathSound.play();
-		                        //console.log(creeps[c].pos.x);
-		                        //generateCreepDeathPoof(creeps[c].pos.x, creeps[c].pos.y);
-		                        
+		                        creeps[c].live = false;
 								console.log("killing creep at: "+creepLoc.x+","+creepLoc.y);
 							}
 						}else{
@@ -988,7 +977,6 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		addCreep2: addCreep2,
 		addCreepAir: addCreepAir,
 		addCreepBoss: addCreepBoss,
-		targetPractice: targetPractice,
 		sellSelectedTower:sellSelectedTower,
 		upgradeSelectedTower:upgradeSelectedTower,
 		showScreen:showScreen,

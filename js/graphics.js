@@ -224,10 +224,16 @@ Game.graphics = (function(){
 			spec.txt = txt;
 		}
 		
+		that.setPos = function(x,y){
+			spec.x = x;
+			spec.y = y;
+		}
+		
 		that.draw = function(){
 			context.font = spec.font;
 			context.textAlign = "center";
 			context.fillText(spec.txt, spec.x, spec.y);
+			context.fillStyle="white";
 		}
 		return that;
 	}
