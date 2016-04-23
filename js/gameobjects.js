@@ -337,6 +337,46 @@ Game.gameobjects = (function(graphics,assets){
 		
 		return that;
 	}
+	
+	function TextParticle(spec){
+        var that = {
+            pos: {x:spec.pos.x,y:spec.pos.y},
+            life: spec.life,
+            dx: spec.dx,
+            dy: spec.dy,
+        }
+        
+        that.particle = graphics.Text({
+			x: that.pos.x, 
+			y: that.pos.y,
+			txt: spec.text,
+			font: '20px Arial',
+		});
+        
+        that.update = function(ticktime){
+            spec.life -= ticktime;
+            
+            if(spec.life > 0){
+            	that.pos.x += that.dx;
+            	that.pos.y += that.dy;
+				that.particle = graphics.Text({
+					x: that.pos.x, 
+					y: that.pos.y,
+					txt: spec.text,
+					font: '20px Arial',
+				});
+				return true;
+			}else{
+				return false;
+			}
+        };
+        
+        that.draw = function(){
+            that.particle.draw()
+            
+        };
+        return that;
+    }
 
     function Particle(spec){
         var that = {
@@ -456,6 +496,7 @@ Game.gameobjects = (function(graphics,assets){
         
         that.creepTo = function(elapsedTime){
             //check if in square
+            
             var b = that.path.length - 1;
             if(that.pos.x < that.path[b].x + 25 && that.pos.x > that.path[b].x - 25 && that.pos.y < that.path[b].y + 25 && that.pos.y > that.path[b].y - 25){
                 if(that.path.length > 1){
@@ -464,7 +505,8 @@ Game.gameobjects = (function(graphics,assets){
                 }
                 
             }
-            if(that.path.length > 1){
+            console.log('moving to: '+that.path[b].x+','+that.path[b].y);
+            if(that.path.length >= 1){
             if(that.path[b].x >= that.pos.x){
                 that.pos.x += that.speed;
             }
@@ -657,6 +699,7 @@ Game.gameobjects = (function(graphics,assets){
 		Tower: Tower,
 		Creep: Creep,
 		Pellet: Pellet,
+		TextParticle: TextParticle,
         Particle: Particle,
 	};
 }(Game.graphics, Game.assets));

@@ -114,8 +114,10 @@ Game.graphics = (function(){
 			context.fillStyle = spec.fill;
 			context.fillRect(spec.x, spec.y, spec.width, spec.height);
 			
-			//context.strokeStyle = spec.stroke;
-			//context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			if(spec.hasOwnProperty('stroke')){
+				context.strokeStyle = spec.stroke;
+				context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			}
 
 			context.restore();
 		};
@@ -224,10 +226,16 @@ Game.graphics = (function(){
 			spec.txt = txt;
 		}
 		
+		that.setPos = function(x,y){
+			spec.x = x;
+			spec.y = y;
+		}
+		
 		that.draw = function(){
 			context.font = spec.font;
 			context.textAlign = "center";
 			context.fillText(spec.txt, spec.x, spec.y);
+			context.fillStyle="white";
 		}
 		return that;
 	}
