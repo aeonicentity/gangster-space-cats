@@ -28,10 +28,11 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     var shortestPathTop = [];
 	var testTarget = null;
 	var selectedTower = null;
-	var catnip = 500;
+	var catnip = 5000;
     var lives = 10;
 	
 	var setKeyType = null;
+	var drawablePath = [];
 	
 	var upgradeKey = [KeyEvent.DOM_VK_U];
 	var sellKey = [KeyEvent.DOM_VK_S];
@@ -39,17 +40,17 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 	
 	function populateTowerGrid(){
 		sumVertex = 0;
-		for(var i =0; i < graphics.gameHeight - 50; i+=50){
+		for(var i =25; i < graphics.gameHeight - 50; i+=50){
 			line = []
-			for(var j=0; j < graphics.gameWidth -50; j+=50){
-				line.push({filled:false,distance:null,parent:null,x:Math.round(j/50),y:Math.round(i/50)});
+			for(var j=25; j < graphics.gameWidth -50; j+=50){
+				line.push({filled:false,distance:null,parent:null,x:Math.round((j-25)/50),y:Math.round((i-25)/50),xreal:j,yreal:i});
 				sumVertex++;
 			}
 			towerGrid.push(line);
 		}
 		towerGrid[4][0].distance = 0;
 		towerGrid[4][0].filled = true;
-		towerGrid[4][towerGrid[4].length-1].filled = true;
+		towerGrid[4][towerGrid[4].length-1].filled = false;
 		console.log(towerGrid);
 	}
 	
@@ -62,25 +63,32 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 	}
 	
-	
+	function deepCopy (array){
+		var temp = []
+		for(var i=0 ; i<array.length; i++){
+			temp.push(array[i]);
+		}
+		return temp;
+	}
 	
 	function calcShortestPath(startx,starty,endx,endy){ //4,0,4,13
 	console.log('begin');
+	var temppath = [];
 	if(!calcMutex){
 		//using dijkstra's.
 		Q = [];
-		var maxx = towerGrid[0].length - 1;
+		var maxx = towerGrid[0].length;
 		console.log(maxx);
-		var maxy = towerGrid.length - 1; 
+		var maxy = towerGrid.length; 
 		var src = null;
 		for (var i = 0; i < maxy; i++){
 			for (var j =0; j < maxx; j++){
 				towerGrid[i][j].distance = null;
-				towerGrid[i][j].parent = null;
+				towerGrid[i][j].p = null;
 			}
 		}
 		
-		Q.push(towerGrid[startx][starty]);
+		Q.push(towerGrid[starty][startx]);
 		
 		while (Q.length > 0){
 			var current = Q.shift();
@@ -89,15 +97,15 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				next = towerGrid[current.y][current.x-1];
 				if(next.distance == null ){
 					next.distance = current.distance+1;
-					next.parent = current;
+					next.p = current;
 					Q.push(next);
 				}
 			}
-			if(current.x < maxx && ! towerGrid[current.y][current.x+1].filled){ //right exists and right not filled.
+			if(current.x+1 < maxx && ! towerGrid[current.y][current.x+1].filled){ //right exists and right not filled.
 				next = towerGrid[current.y][current.x+1];
 				if(next.distance == null){
 					next.distance = current.distance +1;
-					next.parent = current;
+					next.p = current;
 					Q.push(next);
 				}
 			}
@@ -105,28 +113,29 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				next = towerGrid[current.y-1][current.x];
 				if(next.distance == null){
 					next.distance = current.distance +1;
-					next.parent = current;
+					next.p = current;
 					Q.push(next);
 				}
 			}
-			if(current.y < maxy && ! towerGrid[current.y+1][current.x].filled){
+			if(current.y+1 < maxy && ! towerGrid[current.y+1][current.x].filled){
 				next = towerGrid[current.y+1][current.x];
 				if(next.distance == null){
 					next.distance = current.distance +1;
-					next.parent = current;
+					next.p = current;
 					Q.push(next);
 				}
 			}
 		}
-		pos = towerGrid[endx][endy];
-		var path = [];
-		while (pos.parent!=null){
-			path.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
-			pos = pos.parent;
+		pos = towerGrid[endy][endx+1];
+		//temppath.push({x:((endx+1)*50)+50,y:((endy)*50)+50});
+		while (pos.p!=null){
+			temppath.push({x:((pos.x+1)*50),y:((pos.y+1)*50)});
+			pos = pos.p;
 		}
-		//path.push({x:0,y:(4*50)});
+		//temppath.push({x:(startx*50)+50,y:(starty*50)+50});
+		
 	}calcMutex = true;
-	return path;
+	return temppath;
 	}
 
     
@@ -485,7 +494,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             speed: 1,
             rotation: 0,
             air:false,
-            path: shortestPath
+            path: deepCopy(shortestPath)
         });
         creeps.push(tempCreep);
         console.log(tempCreep);
@@ -507,7 +516,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             speed: 2,
             rotation: 0,
             air:false,
-            path: shortestPath,
+            path: deepCopy(shortestPath),
             
         });
         creeps.push(tempCreep);
@@ -530,7 +539,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
             speed: 2,
             rotation: 0,
             air:true,
-            path: shortestPath,
+            path: deepCopy(shortestPath),
         };
         console.log(spec);
         tempCreep = gameobjects.Creep(spec);
@@ -555,6 +564,50 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         });
         creeps.push(tempCreep);
         console.log(tempCreep);
+    }
+    
+    function drawTowerGrid(grid){
+    	
+    	for(var i=0; i<grid.length; i++){
+    		for(var j=0; j<grid[0].length; j++){
+    			if(grid[i][j].filled){
+					var temp = graphics.Rectangle({
+						x:grid[i][j].xreal,
+						y:grid[i][j].yreal,
+						width:50,
+						height:50,
+						fill:'rgba(255,0,0,0.2)',
+						stroke: 'rgba(255,255,255,1)',
+						rotation:0,
+					})
+				}else{
+					var temp = graphics.Rectangle({
+						x:grid[i][j].xreal,
+						y:grid[i][j].yreal,
+						width:50,
+						height:50,
+						fill:'rgba(0,255,0,0.2)',
+						stroke: 'rgba(255,255,255,1)',
+						rotation:0,
+					})
+				}
+    			temp.draw();
+    		}
+    	}
+    }
+    
+    function drawPath(p){
+    	drawablePath = []
+    	for(var i=0; i<p.length; i++){
+    		var temp = graphics.Circle({
+				center: {x: p[i].x, y: p[i].y},
+				radius: 10,
+				fill: 'rgba(255,255,255,1)',
+				line: 0,
+				lineColor: 'rgba(255,255,255,1)',
+			});
+			drawablePath.push(temp);
+    	}
     }
    
 	function towerCollision(obj){
@@ -607,8 +660,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 					towerGrid[Math.round(pos.y/50)-1][Math.round(pos.x/50)-1].filled = true;
 					calcMutex = false; // switch the calc variable so we don't have a race condition.
 					var lastPath = shortestPath
-					shortestPath = calcShortestPath(4,0,4,13);
-                    shortestPathTop = calcShortestPath(0,6,6,6);
+					shortestPath = calcShortestPath(0,4,13,4);
+                    //shortestPathTop = calcShortestPath(0,6,6,6);
 					if(shortestPath.length > 1){
 						console.log(shortestPath);
 						console.log('pos: '+(Math.round(pos.y/50)-1)+','+(Math.round(pos.x/50)-1));
@@ -795,6 +848,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(testTarget != null){
 				testTarget.draw();
 			}
+			drawTowerGrid(towerGrid);
+			drawPath(shortestPath);
+			for(var p=0; p<drawablePath.length; p++){
+				drawablePath[p].draw();
+			}
+			
 		};
 		return that;
 	}());
@@ -958,8 +1017,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}));
 		
 		calcMutex = false;
-        shortestPath = calcShortestPath(4,0,4,13);
-        shortestPathTop = calcShortestPath(0,6,6,6);
+        shortestPath = calcShortestPath(0,4,13,4);
+        //shortestPathTop = calcShortestPath(0,7,7,7);
         console.log(shortestPath);
 		requestAnimationFrame(gameloop);
 	}
@@ -1008,6 +1067,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         generateBombTrailDot: generateBombTrailDot,
         generateBombBoomPoof: generateBombBoomPoof,
         generateMissilePoof: generateMissilePoof,
+        
+        towerGrid: towerGrid,
 	};
 	
 }(Game.graphics, Game.input, Game.screens, Game.server, Game.assets, Game.gameobjects, Game.screens));

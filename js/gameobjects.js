@@ -496,6 +496,7 @@ Game.gameobjects = (function(graphics,assets){
         
         that.creepTo = function(elapsedTime){
             //check if in square
+            
             var b = that.path.length - 1;
             if(that.pos.x < that.path[b].x + 25 && that.pos.x > that.path[b].x - 25 && that.pos.y < that.path[b].y + 25 && that.pos.y > that.path[b].y - 25){
                 if(that.path.length > 1){
@@ -504,7 +505,8 @@ Game.gameobjects = (function(graphics,assets){
                 }
                 
             }
-            if(that.path.length > 1){
+            console.log('moving to: '+that.path[b].x+','+that.path[b].y);
+            if(that.path.length >= 1){
             if(that.path[b].x >= that.pos.x){
                 that.pos.x += that.speed;
             }

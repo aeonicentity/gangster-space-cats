@@ -114,8 +114,10 @@ Game.graphics = (function(){
 			context.fillStyle = spec.fill;
 			context.fillRect(spec.x, spec.y, spec.width, spec.height);
 			
-			//context.strokeStyle = spec.stroke;
-			//context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			if(spec.hasOwnProperty('stroke')){
+				context.strokeStyle = spec.stroke;
+				context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			}
 
 			context.restore();
 		};
