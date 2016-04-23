@@ -135,6 +135,12 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		//temppath.push({x:(startx*50)+50,y:(starty*50)+50});
 		
 	}calcMutex = true;
+    if(endx>endy){
+    temppath.unshift({x:801,y:250});
+    }
+    else{
+        temppath.unshift({x:400,y:501});
+    }
 	return temppath;
 	}
 

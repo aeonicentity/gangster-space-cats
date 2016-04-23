@@ -520,22 +520,6 @@ Game.gameobjects = (function(graphics,assets){
                 that.pos.y -= that.speed;
             }
             }
-            /*else{
-                if(that.pos.x>that.pos.y){
-                    if(that.pos.y>325){
-                        that.pos.y-=that.speed;
-                    }
-                    else if(that.pos.y<225){
-                        that.pos.y+=that.speed;
-                    }
-                    else{
-                        that.pos.x += that.speed;
-                    }
-                }
-                else{
-                    that.pos.y+= that.speed;
-                }
-            }*/
             that.sprite.moveTo(that.pos.x,that.pos.y)
         };
         
