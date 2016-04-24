@@ -197,7 +197,7 @@ Game.graphics = (function(){
 		}
 		
 		
-		console.log(image);
+		//console.log(image);
 		that.draw = function() {
 			if (ready) {
 				context.save();

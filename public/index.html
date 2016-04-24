@@ -8,74 +8,84 @@
 	<body>
 		<div id="gameContext">
 			<div id="state-game" class="MenuContext">
-				<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
+				<div class='InnerWrapper'>
+					<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
 				
-				<div id="menu">
-					lives :<span id="current_lives">10</span>
-				    catnip :<span id="current_catnip">0</span>
-				    score :<span id="current_score">0</span>
-				    <center>
-				    <b>I can has towers?</b><br>
-				    <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
-				    <button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
-				    <button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
-				    <button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
-				    <br>
-				    <hr>
-				    <b>Currently Selected</b><br>
-				    Type:<span id="selected_towertype">---</span>
-				    <br>
-				    Level:<span id="selected_towerlevel">---</span>
-				    <br>
-				    Upgrade Cost:<span id="selected_upgradecost">---</span>
-				    <br>
-				    Sell Price:<span id="selected_sellprice">---</span>
-				    <br>
-				    <button type="button" id="upgrade" onclick="Game.gameLoop.upgradeSelectedTower()" disabled>Upgrade Tower</button>
-				    <button type="button" id="sell" onclick="Game.gameLoop.sellSelectedTower()" disabled>Sell Tower</button>
-				    <button type="button" id="nextWave" onclick="Game.gameLoop.startSpawningCreeps()" disabled>Next Level</button>
-				    </center>
+					<div id="menu">
+						lives :<span id="current_lives">10</span>
+						catnip :<span id="current_catnip">0</span>
+						score :<span id="current_score">0</span>
+						<center>
+						<b>I can has towers?</b><br>
+						<button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
+						<button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
+						<button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
+						<button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
+						<br>
+						<hr>
+						<b>Currently Selected</b><br>
+						Type:<span id="selected_towertype">---</span>
+						<br>
+						Level:<span id="selected_towerlevel">---</span>
+						<br>
+						Upgrade Cost:<span id="selected_upgradecost">---</span>
+						<br>
+						Sell Price:<span id="selected_sellprice">---</span>
+						<br>
+						<button type="button" id="upgrade" onclick="Game.gameLoop.upgradeSelectedTower()" disabled>Upgrade Tower</button>
+						<button type="button" id="sell" onclick="Game.gameLoop.sellSelectedTower()" disabled>Sell Tower</button>
+						<button type="button" id="nextWave" onclick="Game.gameLoop.startSpawningCreeps()" disabled>Next Level</button>
+						</center>
+					</div>
 				</div>
 		    </div>
 		    <div id="state-mainmenu" class="MenuContext Active">
-		    	<h1>Gangsta' Space Cats</h1>
-		    	<h3>VS</h3>
-		    	<h1>Zombie Nazis in Space</h1>
-		    	<button onclick="Game.gameLoop.showScreen('state-game')">Join the Fight!</button>
-		    	<button onclick="Game.gameLoop.showScreen('state-about')">Who made this crap?!</button>
-		    	<button onclick="Game.gameLoop.showScreen('state-controls')">Controls? Maybe?</button>
-		    	<button onclick="Game.gameLoop.showScreen('state-scores')">Biggest Not Losers</button>
+		    	<div class='InnerWrapper'>
+					<h1>Gangsta' Space Cats</h1>
+					<h3>VS</h3>
+					<h1>Zombie Nazis in Space</h1>
+					<button onclick="Game.gameLoop.showScreen('state-game')">Join the Fight!</button>
+					<button onclick="Game.gameLoop.showScreen('state-about')">Who made this crap?!</button>
+					<button onclick="Game.gameLoop.showScreen('state-controls')">Controls? Maybe?</button>
+					<button onclick="Game.gameLoop.showScreen('state-scores')">Biggest Not Losers</button>
+		    	</div>
 		    </div>
 		    <div id="state-about" class="MenuContext">
-		    	<h1>A brief list of who to blame:</h1>
-		    	<ul>
-		    		<li>David Brilliant</li>
-		    		<li>Mikaila Young</li>
-		    	</ul>
-		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+		    	<div class='InnerWrapper'>
+					<h1>A brief list of who to blame:</h1>
+					<ul>
+						<li>David Brilliant</li>
+						<li>Mikaila Young</li>
+					</ul>
+					<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+		    	</div>
 		    </div>
 		    <div id="state-controls" class="MenuContext">
-		    	<h1>Control Configuration</h1>
-		    	<h2>Sell Tower</h2>
-		    		<span id="currentSellKeys"></span>
-		    		<button onclick="Game.gameLoop.setSellKey()">Set Sell Key</button>
-		    	<h2>Upgrade Tower</h2>
-		    		<span id="currentUpgradeKeys"></span>
-		    		<button onclick="Game.gameLoop.setUpgradeKey()">Set Upgrade Key</button>
-		    	<h2>Next Wave</h2>
-		    		<span id="currentWaveKeys"></span>
-		    		<button onclick="Game.gameLoop.setWaveKey()">Set Next Wave Key</button>
-		    	<br>
-		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+		    	<div class='InnerWrapper'>
+					<h1>Control Configuration</h1>
+					<h4>Sell Tower</h4>
+						<h4 id="currentSellKeys"></h4>
+						<button id="curentSellButton" onclick="Game.gameLoop.setSellKey()">Set Sell Key</button>
+					<h4>Upgrade Tower</h4>
+						<h4 id="currentUpgradeKeys"></h4>
+						<button id="currentUpgradeButton" onclick="Game.gameLoop.setUpgradeKey()">Set Upgrade Key</button>
+					<h4>Next Wave</h4>
+						<h4 id="currentWaveKeys"></h4>
+						<button id="currentWaveButton" onclick="Game.gameLoop.setWaveKey()">Set Next Wave Key</button>
+					<br>
+					<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+				</div>
 		    </div>
 		    <div id="state-scores" class="MenuContext">
-		    	<span id="id-score-zone"></span>
-		    	<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
-		    	<button id="id-score-clear">Clear</button>
+		    	<div class='InnerWrapper'>
+					<span id="id-score-zone"></span>
+					<button onclick="Game.gameLoop.showScreen('state-mainmenu')">Back</button>
+					<button id="id-score-clear">Clear</button>
+				</div>
 		    </div>
         </div>
         <div id="audio">
-            <audio controls loop>
+            <audio controls loop autoplay>
                 <source src="assets/MeowMix.mp3" type="audio/mpeg" loop>
                  Your browser does not support the audio element.
             </audio>

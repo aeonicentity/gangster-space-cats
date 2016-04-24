@@ -9,24 +9,24 @@ Game.input = (function (){
 		}
 		
 		that.mouseLeftClickDown = function(e){
-			console.log('clickDown');
-			that.handlers.push({x: e.clientX, y:e.clientY, endX:null, endY:null, time:e.timeStamp});
+			console.log(e);
+			that.handlers.push({x: e.layerX, y:e.layerY, endX:null, endY:null, time:e.timeStamp});
 		}
 		
 		that.mouseTrack = function(e){
 			//console.log(that.position.x+","+that.position.y);
-			that.position.x = e.clientX;
-			that.position.y = e.clientY;
+			that.position.x = e.layerX;
+			that.position.y = e.layerY;
 		}
 		
 		that.mouseLeftClickUp = function(e){
-			console.log('clickup');
+			//console.log('clickup');
 			//this is vestigial for now, but if we want to do click and drag, we might want to have some kind of ending X position saved from this.
-			that.position.x = e.clientX;
-			that.position.y = e.clientY;
+			that.position.x = e.layerX;
+			that.position.y = e.layerY;
 			var temp = that.handlers.pop();
-			temp.endX = e.clientX;
-			temp.endY = e.clientY;
+			temp.endX = e.layerX;
+			temp.endY = e.layerY;
 			that.handlers.push(temp);
 			//console.log(that.handlers);
 		}
@@ -84,7 +84,7 @@ Game.input = (function (){
 		// ------------------------------------------------------------------
 		that.registerCommand = function(key, handler) {
 			that.handlers.push({ key : key, handler : handler});
-			console.log("handler size:"+that.handlers.length);
+			//console.log("handler size:"+that.handlers.length);
 		};
 		
 		that.clearCommands = function(){
@@ -135,8 +135,8 @@ Game.input = (function (){
 		};
 		
 		that.setUpgradeTower = function (keycombo){
-			console.log("setting upgrade to:");
-			console.log(keycombo);
+			//console.log("setting upgrade to:");
+			//console.log(keycombo);
 			that.registerCommand(keycombo,function(){
 				if(!that.endActionFlag){
 					Game.gameLoop.upgradeSelectedTower()

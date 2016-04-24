@@ -67,7 +67,7 @@ Game.gameobjects = (function(graphics,assets){
 			target: null,
 			fireOrder: null,
 			idle: true,
-			rotationSpeed: 200,//rotation speed for one revolution in seconds
+			rotationSpeed: 100,//rotation speed for one revolution in seconds
 			fireRate:spec.fireRate,
 			lastFire:null,
 			damage:spec.damage,
@@ -542,7 +542,7 @@ Game.gameobjects = (function(graphics,assets){
 	
 	function Pellet(spec){
 		var that = {
-			speed:100,//pixels/second
+			speed:150,//pixels/second
 			type:spec.type,//
 			maxRange:spec.range,
 			origin:{x:spec.origin.x,y:spec.origin.y},

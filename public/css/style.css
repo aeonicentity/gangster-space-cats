@@ -1,8 +1,9 @@
 BODY {
 	background-image:url("../assets/bg.jpg");
-	background-color:red;
-	background-repeat:tile;
-	background-position: top center;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+    background-position: center center;
+	background-color:#b20000;
     color: floralwhite;
 }
 
@@ -102,14 +103,18 @@ button:disabled:hover{
 
 .MenuContext{
 	display:none;
-    background-image:url("../assets/menu_bg.jpg");
-    background-repeat: no-repeat;
     padding: 5px;
+    text-align: center;
 }
 
 #state-game{
     background-image: none;
     
+}
+.InnerWrapper{
+	background-image:url("../assets/menu_bg.jpg");
+	background-repeat: repeat repeat;
+	width:1040px; margin:0 auto; clear:both;
 }
 
 .Active{

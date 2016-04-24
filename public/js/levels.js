@@ -9,8 +9,8 @@ Game.levels = (function(gameobjects){
 			grid: {x:startGridX,y:startGridY},
             value: 5,
             spriteTime : [500,500,500,500],
-			health: 150,
-            maxhealth: 150,
+			health: 100,
+            maxhealth: 100,
             spriteCount: 4,
             width: 50,
             height: 50, 
@@ -147,7 +147,7 @@ Game.levels = (function(gameobjects){
 			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
-					console.log('spawning at '+i);
+					//console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
 					delete that.creepQueue[i];
 				}
@@ -179,7 +179,7 @@ Game.levels = (function(gameobjects){
 			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
-					console.log('spawning at '+i);
+					//console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
 					delete that.creepQueue[i];
 				}
@@ -215,7 +215,7 @@ Game.levels = (function(gameobjects){
 			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
-					console.log('spawning at '+i);
+					//console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
 					delete that.creepQueue[i];
 				}
@@ -255,7 +255,7 @@ Game.levels = (function(gameobjects){
 			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
-					console.log('spawning at '+i);
+					//console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
 					delete that.creepQueue[i];
 				}
@@ -298,7 +298,7 @@ Game.levels = (function(gameobjects){
 			that.elapsedLevelTime += tickTime;
 			for(var i in that.creepQueue){
 				if(that.creepQueue.hasOwnProperty(i) && that.elapsedLevelTime > parseInt(i)){
-					console.log('spawning at '+i);
+					//console.log('spawning at '+i);
 					creepReturn.push(that.creepQueue[i]);
 					delete that.creepQueue[i];
 				}
@@ -314,8 +314,8 @@ Game.levels = (function(gameobjects){
 	function setLevel(level){
 		if(level == 0){ //Only send ground 1 from left to right
 			curLevel = level1();
-			console.log(curLevel);
-			console.log("setting level: 1");
+			//console.log(curLevel);
+			//console.log("setting level: 1");
 		}else if(level == 1){ //Send only ground 1 from both entrances
 			curLevel = level2();
 		}else if(level == 2){ //Send only grounds from both entances

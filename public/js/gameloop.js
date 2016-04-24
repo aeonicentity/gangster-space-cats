@@ -54,7 +54,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		towerGrid[4][0].filled = true;
 		towerGrid[0][7].filled = true;
 		towerGrid[4][towerGrid[4].length-1].filled = false;
-		console.log(towerGrid);
+		//console.log(towerGrid);
 	}
 	
 	function clearTowerGrid(){
@@ -88,7 +88,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		//using dijkstra's.
 		Q = [];
 		var maxx = towerGrid[0].length;
-		console.log(maxx);
+		//console.log(maxx);
 		var maxy = towerGrid.length; 
 		var src = null;
 		for (var i = 0; i < maxy; i++){
@@ -401,7 +401,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			var upgradeCost = towers[selectedTower].sellPrice*towers[selectedTower].tier + (50*(towers[selectedTower].tier+1));
 			if(towers[selectedTower].tier < 2 && catnip >= upgradeCost){
 				towers[selectedTower].upgrade();
-				console.log("upgrading tower to tier "+towers[selectedTower].tier);
+				//console.log("upgrading tower to tier "+towers[selectedTower].tier);
 				updateSelectedTowerHTML(towers[selectedTower].typeName, towers[selectedTower].tier, towers[selectedTower].sellPrice)
 				catnip -= upgradeCost;
 			}
@@ -412,8 +412,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		if(selectedTower != null){
 			var gonzo = towers.splice(selectedTower,1);
             towersellSound.play();
-			console.log ("selling tower");
-			console.log(gonzo);
+			//console.log ("selling tower");
+			//console.log(gonzo);
 			//console.log(gonzo[0].sellPrice);
 			towerGrid[(Math.round(gonzo[0].pos.y/50)-1)][(Math.round(gonzo[0].pos.x/50)-1)].filled = false;
 			catnip += gonzo[0].sellPrice;
@@ -565,10 +565,10 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
     }
    
 	function towerCollision(obj){
-		console.log(obj);
+		//console.log(obj);
 		for( i in towers){
 			if(towers[i].box.collidesWith(obj)){
-				console.log("Tower collision");
+				//console.log("Tower collision");
 				return true;
 			}
 		}return false;
@@ -665,7 +665,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			}else if(mouseInputs.length > 0){
 				for (var i =0; i < towers.length; i++){
 					if(towers[i].box.clickedOn(pos.x,pos.y)){
-						console.log(towers[i]);
+						//console.log(towers[i]);
 						selectedTower = i;
 						towers[i].showRadius = true;
 						updateSelectedTowerHTML(towers[i].typeName, towers[i].tier, towers[i].sellPrice);
@@ -858,9 +858,9 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				testTarget.draw();
 			}
 			//Debugging code for checking intersects and pathing.
-			drawTowerGrid(towerGrid);
+			/*drawTowerGrid(towerGrid);
 			drawPath(shortestPath);
-			drawPath(shortestPathTop);
+			drawPath(shortestPathTop);*/
 			
 			
 		};
@@ -956,21 +956,21 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			if(keyboard.totalKeysPressed == 0 && actionCaptured){
 				//switch statement for action set types
 				
-				console.log('captured key combo');
-				console.log(capturedKeyCombo);
+				//console.log('captured key combo');
+				//console.log(capturedKeyCombo);
 				
 				var tempConvertedKeyCombo = [];
 				
 				for(var attr in capturedKeyCombo){
 					tempConvertedKeyCombo.push(parseInt(attr));
 				}
-				console.log(tempConvertedKeyCombo);
+				//console.log(tempConvertedKeyCombo);
 				
 				switch(setKeyType){
 					case "Sell":
 						Game.gameLoop.sellKey = tempConvertedKeyCombo;
-						console.log("setting sell key to : ");
-						console.log(Game.gameLoop.sellKey);
+						//console.log("setting sell key to : ");
+						//console.log(Game.gameLoop.sellKey);
 						break;
 					case "Upgrade":
 						Game.gameLoop.upgradeKey = tempConvertedKeyCombo;
@@ -984,6 +984,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 				//change game state.
 				showScreen('state-controls');
 				actionCaptured = false;
+				enableControlSetButtons();
 				gameState = gameStateBuild;
 			}
 		}
@@ -1031,7 +1032,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		gameState = gameStateBuild;
 		startTime = performance.now();
 		
-		console.log(levels.getCurLevel());
+		//console.log(levels.getCurLevel());
 		/*initialize boundary boxes to create the border*/
 		boundaryBoxes.push(graphics.Rectangle({
 			x:0,
@@ -1100,19 +1101,34 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		}
 	}
 	
+	function disableControlSetButtons(){
+		document.getElementById('curentSellButton').disabled = true;
+		document.getElementById('currentUpgradeButton').disabled = true;
+		document.getElementById('currentWaveButton').disabled = true;
+	}
+	
+	function enableControlSetButtons(){
+		document.getElementById('curentSellButton').disabled = false;
+		document.getElementById('currentUpgradeButton').disabled = false;
+		document.getElementById('currentWaveButton').disabled = false;
+	}
+	
 	function setSellKey(){
-		console.log("key set pressed");
+		//console.log("key set pressed");
 		setKeyType = "Sell";
+		disableControlSetButtons();
 		gameState = gameStateSetKeyCode;
 	}
 	
 	function setUpgradeKey(){
 		setKeyType = "Upgrade";
+		disableControlSetButtons();
 		gameState = gameStateSetKeyCode;
 	}
 	
 	function setWaveKey(){
 		setKeyType = "Level";
+		disableControlSetButtons();
 		gameState = gameStateSetKeyCode;
 		
 	}
@@ -1141,7 +1157,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function(){
 				if(xhttp.readyState == 4 && xhttp.status == 200){
-					console.log("score reported");
+					//console.log("score reported");
 				}
 			};
 			xhttp.open("POST", 'http://localhost:3000/v1/scores/'+score, true);
@@ -1154,7 +1170,7 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function(){
 				if(xhttp.readyState == 4 && xhttp.status == 200){
-					console.log("scores cleared");
+					//console.log("scores cleared");
 				}
 			};
 			xhttp.open("POST", 'http://localhost:3000/v1/scores/clear', true);
