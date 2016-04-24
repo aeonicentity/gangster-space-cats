@@ -867,6 +867,37 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		return that;
 	}());
 	
+	gameStatePause = (function(){
+		var that = {};
+		that.update = function(elapsedTime){
+			keyboard.update(ticktime);
+		};
+		that.render = function(elapsedTime){
+			graphics.clear();
+			
+			for(var b=0; b<boundaryBoxes.length; b++){
+				boundaryBoxes[b].draw();
+			}
+			
+			for(var i in towers){
+				towers[i].draw();
+			}
+			
+			for(var v=0; v<pellets.length; v++){
+				pellets[v].draw();
+			}
+            
+           for(var c in creeps){
+				creeps[c].draw(elapsedTime);
+			}
+            
+            for(var p=0;p<particles.length;p++){
+                particles[p].draw();
+            }
+		};
+		return that;
+	}());
+	
 	gameStateFailure = (function(){ //placeholder function for game logic on Game Loss
 		var that = {};
 		
@@ -1152,6 +1183,14 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
 		startSpawn = true;
 	}
 	
+	function pause(){
+		gameState = gameStatePause;
+	}
+	
+	function unpause(){
+		gameState = gameStateBuild;
+	}
+	
 	function reportScore(){
 		if(score != null && score != 0){
 			var xhttp = new XMLHttpRequest();
@@ -1207,6 +1246,8 @@ Game.gameLoop = (function (graphics, input, screens, server, assets, gameobjects
         getVerticalPath: getVerticalPath,
         getHorizontalAirPath: getHorizontalAirPath,
         getVerticalAirPath: getVerticalAirPath,
+        pause: pause,
+        unpause: unpause,
         
         towerGrid: towerGrid,
         reportScore: reportScore,

@@ -163,6 +163,7 @@ Game.input = (function (){
 		
 		that.setBackKey = function(keycombo){
 			that.registerCommand(keycombo,function(){
+				Game.gameLoop.pause();
 				Game.gameLoop.showScreen('state-mainmenu');
 			});
 		}

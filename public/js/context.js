@@ -78,11 +78,12 @@ Game.screens['state-game'] = (function(game) {
 		/*document.getElementById('id-back').addEventListener(
 			'click',
 			function() {Game.gameLoop.showScreen('main-menu');});*/
+		Game.gameLoop.unpause();
 		Game.gameLoop.keyboard.setSellTower(Game.gameLoop.sellKey);
 		Game.gameLoop.keyboard.setUpgradeTower(Game.gameLoop.upgradeKey);
 		Game.gameLoop.keyboard.setNextWave(Game.gameLoop.nextLevelKey);
 		Game.gameLoop.keyboard.setNewGame([KeyEvent.DOM_VK_N]);
-		Game.gameLoop.keyboard.setBackKey([KeyEvent.DOM_VK_ESC]);
+		Game.gameLoop.keyboard.setBackKey([KeyEvent.DOM_VK_ESCAPE]);
 	}
 	
 	function run(input) {
