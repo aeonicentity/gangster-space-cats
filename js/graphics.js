@@ -1,7 +1,7 @@
 Game.graphics = (function(){
 	'use strict';
-	var gameWidth = 800;
-	var gameHeight = 500;
+	var gameWidth = 540;
+	var gameHeight = 411;
 	var canvas = document.getElementById("gameZone"); 
 	var	context = canvas.getContext('2d');
 	canvas.width  = gameWidth;
@@ -145,11 +145,20 @@ Game.graphics = (function(){
 		return that;
 	}
 	
+	function CountDown(spec){
+		var that = Texture(spec);
+		
+		that.setCounter = function(tick){
+			that.setImg('assets/glass_numbers_'+tick+'.png');
+		};
+		return that;
+	}
+	
 	function Texture(spec) {
 		var that = {},
 			ready = false,
 			image = new Image();
-		
+		//console.log(image);
 		image.src = spec.image.src;
 		//
 		// Load the image, set the ready flag once it is loaded so that
@@ -168,6 +177,10 @@ Game.graphics = (function(){
 		that.moveTo = function(xPos,yPos){
 			spec.center.x = xPos;
 			spec.center.y = yPos;
+		}
+		
+		that.setImg = function(src){
+			image.src = src;
 		}
 		
 		that.reportPos = function (){
@@ -205,7 +218,7 @@ Game.graphics = (function(){
 		};
 		
 		
-		console.log(image);
+		//console.log(image.src);
 		that.draw = function() {
 			if (ready) {
 				context.save();
@@ -253,6 +266,7 @@ Game.graphics = (function(){
 		Circle: Circle,
 		Polygon: Polygon,
 		Texture: Texture,
+		CountDown: CountDown,
 		Text: Text,
 		drawImage:drawImage,
 	};

@@ -1,12 +1,12 @@
 BODY {
-	background-image:url("../assets/bg.jpg");
+	/*background-image:url("../assets/Background.png");
 	background-color:red;
 	background-repeat:tile;
-	background-position: top center;
+	background-position: top center;*/
 }
 
 CANVAS{
-    background-image:url("../assets/spacebg.jpg");
+    background-image:url("../assets/Background.png");
     background-repeat:tile;
     border-style:solid;
     border-color: darkred;
@@ -14,64 +14,11 @@ CANVAS{
     float: left;
 }
 
-#menu{
-    width: 200px;
-    height: 500px;
-    background-color: #600000;
-    color: floralwhite;
-    float: left;
-    border-style:solid;
-    border-color: darkred;
-    border-width:5px;
-    text-align: right;
+.MenuContext{
+	display:none;
 }
-
-button{
-    width:200px;
-    height:50px;
-    background-color: darkred;
-    border-color:red;
-    border-style: solid;
-    border-width: 2px;
-    color:floralwhite;
-    font-size: 16px;
-    text-align: right;
-    padding-right: 20px;
-}
-
-
-#upgrade{
-    text-align: center;
-    height:90px;
-    padding: 0px;
-}
-
-#basic{
-    background-image:url("../assets/proj_tower_1.png");
-    background-repeat: no-repeat;
-    background-position: left;
-}
-#bomb{
-    background-image:url("../assets/bomb_tower_1.png");
-    background-repeat: no-repeat;
-    background-position: left;
-}
-#air{
-    background-image:url("../assets/air_tower_1.png");
-    background-repeat: no-repeat;
-    background-position: left;
-}
-#slow{
-    background-image:url("../assets/slow_tower_1.png");
-    background-repeat: no-repeat;
-    background-position: left;
-}
-
-#about{
-    height:20px;
-    width: 50px;
-    margin-right: 10px;
-    font-size: 12px;
+.Active{
+	display:block;
 }
 
 button:hover{

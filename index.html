@@ -6,34 +6,41 @@
 		
 	</head>
 	<body>
-		<canvas style="width:800px; height:500px" id="gameZone" ></canvas>
-        
-        <div id="menu">
-            <span id="current_catnip">catnip : 0</span>
-            <button type="button" id="about">About</button>
-            <center>
-            <h2>I can has towers?</h2>
-            <button type="button" id="basic" onclick="Game.gameLoop.addBasicTower()">Basic Tower</button>
-            <button type="button" id="bomb" onclick="Game.gameLoop.addBombTower()">Bomb Tower</button>
-            <button type="button" id="air" onclick="Game.gameLoop.addAirTower()">Air Tower</button>
-            <button type="button" id="slow" onclick="Game.gameLoop.addSlowTower()">Slow Tower</button>
-            <br>
-            <hr>
-            <h4>Currently Selected</h4>
-            <span id="selected_towertype">---</span>
-            <br>
-            <span id="selected_upgradecost">---</span>
-            <br>
-            <br>
-            <button type="button" id="upgrade" disabled>Upgrade Tower</button>
-            </center>
+		<div id="">
+			<div id="main-menu" class="MenuContext">
+				<h1>Bomb Sweeper</h1>
+				<button id="id-new-game">New Game</button><br>
+				<button id="id-high-scores">High Scores</button><br>
+				<button id="id-about">Credits</button><br>
+			</div>
+			<div id="high-scores" class="MenuContext">
+				<h1>High Scores</h1>
+				<div id="id-score-zone"></div>
+				<button id="id-score-back">Back</button>
+				<button id="id-score-clear">Clear</button>
+			</div>
+			<div id="about" class="MenuContext">
+				<h1>Credits</h1>
+				<p>Bomb Sweeper by David Brilliant</p>
+				<button id="id-about-back">Back</button>
+			</div>
+			<div id="game-play" class="MenuContext">
+				<canvas style="width:540; height:411px" id="gameZone" ></canvas><br>
+				<button id="id-back">Back</button>
+			</div>
         </div>
+        
 	</body>
 	<script>Game = {}</script>
+	<script src="js/context.js"></script>
+	<script src="js/storage.js"></script>
 	<script src="js/input.js"></script>
 	<script src="js/graphics.js"></script>
 	<script src="js/asset.js"></script>
 	<script src="js/gameobjects.js"></script>
 	<script src="js/gameloop.js"></script>
+	<script>
+		Game.gameLoop.showScreen('main-menu')
+	</script>
 </html>
 
