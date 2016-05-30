@@ -1,4 +1,5 @@
 Game.screens={};
+<<<<<<< HEAD
 Game.screens['main-menu'] = (function(game) {
 	'use strict';
 	
@@ -22,6 +23,17 @@ Game.screens['main-menu'] = (function(game) {
 	function run(input) {
 		//
 		// I know this is empty, there isn't anything to do.
+=======
+Game.screens['state-mainmenu'] = (function(game) {
+	'use strict';
+	
+	function initialize() {
+		//Set the input functions for the keys.
+		
+	}
+	
+	function run(input) {
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
 		
 	}
 	
@@ -29,6 +41,7 @@ Game.screens['main-menu'] = (function(game) {
 		initialize : initialize,
 		run : run
 	};
+<<<<<<< HEAD
 }(Game.main));
 
 
@@ -37,6 +50,13 @@ Game.screens['about'] = (function(game) {
 		document.getElementById('id-about-back').addEventListener(
 			'click',
 			function() { Game.gameLoop.showScreen('main-menu'); });
+=======
+}(Game.gameLoop));
+
+
+Game.screens['state-about'] = (function(game) {
+	function initialize(){
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
 	}
 	
 	function run(input){
@@ -46,6 +66,7 @@ Game.screens['about'] = (function(game) {
 		initialize : initialize,
 		run : run
 	};
+<<<<<<< HEAD
 }(Game.main));
 
 Game.screens['high-scores'] = (function(game) {
@@ -77,16 +98,27 @@ Game.screens['high-scores'] = (function(game) {
 			}
 		}
 		return scorestring+"</ol>";
+=======
+}(Game.gameLoop));
+
+Game.screens['state-scores'] = (function(game) {
+
+	function getScoreString(){
+		return "";
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
 	}
 
 	function initialize(){
 
 		
 		document.getElementById('id-score-zone').innerHTML = getScoreString();
+<<<<<<< HEAD
 		
 		document.getElementById('id-score-back').addEventListener(
 			'click',
 			function() {Game.gameLoop.showScreen('main-menu');});
+=======
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
 			
 		document.getElementById('id-score-clear').addEventListener(
 			'click',
@@ -100,6 +132,7 @@ Game.screens['high-scores'] = (function(game) {
 		initialize : initialize,
 		run : run
 	};
+<<<<<<< HEAD
 }(Game.main));
 
 
@@ -111,6 +144,21 @@ Game.screens['game-play'] = (function(game) {
 			'click',
 			function() {Game.gameLoop.showScreen('main-menu'); Game.gameLoop.stop();});
 		
+=======
+}(Game.gameLoop));
+
+
+Game.screens['state-game'] = (function(game) {
+	'use strict';
+	
+	function initialize() {
+		/*document.getElementById('id-back').addEventListener(
+			'click',
+			function() {Game.gameLoop.showScreen('main-menu');});*/
+		Game.gameLoop.keyboard.setSellTower(Game.gameLoop.sellKey);
+		Game.gameLoop.keyboard.setUpgradeTower(Game.gameLoop.upgradeKey);
+		Game.gameLoop.keyboard.setNextWave(Game.gameLoop.nextLevelKey);
+		Game.gameLoop.keyboard.setNewGame([KeyEvent.DOM_VK_N]);
 	}
 	
 	function run(input) {
@@ -122,4 +170,40 @@ Game.screens['game-play'] = (function(game) {
 		initialize : initialize,
 		run : run
 	};
+}(Game.gameLoop));
+
+Game.screens['state-controls'] = (function(game) {
+	'use strict';
+	
+	function parseKeys (keyset){
+		var retstring = "";
+		for(var i = 0; i < keyset.length ; i++){
+			retstring += ReverseKeyLookup[keyset[i]] +" ";
+		}
+		return retstring;
+	}
+	
+	function initialize() {
+		/*document.getElementById('id-back').addEventListener(
+			'click',
+			function() {Game.gameLoop.showScreen('main-menu');});*/
+		document.getElementById('currentSellKeys').innerHTML = parseKeys(Game.gameLoop.sellKey);
+		document.getElementById('currentUpgradeKeys').innerHTML = parseKeys(Game.gameLoop.upgradeKey);
+		document.getElementById('currentWaveKeys').innerHTML = parseKeys(Game.gameLoop.nextLevelKey);
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
+	}
+	
+	function run(input) {
+		//
+		// I know this is empty, there isn't anything to do.
+	}
+	
+	return {
+		initialize : initialize,
+		run : run
+	};
+<<<<<<< HEAD
 }(Game.main));
+=======
+}(Game.gameLoop));
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58

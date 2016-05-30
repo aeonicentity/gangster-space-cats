@@ -17,8 +17,52 @@ CANVAS{
 .MenuContext{
 	display:none;
 }
+<<<<<<< HEAD
 .Active{
 	display:block;
+=======
+
+h4{
+    margin: 3px;
+}
+
+
+#upgrade{
+    height:50px;
+    padding: 0px;
+}
+
+#basic{
+    background-image:url("../assets/proj_tower_1.png");
+    background-repeat: no-repeat;
+    background-position: left;
+}
+#bomb{
+    background-image:url("../assets/bomb_tower_1.png");
+    background-repeat: no-repeat;
+    background-position: left;
+}
+#air{
+    background-image:url("../assets/air_tower_1.png");
+    background-repeat: no-repeat;
+    background-position: left;
+}
+#slow{
+    background-image:url("../assets/slow_tower_1.png");
+    background-repeat: no-repeat;
+    background-position: left;
+}
+
+#about{
+    height:20px;
+    width: 50px;
+    margin-right: 10px;
+    font-size: 12px;
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
+}
+
+#audio{
+    visibility: visible;
 }
 
 button:hover{
@@ -38,3 +82,13 @@ button:disabled:hover{
     background-color: #603030;
     background-image: none;
 }
+<<<<<<< HEAD
+=======
+
+.MenuContext{
+	display:none;
+}
+.Active{
+	display:block !important;
+}
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58

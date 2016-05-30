@@ -55,6 +55,10 @@ Game.graphics = (function(){
 			that.center.x = x;
 			that.center.y = y;
 		};
+		
+		that.getPos = function(){
+			return that.center;
+		};
 
 		that.update = function(){};
 		
@@ -110,8 +114,10 @@ Game.graphics = (function(){
 			context.fillStyle = spec.fill;
 			context.fillRect(spec.x, spec.y, spec.width, spec.height);
 			
-			//context.strokeStyle = spec.stroke;
-			//context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			if(spec.hasOwnProperty('stroke')){
+				context.strokeStyle = spec.stroke;
+				context.strokeRect(spec.x, spec.y, spec.width, spec.height);
+			}
 
 			context.restore();
 		};
@@ -144,6 +150,7 @@ Game.graphics = (function(){
 
 		return that;
 	}
+<<<<<<< HEAD
 	
 	function CountDown(spec){
 		var that = Texture(spec);
@@ -154,8 +161,13 @@ Game.graphics = (function(){
 		return that;
 	}
 	
+=======
+  
+>>>>>>> 4ee1b5cf7b00c96ee18464b1a983b3d42a048c58
 	function Texture(spec) {
-		var that = {},
+		var that = {
+			center:{x:spec.center.x,y:spec.center.y},
+		},
 			ready = false,
 			image = new Image();
 		//console.log(image);
@@ -169,14 +181,14 @@ Game.graphics = (function(){
 		/*image.src = spec.image;
 		*/
 		that.movetoX = function(xPos){
-			spec.center.x = xPos;
+			that.center.x = xPos;
 		}
 		that.movetoY = function(yPos){
-			spec.center.y = yPos;
+			that.center.y = yPos;
 		}
 		that.moveTo = function(xPos,yPos){
-			spec.center.x = xPos;
-			spec.center.y = yPos;
+			that.center.x = xPos;
+			that.center.y = yPos;
 		}
 		
 		that.setImg = function(src){
@@ -184,53 +196,36 @@ Game.graphics = (function(){
 		}
 		
 		that.reportPos = function (){
-			return {x:spec.center.x -spec.width/2,
-					y:spec.center.y - spec.height/2,
-					dx:spec.center.x+spec.height - spec.height/2,
-					dy:spec.center.y+spec.width - spec.height/2};
+			return {x:that.center.x -spec.width/2,
+					y:that.center.y - spec.height/2,
+					dx:that.center.x+spec.height - spec.height/2,
+					dy:that.center.y+spec.width - spec.height/2};
 		}
 		that.reportCenter = function(){
-			return {x:spec.center.x,y:spec.center.y};
+			return {x:that.center.x,y:that.center.y};
 		}
 		
-		function rotateRight(elapsedTime) {
-			spec.rotation += spec.rotateRate * (elapsedTime / 1000);
-		};
+		that.setRotation = function (angle){
+			spec.rotation = angle + Math.PI;
+		}
 		
-		function rotateLeft(elapsedTime) {
-			spec.rotation -= spec.rotateRate * (elapsedTime / 1000);
-		};
-		
-		function moveLeft(elapsedTime) {
-			spec.center.x -= spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveRight(elapsedTime) {
-			spec.center.x += spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveUp(elapsedTime) {
-			spec.center.y -= spec.moveRate * (elapsedTime / 1000);
-		};
-		
-		function moveDown(elapsedTime) {
-			spec.center.y += spec.moveRate * (elapsedTime / 1000);
-		};
+		that.setImage = function(newImg){
+			image.src = newImg.src;
+		}
 		
 		
 		//console.log(image.src);
 		that.draw = function() {
 			if (ready) {
 				context.save();
-				
-				context.translate(spec.center.x, spec.center.y);
+				context.translate(that.center.x, that.center.y);
 				context.rotate(spec.rotation);
-				context.translate(-spec.center.x, -spec.center.y);
+				context.translate(-that.center.x, -that.center.y);
 				
 				context.drawImage(
 					image, 
-					spec.center.x - spec.width/2, 
-					spec.center.y - spec.height/2,
+					that.center.x - spec.width/2, 
+					that.center.y - spec.height/2,
 					spec.width, spec.height);
 				
 				context.restore();
@@ -248,14 +243,137 @@ Game.graphics = (function(){
 			spec.txt = txt;
 		}
 		
+		that.setPos = function(x,y){
+			spec.x = x;
+			spec.y = y;
+		}
+		
 		that.draw = function(){
 			context.font = spec.font;
 			context.textAlign = "center";
 			context.fillText(spec.txt, spec.x, spec.y);
+			context.fillStyle="white";
 		}
 		return that;
 	}
+
 	
+    
+//////////////////Sprite sheet stuff
+      function SpriteSheet(spec){
+          var that = {};
+          var image = new Image();
+          //console.log(spec);
+
+          var image = new Image();    
+          spec.sprite = 0; //start sprite
+          spec.elapsedTime = 0;
+          
+          image.onload = function(){
+          	
+          	
+              that.draw = function(){
+                context.save();
+                context.translate(spec.pos.x, spec.pos.y);
+				context.rotate(spec.rotation);
+				context.translate(-spec.pos.x, -spec.pos.y);
+                
+                //healthbars
+                context.fillStyle = "red";
+                context.beginPath();
+                context.rect(spec.pos.x-25, spec.pos.y-35, 50, 5);
+                context.fill();
+                var per;
+                per = spec.health/spec.maxhealth *100;
+                context.fillStyle = "green";
+                context.beginPath();
+                context.rect(spec.pos.x-25, spec.pos.y-35, per/2, 5);
+                context.fill();
+                
+				context.drawImage(
+					image,
+					spec.width * spec.sprite, 0,	// Which sprite to pick out
+					spec.width, spec.height,		// The size of the sprite
+					spec.pos.x - spec.width/2,	// Where to draw the sprite
+					spec.pos.y - spec.height/2,
+					spec.width, spec.height);
+
+				context.restore();
+              };
+            spec.height = image.height;
+			spec.creepWidth = image.width / spec.spriteCount;
+			spec.width = image.width / spec.spriteCount;
+
+          };
+          image.src = 'assets/'+spec.typepath+'.png';
+          
+        that.rotateRight = function(tickTime) {
+            console.log("roating right:");
+			spec.rotation += spec.rotateRate * (tickTime);
+		};
+		
+		that.rotateLeft = function(tickTime) {
+            console.log("rotating left");
+			spec.rotation -= spec.rotateRate * (tickTime);
+		};
+          
+		that.update = function(elapsedTime, forward) {
+			spec.elapsedTime += ticktime;
+            
+            //console.log(spec.spriteTime[spec.sprite]);
+			//
+			// Check to see if we should update the animation frame
+			if (spec.elapsedTime >= spec.spriteTime[spec.sprite]) {
+                
+				//
+				// When switching sprites, keep the leftover time because
+				// it needs to be accounted for the next sprite animation frame.
+				spec.elapsedTime -= spec.spriteTime[spec.sprite];
+				//
+                
+				// Depending upon the direction of the animation...
+				if (forward === true) {
+					spec.sprite += 1;
+					//
+					// This provides wrap around from the last back to the first sprite
+					spec.sprite = spec.sprite % spec.spriteCount;
+				} else {
+					spec.sprite -= 1;
+					//
+					// This provides wrap around from the first to the last sprite
+					if (spec.sprite < 0) {
+						spec.sprite = spec.spriteCount - 1;
+					}
+				}
+			}
+		};
+        
+        that.draw = function(elapsedTime) {
+
+          };
+        that.getPos = function(){
+      		return {x:spec.pos.x, y:spec.pos.y};
+      	}
+      	that.moveTo = function(x,y){
+      		spec.pos.x = x;
+      		spec.pos.y = y;
+      	}
+      	that.hit = function(damage){
+      		spec.health -= damage
+      		if(spec.health <= 0){
+      			return true;
+      		}return false;
+      	}
+          
+          
+         
+          image.src = 'assets/'+spec.typepath+'.png';
+         
+          
+          return that;
+      }
+
+
 	
 
 	return {
@@ -268,7 +386,8 @@ Game.graphics = (function(){
 		Texture: Texture,
 		CountDown: CountDown,
 		Text: Text,
-		drawImage:drawImage,
+		drawImage: drawImage,
+		SpriteSheet: SpriteSheet,
 	};
 }());
 

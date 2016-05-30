@@ -55,18 +55,28 @@ Game.input = (function (){
 	function Keyboard() {
 		var that = {
 				keys : {},
-				handlers : []
+				handlers : [],
+				keysDown: false,
+				endActionFlag: false,
+				totalKeysPressed: 0,
 			},
 			handler;
 		
 		function keyPress(e) {
 			that.keys[e.keyCode] = e.timeStamp;
+			that.keysDown = true;
 		}
 		
 		function keyRelease(e) {
 			delete that.keys[e.keyCode];
+			that.keysDown = false;
+			that.totalKeysPressed = Object.keys(that.keys).length //we need up update this length
+			
+			if(that.totalKeysPressed == 0){
+				that.endActionFlag = false; //if there are no keys pressed, reset the end action flag.
+			}
+			
 		}
-		
 		// ------------------------------------------------------------------
 		//
 		// Allows the client code to register a keyboard handler
@@ -74,6 +84,7 @@ Game.input = (function (){
 		// ------------------------------------------------------------------
 		that.registerCommand = function(key, handler) {
 			that.handlers.push({ key : key, handler : handler});
+			console.log("handler size:"+that.handlers.length);
 		};
 		
 		that.clearCommands = function(){
@@ -86,17 +97,69 @@ Game.input = (function (){
 		//
 		// ------------------------------------------------------------------
 		that.update = function(elapsedTime) {
+			that.totalKeysPressed = Object.keys(that.keys).length
 			for (handler = 0; handler < that.handlers.length; handler++) {
-				if (that.keys.hasOwnProperty(that.handlers[handler].key)) {
+				var keyComboFlag = true;
+				for(var i =0; i < that.handlers[handler].key.length; i++){
+					//console.log('checking key:'+that.handlers[handler].key[i]);
+					if (!that.keys.hasOwnProperty(that.handlers[handler].key[i])) {
+						keyComboFlag = false;
+					}
+				}
+				if(keyComboFlag){
 					that.handlers[handler].handler(elapsedTime);
 				}
 			}
+			//console.log(that.keys);
+		};
+		
+		that.getCopyOfKeys = function(){
+			var copy = that.keys.constructor();
+			for (var attr in that.keys){
+				if (that.keys.hasOwnProperty(attr)){
+					copy[attr] = that.keys[attr];
+				}
+			}
+			return copy;
 		};
 		
 		//
 		// These are used to keep track of which keys are currently pressed
 		window.addEventListener('keydown', keyPress);
 		window.addEventListener('keyup', keyRelease);
+		
+		
+		that.setSellTower = function (keycombo){
+			that.registerCommand(keycombo,function(){Game.gameLoop.sellSelectedTower()});
+			
+		};
+		
+		that.setUpgradeTower = function (keycombo){
+			console.log("setting upgrade to:");
+			console.log(keycombo);
+			that.registerCommand(keycombo,function(){
+				if(!that.endActionFlag){
+					Game.gameLoop.upgradeSelectedTower()
+					that.endActionFlag = true;
+				}
+			});
+		};
+		
+		that.setNextWave = function(keycombo){
+			that.registerCommand(keycombo,function(){
+				if(!that.endActionFlag){
+					Game.gameLoop.sendNextWave();
+					that.endActionFlag = true;
+				}
+			});
+		};
+		
+		that.setNewGame = function(keycombo){
+			that.registerCommand(keycombo,function(){
+				Game.gameLoop.cancelFrame = true;
+				Game.gameLoop.start();
+			});
+		}
 		
 		return that;
 	}
@@ -112,6 +175,49 @@ Game.input = (function (){
 // Source: http://stackoverflow.com/questions/1465374/javascript-event-keycode-constants
 //
 //------------------------------------------------------------------
+if (typeof ReverseEvent === 'undefined'){
+	var ReverseKeyLookup = {
+		48: "0",
+		49: "1",
+		50: "2",
+		51: "3",
+		52: "4",
+		53: "5",
+		54: "6",
+		55: "7",
+		56: "8",
+		57: "9",
+		65: "A",
+		66: "B",
+		67: "C",
+		68: "D",
+		69: "E",
+		70: "F",
+		71: "G",
+		72: "H",
+		73: "I",
+		74: "J",
+		75: "K",
+		76: "L",
+		77: "M",
+		78: "N",
+		79: "O",
+		80: "P",
+		81: "Q",
+		82: "R",
+		83: "S",
+		84: "T",
+		85: "U",
+		86: "V",
+		87: "W",
+		88: "X",
+		89: "Y",
+		90: "Z",
+		16: "SHIFT",
+		17: "CTRL",
+		18: "ALT",
+	}
+}
 if (typeof KeyEvent === 'undefined') {
 	var KeyEvent = {
 		DOM_VK_CANCEL: 3,
